@@ -1,4 +1,4 @@
-#define <stdio>
+#define <stdio.h>
 
 int main(){
     printf("dddd");
