@@ -9,14 +9,5 @@ CMake Deprecation Warning:
 
 
 -- Configuring done (0.1s)
-CMake Error at CMakeLists.txt:6 (add_executable):
-  Cannot find source file:
-
-    test.c
-
-
-CMake Error at CMakeLists.txt:6 (add_executable):
-  No SOURCES given to target: mmn14
-
-
-CMake Generate step failed.  Build files cannot be regenerated correctly.
+-- Generating done (0.0s)
+-- Build files have been written to: C:/Users/mayan/Desktop/shared/mmn14_files/cmake-build-debug
