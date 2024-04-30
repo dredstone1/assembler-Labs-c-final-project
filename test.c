@@ -1,1 +1,6 @@
-#define wsasdxdcz 9eedfdsww
+#define <stdio>
+
+int main(){
+    printf("dddd");
+    return 0;
+}
