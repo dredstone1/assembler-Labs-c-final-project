@@ -8,4 +8,5 @@ add_executable(mmn14
         compiler.c
         compiler.h
         compiler.c
+        compiler.h
         compiler.h)
