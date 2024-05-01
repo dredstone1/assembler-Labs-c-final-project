@@ -1,5 +1,6 @@
 #ifndef MMN14_WORD_H
 #define MMN14_WORD_H
+
 #include "opcode.h"
 #include "addressing_modes.h"
 #include "operand_address.h"

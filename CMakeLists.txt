@@ -4,13 +4,15 @@ project(mmn14 C)
 set(CMAKE_C_STANDARD 11)
 
 add_executable(mmn14
-        compiler.h
-        compiler.c
-        instruction/opcode.c
-        instruction/opcode.h
-        instruction/word.c
-        instruction/word.h
-        instruction/addressing_modes.c
-        instruction/addressing_modes.h
-        instruction/operand_address.c
-        instruction/operand_address.h)
+        scripts/compiler.h
+        scripts/compiler.c
+        scripts/instruction/opcode.c
+        scripts/instruction/opcode.h
+        scripts/instruction/word.c
+        scripts/instruction/word.h
+        scripts/instruction/addressing_modes.c
+        scripts/instruction/addressing_modes.h
+        scripts/instruction/operand_address.c
+        scripts/instruction/operand_address.h
+        scripts/binary_translator.c
+        scripts/binary_translator.h)
