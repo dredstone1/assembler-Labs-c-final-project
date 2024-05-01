@@ -6,7 +6,11 @@ set(CMAKE_C_STANDARD 11)
 add_executable(mmn14
         compiler.h
         compiler.c
-        opcode.c
-        opcode.h
-        word.c
-        word.h)
+        instruction/opcode.c
+        instruction/opcode.h
+        instruction/word.c
+        instruction/word.h
+        instruction/addressing_modes.c
+        instruction/addressing_modes.h
+        instruction/operand_address.c
+        instruction/operand_address.h)
