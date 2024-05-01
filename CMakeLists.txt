@@ -15,4 +15,6 @@ add_executable(mmn14
         scripts/instruction/operand_address.c
         scripts/instruction/operand_address.h
         scripts/binary_translator.c
-        scripts/binary_translator.h)
+        scripts/binary_translator.h
+        scripts/formating/formating.c
+        scripts/formating/formating.h)
