@@ -5,4 +5,8 @@ set(CMAKE_C_STANDARD 11)
 
 add_executable(mmn14
         compiler.h
-        compiler.c)
+        compiler.c
+        opcode.c
+        opcode.h
+        word.c
+        word.h)
