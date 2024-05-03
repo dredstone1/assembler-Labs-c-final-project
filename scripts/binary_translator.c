@@ -1,5 +1,6 @@
 #include "binary_translator.h"
 
+
 int intBINARY_to_binary(int num){
     int binary = 0, i = 1;
 

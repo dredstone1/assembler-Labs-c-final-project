@@ -5,8 +5,6 @@
 #define LINE_SIZE 80
 #define LINE_JUMPER_SIZE 1
 
-
-
 typedef struct line{
     char content[LINE_SIZE];
 } line;
@@ -25,6 +23,6 @@ typedef struct file{
     pos pos;
 } file;
 
-void read_file(file *file1);
+void read_file(file *file1, error *error);
 
 #endif //MMN14_FILE_H
