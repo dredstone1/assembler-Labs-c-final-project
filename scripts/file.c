@@ -12,7 +12,8 @@ void read_file(char *filename, char **file_content, int *size){
     }
     *file_content = NULL;
     *size = 0;
-    while ((c = fgetc(file)) != EOF){
+    fread(&c, sizeof(char), 1, file);
+    while (c != EOF){
         *file_content = (char *)realloc(*file_content, *size + 1);
         (*file_content)[*size] = c;
         (*size)++;

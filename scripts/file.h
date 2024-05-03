@@ -1,5 +1,7 @@
 #ifndef MMN14_FILE_H
 #define MMN14_FILE_H
+
+#define LINE_SIZE 80
 void read_file(char *filename, char **file_content, int *size);
 
 typedef enum bool{
@@ -8,11 +10,11 @@ typedef enum bool{
 } bool;
 
 typedef struct line{
-    char *content;
+    char content[LINE_SIZE];
     int size;
     bool ext;
     bool ent;
-};
+} line;
 
 typedef struct pos{
     int line;
