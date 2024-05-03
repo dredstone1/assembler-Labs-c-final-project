@@ -21,4 +21,6 @@ add_executable(mmn14
         scripts/file.c
         scripts/file.h
         scripts/error.c
-        scripts/error.h)
+        scripts/error.h
+        scripts/boolean.c
+        scripts/boolean.h)

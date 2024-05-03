@@ -1,5 +1,4 @@
 #include "word.h"
-
 #include "../binary_translator.h"
 
 int word_to_intBINARY(word word){

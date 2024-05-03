@@ -1,13 +1,11 @@
 #ifndef MMN14_FILE_H
 #define MMN14_FILE_H
+#include "boolean.h"
 
 #define LINE_SIZE 80
 #define LINE_JUMPER_SIZE 1
 
-typedef enum bool{
-    FALSE,
-    TRUE
-} bool;
+
 
 typedef struct line{
     char content[LINE_SIZE];
