@@ -25,5 +25,5 @@ typedef struct file{
 } file;
 
 void read_file(file *file1, error *error);
-
+void print_pos(pos pos);
 #endif //MMN14_FILE_H

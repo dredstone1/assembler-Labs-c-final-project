@@ -46,3 +46,7 @@ void read_file(file *file1, error *error){
     }
     fclose(files);
 }
+
+void print_pos(pos pos){
+    printf("%d, %d", pos.line, pos.column);
+}
