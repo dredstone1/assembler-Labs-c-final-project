@@ -3,22 +3,33 @@
 #include <stdio.h>
 #include <string.h>
 
-void read_file(char *filename, char **file_content, int *size){
-    char c;
-    FILE *file = fopen(filename, "r");
-    if (file == NULL){
+void read_file(file *file1){
+    size_t bytesRead=1;
+    char c = ' ';
+
+    int i=0;
+    size_t lenmax = sizeof(line)*LINE_JUMPER_SIZE;
+
+    file1->line = malloc(lenmax);
+
+    FILE *files = fopen(file1->filename, "r");
+    if (files == NULL){
         printf("Error: File not found\n");
         exit(1);
     }
-    *file_content = NULL;
-    *size = 0;
-    fread(&c, sizeof(char), 1, file);
-    while (c != EOF){
-        *file_content = (char *)realloc(*file_content, *size + 1);
-        (*file_content)[*size] = c;
-        (*size)++;
+
+    while (bytesRead != 0){
+        bytesRead = fread(&c, sizeof(char), 1, files);
+        if (c == '\n') {
+            file1->line[file1->number_of_rows].content[i] = '\0';
+            lenmax += sizeof(line)*LINE_JUMPER_SIZE;
+            file1->line = realloc(file1->line, lenmax);
+            file1->number_of_rows++;
+            i=0;
+        }else if( c=='\r')
+            continue;
+        else
+            file1->line[file1->number_of_rows].content[i++] = c;
     }
-    *file_content = (char *)realloc(*file_content, *size + 1);
-    (*file_content)[*size] = '\0';
-    fclose(file);
+    fclose(files);
 }

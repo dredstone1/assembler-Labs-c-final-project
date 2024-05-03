@@ -2,7 +2,7 @@
 #define MMN14_FILE_H
 
 #define LINE_SIZE 80
-void read_file(char *filename, char **file_content, int *size);
+#define LINE_JUMPER_SIZE 1
 
 typedef enum bool{
     FALSE,
@@ -11,9 +11,6 @@ typedef enum bool{
 
 typedef struct line{
     char content[LINE_SIZE];
-    int size;
-    bool ext;
-    bool ent;
 } line;
 
 typedef struct pos{
@@ -22,13 +19,14 @@ typedef struct pos{
 } pos;
 
 typedef struct file{
-    line **lines;
-    int size;
+    line *line;
+    int number_of_rows;
     char *filename;
     bool ext;
     bool ent;
     pos pos;
 } file;
 
+void read_file(file *file1);
 
 #endif //MMN14_FILE_H

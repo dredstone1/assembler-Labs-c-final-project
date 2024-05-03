@@ -19,4 +19,6 @@ add_executable(mmn14
         scripts/formating/formating.c
         scripts/formating/formating.h
         scripts/file.c
-        scripts/file.h)
+        scripts/file.h
+        scripts/error.c
+        scripts/error.h)
