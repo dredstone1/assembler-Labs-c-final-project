@@ -7,11 +7,11 @@ typedef enum error_type{
     NOTHING,
     FILE_NOT_FOUND,
     MEMORY_ALLOCATION_FAILED
-}error_message;
+}error_type;
 
 
 typedef struct error {
-    error_message error_message;
+    error_type error_type;
     bool temp;
 
     char **error_data;
