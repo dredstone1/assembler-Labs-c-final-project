@@ -5,7 +5,7 @@
 
 void read_file(file *file1){
     size_t bytesRead=1;
-    char c = ' ';
+    char c;
 
     int i=0;
     size_t lenmax = sizeof(line)*LINE_JUMPER_SIZE;
@@ -26,7 +26,6 @@ void read_file(file *file1){
             file1->line = realloc(file1->line, lenmax);
             file1->number_of_rows++;
             i=0;
-
             lenmax += sizeof(line)*LINE_JUMPER_SIZE;
         }else if(c=='\r')
             continue;
