@@ -12,3 +12,7 @@ void print_error_pos(pos pos){
     printf(")");
 }
 
+void print_line(line line){
+    printf("%s", line.content);
+}
+

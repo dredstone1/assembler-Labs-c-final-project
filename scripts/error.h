@@ -9,7 +9,6 @@ typedef enum error_type{
     MEMORY_ALLOCATION_FAILED
 }error_type;
 
-
 typedef struct error {
     error_type error_type;
     bool temp;
