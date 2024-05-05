@@ -26,7 +26,7 @@ typedef struct file{
     char *filename;
     bool ext;
     bool ent;
-    pos pos;
+    pos *pos;
 } file;
 
 void read_file(file *file1, error *error);

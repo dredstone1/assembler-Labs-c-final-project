@@ -26,34 +26,29 @@ void format_line(file *file1, int line_number, error *error){
         return;
 }
 
-void get_tag(line *line, error *error){
+void get_tag(line *line, error *error, pos *pos){
     int i;
-    char tag[LINE_SIZE];
     bool found_tag = FALSE;
 
-    for (i = 0; i < LINE_SIZE; i++){
+    line->tag.tag = FALSE;
+
+    for (i = 0; i < MAX_TAG_SIZE; i++) {
         if (line->content[i] == ' ' || line->content[i] == '\t') {
-            if (found_tag){
-                tag[i] = '\0';
-                line->sentence_type = tag;
+            if (!found_tag){
                 return;
             }
-        }else if (line->content[i] == '\n' || line->content[i] == '\0') {
+        } else if (line->content[i] == '\n' || line->content[i] == '\0') {
             return;
-        }else if (line->content[i] == ':'){
-            tag[i] = '\0';
-            line->sentence_type = tag;
-            return;
-
-        }else {
-                found_tag = TRUE;
-                tag[i] = line->content[i];
+        } else if (line->content[i] == ':') {
+            if (found_tag){
+                line->tag.name[i] = '\0';
+                pos->column = i;
+                line->tag.tag = TRUE;
             }
+            return;
+        } else {
+            found_tag = TRUE;
+            line->tag.name[i] = line->content[i];
         }
-    }
-    tag[i] = '\0';
-    if (tag[i - 1] == ':'){
-        tag[i - 1] = '\0';
-        line->sentence_type = tag;
     }
 }
