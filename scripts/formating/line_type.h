@@ -10,5 +10,6 @@ typedef enum sentence_type{
 } sentence_type;
 
 sentence_type get_line_type(line *line);
+//
 
 #endif //MMN14_LINE_TYPE_H
