@@ -4,7 +4,7 @@
 #include "boolean.h"
 #include "error.h"
 #include "formating/line_type.h"
-#include "tag.h"
+#include "data/tag.h"
 
 #define LINE_SIZE 80
 #define LINE_JUMPER_SIZE 1
