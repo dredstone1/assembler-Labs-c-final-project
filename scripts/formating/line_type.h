@@ -1,5 +1,6 @@
 #ifndef MMN14_LINE_TYPE_H
 #define MMN14_LINE_TYPE_H
+#include "../boolean.h"
 
 typedef enum sentence_type{
     NOTHING,
@@ -9,7 +10,6 @@ typedef enum sentence_type{
     TEACHING
 } sentence_type;
 
-sentence_type get_line_type(line *line);
-//
+bool is_empty(line *line);
 
 #endif //MMN14_LINE_TYPE_H

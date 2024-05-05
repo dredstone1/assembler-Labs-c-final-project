@@ -22,5 +22,7 @@ void first_pass(file *file1, error *error){
 }
 
 void format_line(file *file1, int line_number, error *error){
-    get_line_type();
+    if (is_empty(file1->line[line_number])){
+        return;
+    }
 }
