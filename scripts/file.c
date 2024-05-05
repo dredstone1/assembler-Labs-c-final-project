@@ -14,13 +14,13 @@ void read_file(file *file1, error *error){
     file1->line = malloc(lenmax);
 
     if (file1->line == NULL){
-        error->error_message = MEMORY_ALLOCATION_FAILED;
+        error->error_type = MEMORY_ALLOCATION_FAILED;
         return;
     }
 
     FILE *files = fopen(file1->filename, "r");
     if (files == NULL){
-        error->error_message = FILE_NOT_FOUND;
+        error->error_type = FILE_NOT_FOUND;
         return;
     }
 
@@ -32,7 +32,7 @@ void read_file(file *file1, error *error){
 
             file1->line = realloc(file1->line, lenmax);
             if(file1->line == NULL){
-                error->error_message = MEMORY_ALLOCATION_FAILED;
+                error->error_type = MEMORY_ALLOCATION_FAILED;
                 return;
             }
 

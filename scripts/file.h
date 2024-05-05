@@ -1,13 +1,16 @@
 #ifndef MMN14_FILE_H
 #define MMN14_FILE_H
 
+#include "boolean.h"
+#include "error.h"
+#include "formating/line_type.h"
+
 #define LINE_SIZE 80
 #define LINE_JUMPER_SIZE 1
 
-#include "boolean.h"
-
 typedef struct line{
     char content[LINE_SIZE];
+    sentence_type sentence_type;
 } line;
 
 typedef struct pos{

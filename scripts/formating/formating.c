@@ -1,10 +1,17 @@
 #include "formating.h"
 #include "../file.h"
 #include "../error.h"
+#include "line_type.h"
 
 void format_line(file *file1, int line_number, error *error);
+void first_pass(file *file1, error *error);
 
 void format_file(file *file1, error *error){
+    first_pass(file1, error);
+
+}
+
+void first_pass(file *file1, error *error){
     int i;
 
     for (i = 0; i < file1->number_of_rows; i++){
@@ -15,5 +22,5 @@ void format_file(file *file1, error *error){
 }
 
 void format_line(file *file1, int line_number, error *error){
-
+    get_line_type();
 }
