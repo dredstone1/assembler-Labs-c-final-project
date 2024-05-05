@@ -1,7 +1,7 @@
 #ifndef MMN14_ERROR_H
 #define MMN14_ERROR_H
 
-#include "boolean.h"
+#include "data/boolean.h"
 
 typedef enum error_type{
     NOTHING,

@@ -1,7 +1,7 @@
 #ifndef MMN14_TAG_H
 #define MMN14_TAG_H
 
-#include "../boolean.h"
+#include "boolean.h"
 
 #define MAX_TAG_SIZE 31
 

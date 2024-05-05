@@ -1,6 +1,6 @@
 #ifndef MMN14_LINE_TYPE_H
 #define MMN14_LINE_TYPE_H
-#include "../boolean.h"
+#include "../data/boolean.h"
 #include "../file.h"
 
 

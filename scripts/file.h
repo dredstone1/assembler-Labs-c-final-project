@@ -1,7 +1,7 @@
 #ifndef MMN14_FILE_H
 #define MMN14_FILE_H
 
-#include "boolean.h"
+#include "data/boolean.h"
 #include "error.h"
 #include "formating/line_type.h"
 #include "data/tag.h"

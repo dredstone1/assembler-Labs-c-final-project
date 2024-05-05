@@ -22,8 +22,8 @@ add_executable(mmn14
         scripts/file.h
         scripts/error.c
         scripts/error.h
-        scripts/boolean.c
-        scripts/boolean.h
+        scripts/data/boolean.c
+        scripts/data/boolean.h
         scripts/formating/line_type.c
         scripts/formating/line_type.h
         scripts/data/tag.c
