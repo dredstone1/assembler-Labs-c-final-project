@@ -41,6 +41,6 @@ void get_tag(line *line, error *error){
     tag[i] = '\0';
     if (tag[i - 1] == ':'){
         tag[i - 1] = '\0';
-        line->sentence_type = TAG;
+        line->sentence_type = tag;
     }
 }
