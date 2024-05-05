@@ -4,14 +4,16 @@
 #include "boolean.h"
 #include "error.h"
 #include "formating/line_type.h"
+#include "tag.h"
 
 #define LINE_SIZE 80
 #define LINE_JUMPER_SIZE 1
 
 typedef struct line{
     char content[LINE_SIZE];
-    sentence_type sentence_type;
+    tag tag;
 } line;
+
 
 typedef struct pos{
     int line;

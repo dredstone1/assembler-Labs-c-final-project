@@ -29,14 +29,27 @@ void format_line(file *file1, int line_number, error *error){
 void get_tag(line *line, error *error){
     int i;
     char tag[LINE_SIZE];
+    bool found_tag = FALSE;
 
     for (i = 0; i < LINE_SIZE; i++){
-        if (line->content[i] == ' ' || line->content[i] == '\t')
-            continue;
-        else if (line->content[i] == '\n' || line->content[i] == '\0') {
+        if (line->content[i] == ' ' || line->content[i] == '\t') {
+            if (found_tag){
+                tag[i] = '\0';
+                line->sentence_type = tag;
+                return;
+            }
+        }else if (line->content[i] == '\n' || line->content[i] == '\0') {
             return;
-        }else
-            tag[i] = line->content[i];
+        }else if (line->content[i] == ':'){
+            tag[i] = '\0';
+            line->sentence_type = tag;
+            return;
+
+        }else {
+                found_tag = TRUE;
+                tag[i] = line->content[i];
+            }
+        }
     }
     tag[i] = '\0';
     if (tag[i - 1] == ':'){
