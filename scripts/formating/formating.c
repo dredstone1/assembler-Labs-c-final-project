@@ -1,6 +1,4 @@
 #include "formating.h"
-#include "../file.h"
-#include "../error.h"
 #include "line_type.h"
 
 void format_line(file *file1, int line_number, error *error);
