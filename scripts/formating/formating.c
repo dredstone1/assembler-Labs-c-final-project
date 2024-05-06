@@ -9,7 +9,7 @@ void format_file(file *file1, error *error){
     first_pass(file1, error);
 
 }
-//hello
+
 void first_pass(file *file1, error *error){
     int i;
 

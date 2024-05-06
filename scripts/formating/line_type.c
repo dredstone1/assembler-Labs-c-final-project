@@ -13,7 +13,7 @@ bool is_empty(line *line){
 
     return FALSE;
 }
-
+//hello
 bool is_line_type_empty(line *line){
     int i;
 
