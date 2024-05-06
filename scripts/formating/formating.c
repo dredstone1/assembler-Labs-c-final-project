@@ -35,9 +35,10 @@ void get_tag(line *line, error *error, pos *pos){
 
     for (i = 0; i < MAX_TAG_SIZE; i++) {
         if (line->content[i] == ' ' || line->content[i] == '\t') {
-            if (!found_tag){
+            if (found_tag){
                 return;
             }
+            continue;
         } else if (line->content[i] == '\n' || line->content[i] == '\0') {
             return;
         } else if (line->content[i] == ':') {
