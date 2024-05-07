@@ -40,10 +40,11 @@ bool get_start_tag(line *line, error *error, pos *pos) {
         else if (line->content[i] == ':') {
             if (found_text) {
                 line->tag.name[i] = '\0';
-                pos->column = i;
+                set_pos(pos, i, line->line_number);
                 line->tag.tag = TRUE;
                 return TRUE;
             }
+
 
             error->error_type = UNDEFINED_TAG_NAME;
             return FALSE;

@@ -1,10 +1,11 @@
 #ifndef MMN14_FILE_H
 #define MMN14_FILE_H
 
-#include "data/boolean.h"
+#include "../data/boolean.h"
 #include "error.h"
-#include "formating/line_type.h"
-#include "data/tag.h"
+#include "../formating/line_type.h"
+#include "../data/tag.h"
+#include "../data/pos.h"
 
 #define LINE_SIZE 80
 #define LINE_JUMPER_SIZE 1
@@ -14,12 +15,6 @@ typedef struct line{
     tag tag;
     int line_number;
 } line;
-
-
-typedef struct pos{
-    int line;
-    int column;
-} pos;
 
 typedef struct file{
     line *line;
