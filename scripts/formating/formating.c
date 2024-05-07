@@ -3,7 +3,7 @@
 
 void format_line(file *file1, int line_number, error *error);
 void first_pass(file *file1, error *error);
-void get_tag(line *line, error *error, pos *pos);
+void get_start_tag(line *line, error *error, pos *pos);
 
 void format_file(file *file1, error *error){
     first_pass(file1, error);
@@ -24,10 +24,10 @@ void format_line(file *file1, int line_number, error *error){
     if (is_empty(file1->line[line_number]))
         return;
 
-    get_tag(file1->line, error, file1->pos);
+    get_start_tag(file1->line, error, file1->pos);
 }
 
-void get_tag(line *line, error *error, pos *pos){
+void get_start_tag(line *line, error *error, pos *pos){
     int i;
     bool found_tag = FALSE;
 
