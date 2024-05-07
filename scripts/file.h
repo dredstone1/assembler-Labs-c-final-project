@@ -12,6 +12,7 @@
 typedef struct line{
     char content[LINE_SIZE];
     tag tag;
+    int line_number;
 } line;
 
 

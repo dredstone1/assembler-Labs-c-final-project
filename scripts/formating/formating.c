@@ -21,13 +21,10 @@ void first_pass(file *file1, error *error){
 }
 
 void format_line(file *file1, int line_number, error *error){
-    if (is_empty(file1->line[line_number]))
-        return;
-
     get_start_tag(file1->line, error, file1->pos);
 }
 
-void get_start_tag(line *line, error *error, pos *pos){
+void get_start_tag(line *line, error *error, pos *pos) {
     int i;
     bool found_tag = FALSE;
 
@@ -35,14 +32,13 @@ void get_start_tag(line *line, error *error, pos *pos){
 
     for (i = 0; i < MAX_TAG_SIZE; i++) {
         if (line->content[i] == ' ' || line->content[i] == '\t') {
-            if (found_tag){
+            if (found_tag)
                 return;
-            }
             continue;
-        } else if (line->content[i] == '\n' || line->content[i] == '\0') {
+        } else if (line->content[i] == '\n' || line->content[i] == '\0' || line->content[i] == '.')
             return;
-        } else if (line->content[i] == ':') {
-            if (found_tag){
+        else if (line->content[i] == ':') {
+            if (found_tag) {
                 line->tag.name[i] = '\0';
                 pos->column = i;
                 line->tag.tag = TRUE;
