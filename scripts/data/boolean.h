@@ -1,7 +1,7 @@
 #ifndef MMN14_BOOLEAN_H
 #define MMN14_BOOLEAN_H
 
-typedef enum{
+typedef enum bool{
     FALSE,
     TRUE
 } bool;

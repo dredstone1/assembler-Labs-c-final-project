@@ -3,7 +3,7 @@
 
 void format_line(file *file1, int line_number, error *error);
 void first_pass(file *file1, error *error);
-void get_start_tag(line *line, error *error, pos *pos);
+bool get_start_tag(line *line, error *error, pos *pos);
 
 void format_file(file *file1, error *error){
     first_pass(file1, error);
@@ -24,29 +24,33 @@ void format_line(file *file1, int line_number, error *error){
     get_start_tag(file1->line, error, file1->pos);
 }
 
-void get_start_tag(line *line, error *error, pos *pos) {
+bool get_start_tag(line *line, error *error, pos *pos) {
     int i;
-    bool found_tag = FALSE;
+    bool found_text = FALSE;
 
     line->tag.tag = FALSE;
 
     for (i = 0; i < MAX_TAG_SIZE; i++) {
         if (line->content[i] == ' ' || line->content[i] == '\t') {
-            if (found_tag)
-                return;
-            continue;
+            if (found_text)
+                return FALSE;
         } else if (line->content[i] == '\n' || line->content[i] == '\0' || line->content[i] == '.')
-            return;
+            return FALSE;
         else if (line->content[i] == ':') {
-            if (found_tag) {
+            if (found_text) {
                 line->tag.name[i] = '\0';
                 pos->column = i;
                 line->tag.tag = TRUE;
+                return TRUE;
             }
-            return;
+
+            error->error_type = UNDEFINED_TAG_NAME;
+            return FALSE;
+
         } else {
-            found_tag = TRUE;
+            found_text = TRUE;
             line->tag.name[i] = line->content[i];
         }
     }
+    return FALSE;
 }
