@@ -1,5 +1,6 @@
 #include "formating.h"
 #include "line_type.h"
+#include "../data/tag.h"
 
 void format_line(file *file1, int line_number, error *error);
 void first_pass(file *file1, error *error);
@@ -46,8 +47,10 @@ bool get_start_tag(line *line, error *error, pos *pos) {
 
             error->error_type = UNDEFINED_TAG_NAME;
             return FALSE;
-
         } else {
+            if (is_legal_char_tag(line->content[i]) == FALSE)
+                return FALSE;
+
             found_text = TRUE;
             line->tag.name[i] = line->content[i];
         }

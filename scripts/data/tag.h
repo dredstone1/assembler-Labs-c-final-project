@@ -10,4 +10,6 @@ typedef struct tag{
     bool tag;
 } tag;
 
+bool is_legal_char_tag(char c);
+
 #endif //MMN14_TAG_H

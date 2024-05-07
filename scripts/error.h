@@ -7,6 +7,7 @@ typedef enum error_type{
     NOTHING,
     FILE_NOT_FOUND,
     UNDEFINED_TAG_NAME,
+    UNDEFINED_TAG_NAME,
     MEMORY_ALLOCATION_FAILED
 }error_type;
 
