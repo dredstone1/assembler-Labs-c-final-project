@@ -114,3 +114,4 @@ dkms.conf
 /cmake-build-debug/Makefile
 /cmake-build-debug/mmn14.cbp
 /cmake-build-debug/mmn14.exe
+/cmake-build-debug/
