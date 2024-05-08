@@ -7,10 +7,11 @@ void format_line(file *file1, int line_number, error *error);
 void first_pass(file *file1, error *error);
 bool get_start_tag(line *line, error *error, pos *pos);
 void format_file(file *file1, error *error);
+
 int main(){
     file file1;
-    int i;
     error error;
+
     error.error_type = NOTHING;
     file1.number_of_rows = 0;
     file1.filename = "C:\\Users\\mayan\\Desktop\\shared\\mmn14_files\\ps.as";
@@ -18,23 +19,13 @@ int main(){
 
     format_file(&file1, &error);
 
-    for (i = 0; i < file1.number_of_rows; i++){
-        /*if(file1.line[i].tag.tag == TRUE)*/ {
-            printf("line: %s\n", file1.line[i].content);
-            printf("tag: %s\n", file1.line[i].tag.name);
-            printf("num: %d\n\n\n", file1.line[i+1].line_number);
-        }
-    }
-
     return 0;
-
 }
 
 
 
 void format_file(file *file1, error *error){
     first_pass(file1, error);
-
 }
 
 void first_pass(file *file1, error *error){
@@ -42,9 +33,7 @@ void first_pass(file *file1, error *error){
 
     for (i = 0; i < file1->number_of_rows; i++){
         format_line(file1, i, error);
-/*
-        printf("run\n");
-*/
+
         if (error->error_type != NOTHING){
             printf("oops\n");
             return;
@@ -58,36 +47,17 @@ void format_line(file *file1, int line_number, error *error){
 
 bool get_start_tag(line *line, error *error, pos *pos) {
     int i;
-    bool found_text = FALSE;
 
+    bool found_text = FALSE;
     line->tag.tag = FALSE;
 
     for (i = 0; i < MAX_TAG_SIZE; i++) {
-/*
-        printf("i: %d\n", i);
-*/
-/*
-        printf("char: %c\n", line->content[i]);
-*/
         if (line->content[i] == ' ' || line->content[i] == '\t') {
-/*
-            printf("space\n");
-*/
             if (found_text)
                 return FALSE;
-        } else if (line->content[i] == '\n' || line->content[i] == '\0' || line->content[i] == '.') {
-/*
-            printf("new line\n");
-*/
+        } else if (line->content[i] == '\n' || line->content[i] == '\0' || line->content[i] == '.')
             return FALSE;
-        }
         else if (line->content[i] == ':') {
-/*
-            printf("end tag\n");
-*/
-/*
-            set_pos(pos, i, line->line_number);
-*/
             if (found_text) {
                 line->tag.name[i] = '\0';
                 line->tag.tag = TRUE;
@@ -101,9 +71,6 @@ bool get_start_tag(line *line, error *error, pos *pos) {
                 return FALSE;
 
             found_text = TRUE;
-/*
-            printf("rrr: %c\n", line->content[i]);
-*/
             line->tag.name[i] = line->content[i];
         }
     }
