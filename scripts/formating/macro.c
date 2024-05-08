@@ -1,6 +1,6 @@
 #include "macro.h"
 
-bool is_line_macro(char line[LINE_SIZE]){
+bool is_line_macro(char line[]){
     int i;
     bool found_text = FALSE;
 
@@ -21,10 +21,11 @@ bool is_line_macro(char line[LINE_SIZE]){
                 return FALSE;
 
             found_text = TRUE;
-            macros->macro_name.name[i] = line[i];
+            macros macro_name.name[i] = line[i];
         }
     }
-    return FALSE;}
+    return FALSE;
+}
 
 void add_macro_to_line(line *line, macros macros, int line_number){
 

@@ -11,4 +11,7 @@ typedef struct macros{
     int number_of_macro_lines;
     char macro_name[LINE_SIZE];
 } macros;
+
+bool is_line_macro(char line[]);
+
 #endif //MMN14_MACRO_H

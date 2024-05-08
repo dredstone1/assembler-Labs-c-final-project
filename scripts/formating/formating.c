@@ -2,22 +2,28 @@
 #include "line_type.h"
 #include <stdio.h>
 #include "../systems/file.h"
+#include "../formating/macro.h"
 
 void format_line(file *file1, int line_number, error *error);
 void first_pass(file *file1, error *error);
 bool get_start_tag(line *line, error *error, pos *pos);
 void format_file(file *file1, error *error);
-
+void post_formating(file *file1, error *error);
 int main(){
     file file1;
     error error;
+    char text[] = "macr m_macr\n";
+    printf("eeeee: %i\n", is_line_macro(text));
+
+
 
     error.error_type = NOTHING;
     file1.number_of_rows = 0;
     file1.filename = "../ps.as";
     read_file(&file1, &error);
 
-    format_file(&file1, &error);
+    post_formating(&file1, error);
+//    format_file(&file1, &error);
 
     return 0;
 }
@@ -32,7 +38,9 @@ void first_pass(file *file1, error *error){
     int i;
 
     for (i = 0; i < file1->number_of_rows; i++){
+/*
         format_line(file1, i, error);
+*/
 
         if (error->error_type != NOTHING){
             printf("oops\n");
@@ -49,6 +57,15 @@ void post_formating(file *file1, error *error){
     }
 }
 
+void post_formating_line(line *line, error *error){
+    int i;
+
+    for (i = 0; i < MAX_TAG_SIZE; i++){
+        if (line->content[i] == '\0')
+            break;
+        else if (line)
+    }
+}
 
 
 

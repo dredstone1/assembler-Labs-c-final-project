@@ -6,6 +6,7 @@
 #include "../formating/line_type.h"
 #include "../data/tag.h"
 #include "../data/pos.h"
+#include "../formating/macro.h"
 
 #define LINE_SIZE 80
 #define LINE_JUMPER_SIZE 1
@@ -23,6 +24,7 @@ typedef struct file{
     bool ext;
     bool ent;
     pos *pos;
+    macros *macros;
 } file;
 
 void read_file(file *file1, error *error);
