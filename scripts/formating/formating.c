@@ -9,21 +9,27 @@ bool get_start_tag(line *line, error *error, pos *pos);
 void format_file(file *file1, error *error);
 int main(){
     file file1;
+    int i;
     error error;
     error.error_type = NOTHING;
     file1.number_of_rows = 0;
     file1.filename = "C:\\Users\\mayan\\Desktop\\shared\\mmn14_files\\ps.as";
     read_file(&file1, &error);
-/*
-    printf("data: %s\n", file1.line[2].content);
-*/
-    printf("error: %d\n", error.error_type);
+
     format_file(&file1, &error);
-    printf("error: %d\n", error.error_type);
-    printf("data: %s\n", file1.line[17].tag.name);
+
+    for (i = 0; i < file1.number_of_rows; i++){
+        /*if(file1.line[i].tag.tag == TRUE)*/ {
+            printf("line: %s\n", file1.line[i].content);
+            printf("tag: %s\n", file1.line[i].tag.name);
+            printf("num: %d\n\n\n", file1.line[i+1].line_number);
+        }
+    }
+
     return 0;
 
 }
+
 
 
 void format_file(file *file1, error *error){

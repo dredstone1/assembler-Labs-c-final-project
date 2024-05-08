@@ -7,10 +7,9 @@ void reset_content(line *line);
 void read_file(file *file1, error *error) {
     size_t bytesRead = 1;
     char c;
-    int i = 0;
+    int i = 0, line_number = 0;
     bool found = FALSE;
     size_t lenmax = sizeof(line) * LINE_JUMPER_SIZE;
-
     file1->line = malloc(lenmax);
 
     if (file1->line == NULL) {
@@ -30,6 +29,7 @@ void read_file(file *file1, error *error) {
 */
 
         if (c == '\n') {
+            line_number++;
             if (found == TRUE) {
                 file1->line[file1->number_of_rows].content[i] = '\0';
 
@@ -45,18 +45,18 @@ void read_file(file *file1, error *error) {
         } else {
 
             if (found == FALSE) {
-/*
-                printf("found\n");
-*/
                 lenmax += sizeof(line) * LINE_JUMPER_SIZE;
                 file1->line = realloc(file1->line, lenmax);
                 if (file1->line == NULL) {
                     error->error_type = MEMORY_ALLOCATION_FAILED;
                     return;
-
                 }
                 i = 0;
+
+                file1->line[i].line_number = line_number;
+/*
                 reset_content(&file1->line[file1->number_of_rows]);
+*/
             }
 
             found = TRUE;
