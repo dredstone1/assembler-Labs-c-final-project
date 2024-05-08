@@ -14,7 +14,7 @@ int main(){
 
     error.error_type = NOTHING;
     file1.number_of_rows = 0;
-    file1.filename = "C:\\Users\\mayan\\Desktop\\shared\\mmn14_files\\ps.as";
+    file1.filename = "../ps.as";
     read_file(&file1, &error);
 
     format_file(&file1, &error);
@@ -40,6 +40,25 @@ void first_pass(file *file1, error *error){
         }
     }
 }
+
+void post_formating(file *file1, error *error){
+    int i;
+
+    for (i = 0; i < file1->number_of_rows; i++){
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 void format_line(file *file1, int line_number, error *error){
     get_start_tag(&file1->line[line_number], error, file1->pos);

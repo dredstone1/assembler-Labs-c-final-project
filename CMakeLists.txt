@@ -29,4 +29,6 @@ add_executable(mmn14
         scripts/data/tag.c
         scripts/data/tag.h
         scripts/data/pos.c
-        scripts/data/pos.h)
+        scripts/data/pos.h
+        scripts/formating/macro.c
+        scripts/formating/macro.h)
