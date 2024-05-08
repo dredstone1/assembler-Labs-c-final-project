@@ -63,7 +63,7 @@ void post_formating_line(line *line, error *error){
     for (i = 0; i < MAX_TAG_SIZE; i++){
         if (line->content[i] == '\0')
             break;
-        else if (line)
+        else if (line->content[i] == ''
     }
 }
 
