@@ -2,6 +2,8 @@
 #define MMN14_MACRO_H
 #include "../systems/file.h"
 
+#define MACRO "macr "
+
 typedef struct macro_line{
     char name[LINE_SIZE];
 } macro;

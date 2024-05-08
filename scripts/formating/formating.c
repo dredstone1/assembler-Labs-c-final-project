@@ -52,6 +52,7 @@ void first_pass(file *file1, error *error){
 void post_formating(file *file1, error *error){
     int i;
 
+
     for (i = 0; i < file1->number_of_rows; i++){
 
     }
@@ -60,10 +61,13 @@ void post_formating(file *file1, error *error){
 void post_formating_line(line *line, error *error){
     int i;
 
+    bool found_text = FALSE;
+
     for (i = 0; i < MAX_TAG_SIZE; i++){
-        if (line->content[i] == '\0')
-            break;
-        else if (line->content[i] == ''
+        if (line->content[i] == MACRO[i]){
+            continue;
+        }
+
     }
 }
 
@@ -112,4 +116,3 @@ bool get_start_tag(line *line, error *error, pos *pos) {
     }
     return FALSE;
 }
-//hello
