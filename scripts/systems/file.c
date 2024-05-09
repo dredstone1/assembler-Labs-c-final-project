@@ -9,15 +9,9 @@ void read_file(file *file1, error *error) {
     char c;
     int i = 0, line_number = 0;
     bool found = FALSE;
-    size_t lenmax = sizeof(line) * LINE_JUMPER_SIZE;
-
-    file1->line = malloc(0);
-    if (file1->line == NULL) {
-        error->error_type = MEMORY_ALLOCATION_FAILED;
-        return;
-    }
-
+    line_node *last_line = NULL;
     FILE *files = fopen(file1->filename, "r");
+    file1->first_line = NULL;
     if (files == NULL) {
         error->error_type = FILE_NOT_FOUND;
         return;
@@ -29,7 +23,7 @@ void read_file(file *file1, error *error) {
         if (c == '\n') {
             line_number++;
             if (found == TRUE) {
-                file1->line[file1->number_of_rows].content[i] = '\0';
+                last_line->line->line_text.content[i] = '\0';
 
                 found = FALSE;
                 file1->number_of_rows++;
@@ -39,23 +33,22 @@ void read_file(file *file1, error *error) {
             continue;
         else if (c == ' ' || c == '\t') {
             if (found == TRUE)
-                file1->line[file1->number_of_rows].content[i++] = c;
+                last_line->line->line_text.content[i++] = c;
         } else {
             if (found == FALSE) {
-                lenmax += sizeof(line) * LINE_JUMPER_SIZE;
-                file1->line = realloc(file1->line, lenmax);
+                last_line = create_line_node(NULL, NULL);
 
-                if (file1->line == NULL) {
-                    error->error_type = MEMORY_ALLOCATION_FAILED;
-                    return;
-                }
+                if (file1->first_line == NULL)
+                    file1->first_line = last_line;
+                else
+                    last_line->next = last_line;
 
                 i = 0;
-                file1->line[file1->number_of_rows].line_number = line_number;
+                last_line->line->line_number = line_number;
             }
 
             found = TRUE;
-            file1->line[file1->number_of_rows].content[i++] = c;
+            last_line->line->line_text.content[i++] = c;
         }
     }
     fclose(files);

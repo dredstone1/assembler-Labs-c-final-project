@@ -24,11 +24,11 @@ add_executable(mmn14
         scripts/systems/error.h
         scripts/data/boolean.c
         scripts/data/boolean.h
-        scripts/formating/line_type.c
-        scripts/formating/line_type.h
         scripts/data/tag.c
         scripts/data/tag.h
         scripts/data/pos.c
         scripts/data/pos.h
         scripts/formating/macro.c
-        scripts/formating/macro.h)
+        scripts/formating/macro.h
+        scripts/formating/line.c
+        scripts/formating/line.h)

@@ -1,19 +1,24 @@
 #include "formating.h"
-#include "line_type.h"
-#include <stdio.h>
 #include "../systems/file.h"
-#include "../formating/macro.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
 
 void format_line(file *file1, int line_number, error *error);
 void first_pass(file *file1, error *error);
 bool get_start_tag(line *line, error *error, pos *pos);
 void format_file(file *file1, error *error);
-void post_formating(file *file1, error *error);
+void post_formating(file *file1, error *error, macros *macros);
+void post_formating_line(line_node *line_node, error *error, macros *macros, pos *pos);
+
 int main(){
     file file1;
     error error;
-    char text[] = "macr m_macr\n";
-    printf("eeeee: %i\n", is_line_macro(text));
+    macros *macros;
+
+    char text[] = "macr m_macr\ncmp r3, #-6\nbne END\nendmacr";
+
 
 
 
@@ -22,7 +27,7 @@ int main(){
     file1.filename = "../ps.as";
     read_file(&file1, &error);
 
-    post_formating(&file1, error);
+    post_formating(&file1, &error, macros);
 //    format_file(&file1, &error);
 
     return 0;
@@ -49,26 +54,33 @@ void first_pass(file *file1, error *error){
     }
 }
 
-void post_formating(file *file1, error *error){
+void post_formating(file *file1, error *error, macros *macros){
     int i;
+    line_node *node;
 
+    node = file1->first_line;
+
+    macros->number_of_macros = 0;
 
     for (i = 0; i < file1->number_of_rows; i++){
-
+        post_formating_line(node, error, macros, file1->pos);
+        i = file1->pos->line;
+        node = node->next;
     }
 }
 
-void post_formating_line(line *line, error *error){
-    int i;
+void post_formating_line(line_node *line_node, error *error, macros *macros, pos *pos){
+    if (is_line_macro(line_node->line->line_text.content, &pos->column)==FALSE)
+        return;
 
-    bool found_text = FALSE;
-
-    for (i = 0; i < MAX_TAG_SIZE; i++){
-        if (line->content[i] == MACRO[i]){
-            continue;
-        }
-
+    macros->macro = (macro*)realloc(macros->macro, macros->number_of_macros* sizeof(macros));
+    if (macros->macro == NULL){
+        error->error_type = MEMORY_ALLOCATION_FAILED;
+        return;
     }
+
+    macros->number_of_macros++;
+    set_macro_name(line_node->line->line_text.content, &macros->macro[macros->number_of_macros], pos, error);
 }
 
 
@@ -115,5 +127,4 @@ bool get_start_tag(line *line, error *error, pos *pos) {
         }
     }
     return FALSE;
-}
-//svjnskfvn
+}*/

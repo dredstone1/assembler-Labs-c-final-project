@@ -1,32 +1,65 @@
 #include "macro.h"
+#include <stdlib.h>
+#include <string.h>
 
-bool is_line_macro(char line[]){
-    int i;
-    bool found_text = FALSE;
-
-    for (i = 0; i < MAX_TAG_SIZE; i++) {
-        if (line[i] == ' ' || line[i] == '\t') {
-            if (found_text)
-                return FALSE;
-        } else if (line[i] == '\n' || line[i] == '\0' || line[i] == '.')
+bool is_line_macro(const char line[], int *offset){
+    for (offset = 0; offset < 5; offset++){
+        if (line[*offset] == MACRO[*offset]){
+            continue;
+        }else{
             return FALSE;
-        else if (line[i] == ':') {
-            if (found_text) {
-                return TRUE;
-            }
-
-            return FALSE;
-        } else {
-            if (is_legal_char_tag(line[i]) == FALSE)
-                return FALSE;
-
-            found_text = TRUE;
-            macros macro_name.name[i] = line[i];
         }
     }
-    return FALSE;
+
+    return TRUE;
 }
 
-void add_macro_to_line(line *line, macros macros, int line_number){
+void set_macro_name(const char line[], macro *macro, pos *pos, error *error){
+    bool found_text = FALSE;
 
+    for (; pos->column<LINE_SIZE; pos->column++){
+        if (line[pos->column]==' '|| line[pos->column]=='\t'){
+            if (!found_text){
+                continue;
+            }
+
+            /*error extra text after the macro name*/
+        } else if (line[pos->column] == '\n' || line[pos->column] == '\0'){
+            if(found_text){
+                macro->macro_name[pos->column] = '\0';
+                break;
+            }
+
+            /*error undefined macro name*/
+        } else {
+            macro->macro_name[pos->column] = line[pos->column];
+            found_text = TRUE;
+        }
+    }
 }
+/*
+
+void get_macro_lines(file *file1, error *error){
+    int i,line_number=0;
+    size_t lenmax = sizeof(line) * LINE_JUMPER_SIZE;
+
+    file1->pos->column = 0;
+    i = file1->pos->line+1;
+
+    file1->macros->macro_lines = malloc(0);
+
+    for (; i < file1->number_of_rows; i++){
+        if (strcmp(file1->line[i].content, "endmacr")==0)
+            break;
+
+        lenmax += sizeof(line) * LINE_JUMPER_SIZE;
+        file1->macros->macro_lines = realloc(file1->macros->macro_lines, sizeof(macro));
+
+        if (file1->line == NULL) {
+            error->error_type = MEMORY_ALLOCATION_FAILED;
+            return;
+        }
+        file1->macros[macro_lines].line_number = line_number;
+        line_number++;
+    }
+}*/
