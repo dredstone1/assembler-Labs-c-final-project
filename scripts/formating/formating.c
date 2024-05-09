@@ -22,7 +22,8 @@ int main(){
     char text[] = "macr m_macr\ncmp r3, #-6\nbne END\nendmacr";
 
 
-
+    file1.pos.column = 0;
+    file1.pos.line = 0;
 
     error.error_type = NOTHING;
     file1.number_of_rows = 0;
@@ -30,12 +31,8 @@ int main(){
 
     read_file(&file1, &error);
     printf("number of rows: %d\n", file1.number_of_rows);
-/*
     post_formating(&file1, &error, &macros);
-*/
-/*
     printf("number of macros: %s\n", macros.macro[0].macro_name);
-*/
 //    format_file(&file1, &error);
 
     return 0;
@@ -71,8 +68,14 @@ void post_formating(file *file1, error *error, macros *macros){
     macros->number_of_macros = 0;
 
     for (i = 0; i < 5; i++){
-        post_formating_line(node, error, macros, file1->pos);
-        i = file1->pos->line;
+        printf("line: %s\n", node->line_text.content);
+/*
+        printf("line: %s\n", node->next->line_text.content);
+*/
+        post_formating_line(node, error, macros, &file1->pos);
+/*
+        i = file1->pos.line;
+*/
         node = node->next;
     }
 }
@@ -91,16 +94,7 @@ void post_formating_line(line_node *line_node, error *error, macros *macro_list,
     set_macro_name(line_node->line_text.content, &macro_list->macro[macro_list->number_of_macros], pos);
 }
 
-
-
-
-
-
-
-
-
-
-
+/*
 void format_line(file *file1, int line_number, error *error){
     get_start_tag(&file1->line[line_number], error, file1->pos);
 }
