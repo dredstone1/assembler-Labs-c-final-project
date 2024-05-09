@@ -30,9 +30,13 @@ int main(){
     file1.filename = "C:\\Users\\mayan\\Desktop\\shared\\mmn14_files\\ps2.as";
 
     read_file(&file1, &error);
+/*
     printf("number of rows: %d\n", file1.number_of_rows);
+*/
     post_formating(&file1, &error, &macros);
+/*
     printf("number of macros: %s\n", macros.macro[0].macro_name);
+*/
 //    format_file(&file1, &error);
 
     return 0;
@@ -68,10 +72,7 @@ void post_formating(file *file1, error *error, macros *macros){
     macros->number_of_macros = 0;
 
     for (i = 0; i < 5; i++){
-        printf("line: %s\n", node->line_text.content);
-/*
-        printf("line: %s\n", node->next->line_text.content);
-*/
+
         post_formating_line(node, error, macros, &file1->pos);
 /*
         i = file1->pos.line;

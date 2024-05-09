@@ -38,18 +38,16 @@ void read_file(file *file1, error *error) {
                 last_line->line_text.content[i++] = c;
         } else {
             if (found == FALSE) {
-                printf("new_line\n");
 
-                if (file1->first_line == NULL)
+                if (file1->first_line == NULL) {
                     file1->first_line = create_line_node(NULL, NULL);
-                else {
+                    last_line = file1->first_line;
+                }else {
                     last_line->next = create_line_node(NULL, NULL);
-                    last_line = last_line->next;
                 }
 
                 i = 0;
                 file1->number_of_rows++;
-                printf("number of rows: %d\n", last_line->line_number);
                 last_line->line_number = line_number;
             }
 

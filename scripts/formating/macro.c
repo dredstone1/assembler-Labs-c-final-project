@@ -3,8 +3,6 @@
 
 bool is_line_macro(const char line[], pos *pos){
     for (pos->column = 0; 6 > pos->column; pos->column++){
-        printf("eeee1: %d\n", pos->column);
-        printf("eeee2: %s\n\n", line);
         if(line[pos->column] == '\0')
             return FALSE;
         if (line[pos->column] != MACRO[pos->column])
