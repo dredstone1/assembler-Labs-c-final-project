@@ -15,7 +15,7 @@ void post_formating_line(line_node *line_node, error *error, macros *macros, pos
 int main(){
     file file1;
     error error;
-    macros *macros;
+    macros macros;
 
     char text[] = "macr m_macr\ncmp r3, #-6\nbne END\nendmacr";
 
@@ -27,7 +27,7 @@ int main(){
     file1.filename = "../ps.as";
     read_file(&file1, &error);
 
-    post_formating(&file1, &error, macros);
+    post_formating(&file1, &error, &macros);
 //    format_file(&file1, &error);
 
     return 0;
@@ -70,7 +70,7 @@ void post_formating(file *file1, error *error, macros *macros){
 }
 
 void post_formating_line(line_node *line_node, error *error, macros *macros, pos *pos){
-    if (is_line_macro(line_node->line->line_text.content, &pos->column)==FALSE)
+    if (is_line_macro(line_node->line->line_text.content, pos)==FALSE)
         return;
 
     macros->macro = (macro*)realloc(macros->macro, macros->number_of_macros* sizeof(macros));
@@ -80,7 +80,7 @@ void post_formating_line(line_node *line_node, error *error, macros *macros, pos
     }
 
     macros->number_of_macros++;
-    set_macro_name(line_node->line->line_text.content, &macros->macro[macros->number_of_macros], pos, error);
+    set_macro_name(line_node->line->line_text.content, &macros->macro[macros->number_of_macros], pos);
 }
 
 

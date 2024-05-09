@@ -1,20 +1,15 @@
 #include "macro.h"
-#include <stdlib.h>
-#include <string.h>
 
-bool is_line_macro(const char line[], int *offset){
-    for (offset = 0; offset < 5; offset++){
-        if (line[*offset] == MACRO[*offset]){
-            continue;
-        }else{
+bool is_line_macro(char line[], pos *pos){
+    for (pos->column = 0; 5 > pos->column; pos->column++){
+        if (line[pos->column] != MACRO[pos->column])
             return FALSE;
-        }
     }
 
     return TRUE;
 }
 
-void set_macro_name(const char line[], macro *macro, pos *pos, error *error){
+void set_macro_name(const char line[], macro *macro, pos *pos){
     bool found_text = FALSE;
 
     for (; pos->column<LINE_SIZE; pos->column++){

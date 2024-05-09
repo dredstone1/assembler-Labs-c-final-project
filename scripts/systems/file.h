@@ -3,13 +3,9 @@
 
 #include "../data/boolean.h"
 #include "error.h"
-#include "../data/tag.h"
 #include "../data/pos.h"
 #include "../formating/macro.h"
 #include "../formating/line.h"
-
-
-
 
 typedef struct file{
     line_node *first_line;

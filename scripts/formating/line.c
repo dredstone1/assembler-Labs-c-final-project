@@ -7,7 +7,7 @@ line_node *create_line_node(line_node *next, line_data *line_data){
         return NULL;
 
     if (line_data!=NULL)
-        node->line_data = line_data;
+        node->line->line_data = line_data;
 
     node->next = next;
     return node;
