@@ -1,16 +1,18 @@
-#include "formating.h"
-#include "../systems/file.h"
-
 #include <stdio.h>
 #include <stdlib.h>
+#include "../systems/file.h"
 
 
+/*
 void format_line(file *file1, int line_number, error *error);
+*/
 void first_pass(file *file1, error *error);
+/*
 bool get_start_tag(line *line, error *error, pos *pos);
+*/
 void format_file(file *file1, error *error);
 void post_formating(file *file1, error *error, macros *macros);
-void post_formating_line(line_node *line_node, error *error, macros *macros, pos *pos);
+void post_formating_line(line_node *line_node, error *error, macros *macro_list, pos *pos);
 
 int main(){
     file file1;
@@ -24,10 +26,16 @@ int main(){
 
     error.error_type = NOTHING;
     file1.number_of_rows = 0;
-    file1.filename = "../ps.as";
-    read_file(&file1, &error);
+    file1.filename = "C:\\Users\\mayan\\Desktop\\shared\\mmn14_files\\ps2.as";
 
+    read_file(&file1, &error);
+    printf("number of rows: %d\n", file1.number_of_rows);
+/*
     post_formating(&file1, &error, &macros);
+*/
+/*
+    printf("number of macros: %s\n", macros.macro[0].macro_name);
+*/
 //    format_file(&file1, &error);
 
     return 0;
@@ -62,25 +70,25 @@ void post_formating(file *file1, error *error, macros *macros){
 
     macros->number_of_macros = 0;
 
-    for (i = 0; i < file1->number_of_rows; i++){
+    for (i = 0; i < 5; i++){
         post_formating_line(node, error, macros, file1->pos);
         i = file1->pos->line;
         node = node->next;
     }
 }
 
-void post_formating_line(line_node *line_node, error *error, macros *macros, pos *pos){
-    if (is_line_macro(line_node->line->line_text.content, pos)==FALSE)
+void post_formating_line(line_node *line_node, error *error, macros *macro_list, pos *pos){
+    if (is_line_macro(line_node->line_text.content, pos)==FALSE)
         return;
 
-    macros->macro = (macro*)realloc(macros->macro, macros->number_of_macros* sizeof(macros));
-    if (macros->macro == NULL){
+    macro_list->macro = (macro*)realloc(macro_list->macro, macro_list->number_of_macros* sizeof(macros));
+    if (macro_list->macro == NULL){
         error->error_type = MEMORY_ALLOCATION_FAILED;
         return;
     }
 
-    macros->number_of_macros++;
-    set_macro_name(line_node->line->line_text.content, &macros->macro[macros->number_of_macros], pos);
+    macro_list->number_of_macros++;
+    set_macro_name(line_node->line_text.content, &macro_list->macro[macro_list->number_of_macros], pos);
 }
 
 

@@ -1,6 +1,6 @@
 #include "macro.h"
 
-bool is_line_macro(char line[], pos *pos){
+bool is_line_macro(const char line[], pos *pos){
     for (pos->column = 0; 5 > pos->column; pos->column++){
         if (line[pos->column] != MACRO[pos->column])
             return FALSE;
