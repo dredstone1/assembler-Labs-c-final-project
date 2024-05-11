@@ -18,4 +18,6 @@ typedef struct file{
 
 void read_file(file *file1, error *error);
 void print_pos(pos pos);
+void free_file_lines(file *file1);
+
 #endif //MMN14_FILE_H

@@ -3,16 +3,20 @@
 #include <stdio.h>
 #include <string.h>
 #include "error.h"
+void free_line(line_node *node);
 
 void read_file(file *file1, error *error) {
     size_t bytesRead = 1;
     char c;
-    char e[80];
     int i = 0, line_number = 0;
     bool found = FALSE;
-    line_node *last_line = NULL;
+    line_node *last_line;
+
     FILE *files = fopen(file1->filename, "r");
-    file1->first_line = NULL;
+
+    last_line = create_line_node(NULL, NULL);
+    file1->first_line = last_line;
+
 
     if (files == NULL) {
         error->error_type = FILE_NOT_FOUND;
@@ -37,14 +41,9 @@ void read_file(file *file1, error *error) {
             if (found == TRUE)
                 last_line->line_text.content[i++] = c;
         } else {
-            if (found == FALSE) {
-
-                if (file1->first_line == NULL) {
-                    file1->first_line = create_line_node(NULL, NULL);
-                    last_line = file1->first_line;
-                }else {
-                    last_line->next = create_line_node(NULL, NULL);
-                }
+            if (found == FALSE){
+                if (file1->number_of_rows>0)
+                    last_line = last_line->next = create_line_node(NULL, NULL);
 
                 i = 0;
                 file1->number_of_rows++;
@@ -55,10 +54,25 @@ void read_file(file *file1, error *error) {
             last_line->line_text.content[i++] = c;
         }
     }
+    last_line->line_text.content[i] = '\0';
 
     fclose(files);
 }
 
 void print_pos(pos pos) {
     printf("%d, %d", pos.line, pos.column);
+}
+
+void free_file_lines(file *file1){
+    free_line(file1->first_line);
+}
+
+void free_line(line_node *node){
+    if (node == NULL)
+        return;
+
+    free_line(node->next);
+
+    free(node->line_data);
+    free(node);
 }

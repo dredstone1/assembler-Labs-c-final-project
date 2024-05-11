@@ -2,39 +2,38 @@
 #include <stdio.h>
 
 bool is_line_macro(const char line[], pos *pos){
-    for (pos->column = 0; 6 > pos->column; pos->column++){
-        if(line[pos->column] == '\0')
-            return FALSE;
+    for (pos->column = 0; 5 > pos->column; pos->column++)
         if (line[pos->column] != MACRO[pos->column])
             return FALSE;
-    }
 
     return TRUE;
 }
 
-void set_macro_name(const char line[], macro *macro, pos *pos){
+void set_macro_name(const char line[], macro *macro, pos *pos) {
     bool found_text = FALSE;
-
-    for (; pos->column<LINE_SIZE; pos->column++){
-        if (line[pos->column]==' '|| line[pos->column]=='\t'){
-            if (!found_text){
-                continue;
-            }
-
-            /*error extra text after the macro name*/
-        } else if (line[pos->column] == '\n' || line[pos->column] == '\0'){
-            if(found_text){
-                macro->macro_name[pos->column] = '\0';
-                break;
+    int i = 0;
+    for (; pos->column < LINE_SIZE; pos->column++) {
+        if (line[pos->column] == '\0') {
+            if (found_text) {
+                macro->macro_name[i] = '\0';
+                return;
             }
 
             /*error undefined macro name*/
-        } else {
-            macro->macro_name[pos->column] = line[pos->column];
+        } if (line[pos->column] == ' ' || line[pos->column] == '\t') {
+            if (!found_text)
+                continue;
+
+            /*error extra text after the macro name*/
+        } else if (line[pos->column] == '\r')
+            continue;
+        else {
+            macro->macro_name[i++] = line[pos->column];
             found_text = TRUE;
         }
     }
 }
+
 /*
 
 void get_macro_lines(file *file1, error *error){

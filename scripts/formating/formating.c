@@ -34,6 +34,7 @@ int main(){
     printf("number of rows: %d\n", file1.number_of_rows);
 */
     post_formating(&file1, &error, &macros);
+    free_file_lines(&file1);
 /*
     printf("number of macros: %s\n", macros.macro[0].macro_name);
 */
@@ -63,27 +64,33 @@ void first_pass(file *file1, error *error){
     }
 }
 
-void post_formating(file *file1, error *error, macros *macros){
-    int i;
+void post_formating(file *file1, error *error, macros *macros) {
     line_node *node;
 
     node = file1->first_line;
 
     macros->number_of_macros = 0;
 
-    for (i = 0; i < 5; i++){
+    while (node != NULL) {
+        if (is_line_macro(node->line_text.content, &file1->pos)) {
+            macros->number_of_macros++;
 
-        post_formating_line(node, error, macros, &file1->pos);
-/*
-        i = file1->pos.line;
-*/
+            macros->macro = (macro*)realloc(macros->macro, macros->number_of_macros * sizeof(macros));
+            if (macros->macro == NULL) {
+                error->error_type = MEMORY_ALLOCATION_FAILED;
+                return;
+            }
+            set_macro_name(node->line_text.content, &macros->macro[macros->number_of_macros-1], &file1->pos);
+        }
+        file1->pos.line++;
         node = node->next;
     }
 }
 
+
+
 void post_formating_line(line_node *line_node, error *error, macros *macro_list, pos *pos){
-    if (is_line_macro(line_node->line_text.content, pos)==FALSE)
-        return;
+
 
     macro_list->macro = (macro*)realloc(macro_list->macro, macro_list->number_of_macros* sizeof(macros));
     if (macro_list->macro == NULL){
