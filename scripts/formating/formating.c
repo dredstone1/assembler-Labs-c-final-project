@@ -12,7 +12,7 @@ bool get_start_tag(line *line, error *error, pos *pos);
 */
 void format_file(file *file1, error *error);
 void post_formating(file *file1, error *error, macros *macros);
-void post_formating_line(line_node *line_node, error *error, macros *macro_list, pos *pos);
+
 
 int main(){
     file file1;
@@ -64,7 +64,7 @@ void first_pass(file *file1, error *error){
     }
 }
 
-void post_formating(file *file1, error *error, macros *macros) {
+/*void post_formating(file *file1, error *error, macros *macros) {
     line_node *node;
 
     node = file1->first_line;
@@ -72,7 +72,7 @@ void post_formating(file *file1, error *error, macros *macros) {
     macros->number_of_macros = 0;
 
     while (node != NULL) {
-        if (is_line_macro(node->line_text.content, &file1->pos)) {
+        if (is_line_macro((*node)->line_text.content, &file1->pos)) {
             macros->number_of_macros++;
 
             macros->macro = (macro*)realloc(macros->macro, macros->number_of_macros * sizeof(macros));
@@ -80,27 +80,60 @@ void post_formating(file *file1, error *error, macros *macros) {
                 error->error_type = MEMORY_ALLOCATION_FAILED;
                 return;
             }
-            set_macro_name(node->line_text.content, &macros->macro[macros->number_of_macros-1], &file1->pos);
+            set_macro_name((*node)->line_text.content, &macros->macro[macros->number_of_macros-1], &file1->pos);
+
+            node = get_macro_lines(node, &macros->macro[macros->number_of_macros-1], error, file1->number_of_rows);
+
         }
         file1->pos.line++;
+        *node = (*node)->next;
+    }
+}*/
+
+void post_formating(file *file1, error *error, macros *macros) {
+    line_node *node, *prev_node;
+    macro *temp;
+    bool last_macro = FALSE;
+
+    node = file1->first_line;
+    macros->number_of_macros = 0;
+
+    while (node != NULL) {
+        if (is_line_macro(node->line_text.content, &file1->pos)) {
+            macros->number_of_macros++;
+
+            macros->macro = (macro*)realloc(macros->macro, macros->number_of_macros * sizeof(macro));
+            if (macros->macro == NULL) {
+                error->error_type = MEMORY_ALLOCATION_FAILED;
+                return;
+            }
+
+            set_macro_name(node->line_text.content, &macros->macro[macros->number_of_macros-1], &file1->pos);
+            get_macro_lines(&(prev_node->next), &macros->macro[macros->number_of_macros-1], error);
+
+            node = prev_node->next;
+
+        }
+
+        if(macros->number_of_macros>0) {
+            temp = is_line_call_macro(macros, node, error);
+            if (temp != NULL) {
+                push_to_macro(&prev_node, temp->macro_lines);
+                last_macro = TRUE;
+            }
+        }
+
+        if(last_macro)
+            node = prev_node->next;
+
+        prev_node = node;
+        file1->pos.line++;
         node = node->next;
+        temp= NULL;
     }
+    print_linked_list(file1->first_line);
 }
 
-
-
-void post_formating_line(line_node *line_node, error *error, macros *macro_list, pos *pos){
-
-
-    macro_list->macro = (macro*)realloc(macro_list->macro, macro_list->number_of_macros* sizeof(macros));
-    if (macro_list->macro == NULL){
-        error->error_type = MEMORY_ALLOCATION_FAILED;
-        return;
-    }
-
-    macro_list->number_of_macros++;
-    set_macro_name(line_node->line_text.content, &macro_list->macro[macro_list->number_of_macros], pos);
-}
 
 /*
 void format_line(file *file1, int line_number, error *error){

@@ -21,5 +21,8 @@ typedef struct line_node{
     int line_number;
 } line_node;
 
+void print_linked_list(line_node *head);
 line_node *create_line_node(line_node *next, line_data *line_data);
+line_node *copy_block_of_nodes(line_node **last_node, line_node *node);
+
 #endif //MMN14_LINE_H
