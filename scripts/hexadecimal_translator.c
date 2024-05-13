@@ -1,8 +1,3 @@
-//
-// Created by mayan on 13/05/2024.
-//
-
-#include "hexadecimal_translator.h"
 #include "hexadecimal_translator.h"
 
 /* Function to translate a word into hexadecimal format */
