@@ -1,10 +1,8 @@
 #include "hexadecimal_translator.h"
-
 /* Function to translate a word into hexadecimal format */
 int translateToHex(char *word, int len) {
     int i, k;//SWASDSW
-
-
+    /*SESWA*/
 }
 
 /* Main function */
