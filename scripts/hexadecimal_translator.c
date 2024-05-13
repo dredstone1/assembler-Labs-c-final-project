@@ -2,7 +2,7 @@
 
 /* Function to translate a word into hexadecimal format */
 int translateToHex(char *word, int len) {
-    int i, k;
+    int i, k;//SWASDS
 
 
 }
