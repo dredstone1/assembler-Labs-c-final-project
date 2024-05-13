@@ -2,17 +2,10 @@
 #include <stdlib.h>
 #include "../systems/file.h"
 
-
-/*
-void format_line(file *file1, int line_number, error *error);
-*/
 void first_pass(file *file1, error *error);
-/*
-bool get_start_tag(line *line, error *error, pos *pos);
-*/
-void format_file(file *file1, error *error);
+bool get_start_tag(line_node *line, error *error, pos *pos);
 void post_formating(file *file1, error *error, macros *macros);
-
+void format_line(line_node *node, error *error, pos *pos);
 
 int main(){
     file file1;
@@ -30,67 +23,26 @@ int main(){
     file1.filename = "C:\\Users\\mayan\\Desktop\\shared\\mmn14_files\\ps2.as";
 
     read_file(&file1, &error);
-/*
-    printf("number of rows: %d\n", file1.number_of_rows);
-*/
     post_formating(&file1, &error, &macros);
     first_pass(&file1, &error);
 
     free_file_lines(&file1);
-/*
-    printf("number of macros: %s\n", macros.macro[0].macro_name);
-*/
-//    format_file(&file1, &error);
-
     return 0;
 }
 
 
-
-void format_file(file *file1, error *error){
-    first_pass(file1, error);
-}
-
 void first_pass(file *file1, error *error){
     int i;
+    line_node *temp = file1->first_line;
 
-    for (i = 0; i < file1->number_of_rows; i++){
-/*
-        format_line(file1, i, error);
-*/
+    add_data_object_to_lines(temp);
 
-        if (error->error_type != NOTHING){
-            printf("oops\n");
-            return;
-        }
+    while (temp != NULL) {
+        format_line(file1->first_line, error, &file1->pos);
+
+        temp = temp->next;
     }
 }
-
-/*void post_formating(file *file1, error *error, macros *macros) {
-    line_node *node;
-
-    node = file1->first_line;
-
-    macros->number_of_macros = 0;
-
-    while (node != NULL) {
-        if (is_line_macro((*node)->line_text.content, &file1->pos)) {
-            macros->number_of_macros++;
-
-            macros->macro = (macro*)realloc(macros->macro, macros->number_of_macros * sizeof(macros));
-            if (macros->macro == NULL) {
-                error->error_type = MEMORY_ALLOCATION_FAILED;
-                return;
-            }
-            set_macro_name((*node)->line_text.content, &macros->macro[macros->number_of_macros-1], &file1->pos);
-
-            node = get_macro_lines(node, &macros->macro[macros->number_of_macros-1], error, file1->number_of_rows);
-
-        }
-        file1->pos.line++;
-        *node = (*node)->next;
-    }
-}*/
 
 void post_formating(file *file1, error *error, macros *macros) {
     line_node *node, *prev_node;
@@ -136,39 +88,39 @@ void post_formating(file *file1, error *error, macros *macros) {
 }
 
 
-/*
-void format_line(file *file1, int line_number, error *error){
-    get_start_tag(&file1->line[line_number], error, file1->pos);
+void format_line(line_node *node, error *error, pos *pos){
+    get_start_tag(node, error, pos);
 }
 
-bool get_start_tag(line *line, error *error, pos *pos) {
+bool get_start_tag(line_node *node, error *error, pos *pos) {
     int i;
-
     bool found_text = FALSE;
-    line->tag.tag = FALSE;
+
+    node->line_data->tag.tag = FALSE;
 
     for (i = 0; i < MAX_TAG_SIZE; i++) {
-        if (line->content[i] == ' ' || line->content[i] == '\t') {
+        if (node->line_text.content[i] == ' ' || node->line_text.content[i] == '\t') {
             if (found_text)
                 return FALSE;
-        } else if (line->content[i] == '\n' || line->content[i] == '\0' || line->content[i] == '.')
+        } else if (node->line_text.content[i] == '\n' || node->line_text.content[i] == '\0' || node->line_text.content[i] == '.')
             return FALSE;
-        else if (line->content[i] == ':') {
+        else if (node->line_text.content[i] == ':') {
             if (found_text) {
-                line->tag.name[i] = '\0';
-                line->tag.tag = TRUE;
+                node->line_data->tag.name[i] = '\0';
+                node->line_data->tag.tag = TRUE;
                 return TRUE;
             }
 
             error->error_type = UNDEFINED_TAG_NAME;
             return FALSE;
         } else {
-            if (is_legal_char_tag(line->content[i]) == FALSE)
+            if (is_legal_char_tag(node->line_text.content[i]) == FALSE)
                 return FALSE;
 
             found_text = TRUE;
-            line->tag.name[i] = line->content[i];
+            node->line_data->tag.name[i] = node->line_text.content[i];
         }
     }
     return FALSE;
-}*/
+}
+

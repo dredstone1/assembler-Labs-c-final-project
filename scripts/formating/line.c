@@ -96,3 +96,16 @@ line_node *copy_block_of_nodes(line_node **last_node, line_node *node) {
 
     return new_node;
 }
+
+void add_data_object_to_lines(line_node *head) {
+    line_node *temp = head;
+
+    while(temp != NULL) {
+        temp->line_data = (line_data *)malloc(sizeof(line_data));
+        if (temp->line_data == NULL) {
+            return;
+        }
+
+        temp = temp->next;
+    }
+}
