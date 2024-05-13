@@ -1,24 +1,27 @@
 #include "hexadecimal_translator.h"
-/* Function to translate a word into hexadecimal format */
-int translateToHex(char *word, int len) {
-    int i, k;
 
+/* Function to translate an integer into octal format */
+int translateToOctal(int number) {
+    int result = 0;
+
+    // Convert the decimal number to octal
+    while (number != 0) {
+        result = (number % 8) + result * 10;
+        number /= 8;
+    }
+
+    // Return the octal representation of the number
+    return result;
 }
 
 /* Main function */
 int main() {
-    // Define a character array to store the word
-    char word[100];
+    // Pre-defined number
+    int number = 123;
 
-    // Prompt the user to enter a word
-    printf("Enter a word: ");
+    // Call the function to translate the number into octal format
+    int octalValue = translateToOctal(number);
 
-    // Read the word entered by the user
-    scanf("%s", word);
-
-    // Call the function to translate the word into hexadecimal format
-    translateToHex(word);
-
-    // Return 0 to indicate successful completion of the program
-    return 0;
+    // Return the octal value
+    return octalValue;
 }
