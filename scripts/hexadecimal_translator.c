@@ -1,27 +1,13 @@
 #include "hexadecimal_translator.h"
 
-/* Function to translate an integer into octal format */
-int translateToOctal(int number) {
-    int result = 0;
+int int_to_octal(int num) {
+    int answer = 0, y = 1;
 
-    // Convert the decimal number to octal
-    while (number != 0) {
-        result = (number % 8) + result * 10;
-        number /= 8;
+    while (num != 0) {
+        answer += (num % 8) * y;
+        num = num / 8;
+        y *= 10;
     }
 
-    // Return the octal representation of the number
-    return result;
-}
-
-/* Main function */
-int main() {
-    // Pre-defined number
-    int number = 123;
-
-    // Call the function to translate the number into octal format
-    int octalValue = translateToOctal(number);
-
-    // Return the octal value
-    return octalValue;
+    return answer;
 }
