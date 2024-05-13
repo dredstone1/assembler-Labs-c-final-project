@@ -33,4 +33,6 @@ add_executable(mmn14
         scripts/formating/line.c
         scripts/formating/line.h
         scripts/formating/directive_line_type.c
-        scripts/formating/directive_line_type.h)
+        scripts/formating/directive_line_type.h
+        scripts/hexadecimal_translator.c
+        scripts/hexadecimal_translator.h)
