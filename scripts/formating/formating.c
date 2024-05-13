@@ -34,6 +34,8 @@ int main(){
     printf("number of rows: %d\n", file1.number_of_rows);
 */
     post_formating(&file1, &error, &macros);
+    first_pass(&file1, &error);
+
     free_file_lines(&file1);
 /*
     printf("number of macros: %s\n", macros.macro[0].macro_name);
@@ -131,7 +133,6 @@ void post_formating(file *file1, error *error, macros *macros) {
         node = node->next;
         temp= NULL;
     }
-    print_linked_list(file1->first_line);
 }
 
 

@@ -17,7 +17,6 @@ void read_file(file *file1, error *error) {
     last_line = create_line_node(NULL, NULL);
     file1->first_line = last_line;
 
-
     if (files == NULL) {
         error->error_type = FILE_NOT_FOUND;
         return;
@@ -34,9 +33,8 @@ void read_file(file *file1, error *error) {
                 found = FALSE;
                 i = 0;
             }
-        } else if (c == '\r') {
+        } else if (c == '\r')
             continue;
-        }
         else if (c == ' ' || c == '\t') {
             if (found == TRUE)
                 last_line->line_text.content[i++] = c;
@@ -54,7 +52,6 @@ void read_file(file *file1, error *error) {
             last_line->line_text.content[i++] = c;
         }
     }
-    last_line->line_text.content[i] = '\0';
 
     fclose(files);
 }
