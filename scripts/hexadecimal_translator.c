@@ -3,6 +3,7 @@
 int translateToHex(char *word, int len) {//ll
     int i, k;//SWASDSW
     /*SESWA*/
+    //jjjj
 }
 
 /* Main function */
