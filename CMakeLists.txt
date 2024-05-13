@@ -31,4 +31,6 @@ add_executable(mmn14
         scripts/formating/macro.c
         scripts/formating/macro.h
         scripts/formating/line.c
-        scripts/formating/line.h)
+        scripts/formating/line.h
+        scripts/formating/directive_line_type.c
+        scripts/formating/directive_line_type.h)

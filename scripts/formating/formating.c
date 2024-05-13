@@ -91,6 +91,9 @@ void post_formating(file *file1, error *error, macros *macros) {
 void format_line(line_node *node, error *error, pos *pos){
     get_start_tag(node, error);
     set_line_type(node, error);
+
+    if (node->line_data->directive == TRUE)
+        set_direct_line_type(node);
 }
 
 
@@ -140,7 +143,7 @@ void set_line_type(line_node *node, error *error){
             continue;
         else if (node->line_text.content[i] =='.') {
             node->line_data->directive = TRUE;
-            node->line_data->offset = i;
+            node->line_data->offset = i+1;
         }
 
         return;
