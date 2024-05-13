@@ -19,7 +19,6 @@ line_node *create_line_node(line_node *next, line_data *line_data){
 
     node->line_data = line_data;
     node->next = next;
-
     return node;
 }
 
@@ -61,7 +60,6 @@ void add_data_object_to_lines(line_node *head) {
 
     while(temp != NULL) {
         temp->line_data = (line_data *)malloc(sizeof(line_data));
-
         if (temp->line_data == NULL)
             return;
 
@@ -70,24 +68,16 @@ void add_data_object_to_lines(line_node *head) {
 }
 
 void set_direct_line_type(line_node *node){
-    printf("set_direct_line_type: %c\n", node->line_text.content[node->line_data->offset]);
-
-    if(is_directive_type_is(node->line_text.content, &node->line_data->offset, DATA_DIRECTIVE)) {
+    if(is_directive_type_is(node->line_text.content, &node->line_data->offset, DATA_DIRECTIVE))
         node->line_data->directive_line.type = DATA;
-    }
-    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, STRING_DIRECTIVE)) {
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, STRING_DIRECTIVE))
         node->line_data->directive_line.type = STRING;
-        printf("error\n");
-    }
-    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, ENTRY_DIRECTIVE)) {
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, ENTRY_DIRECTIVE))
         node->line_data->directive_line.type = ENTRY;
-    }
-    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, EXTERN_DIRECTIVE)) {
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, EXTERN_DIRECTIVE))
         node->line_data->directive_line.type = EXTERN;
-    }
     else{
+
         /*error undefined direct line type*/
     }
-
-    printf("offset: %d\n\n", node->line_data->directive_line.type);
 }

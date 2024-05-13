@@ -13,9 +13,6 @@ int main(){
     error error;
     macros macros;
 
-    char text[] = "macr m_macr\ncmp r3, #-6\nbne END\nendmacr";
-
-
     file1.pos.column = 0;
     file1.pos.line = 0;
 
@@ -24,6 +21,7 @@ int main(){
     file1.filename = "C:\\Users\\mayan\\Desktop\\shared\\mmn14_files\\ps2.as";
 
     read_file(&file1, &error);
+
     post_formating(&file1, &error, &macros);
     first_pass(&file1, &error);
 
@@ -66,7 +64,6 @@ void post_formating(file *file1, error *error, macros *macros) {
             get_macro_lines(&(prev_node->next), &macros->macro[macros->number_of_macros-1], error);
 
             node = prev_node->next;
-
         }
 
         if(macros->number_of_macros>0) {
@@ -149,4 +146,3 @@ void set_line_type(line_node *node, error *error){
         return;
     }
 }
-//hhhhhhhhhhhhhhhhhhhhh

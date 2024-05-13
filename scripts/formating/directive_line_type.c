@@ -1,18 +1,17 @@
 #include "directive_line_type.h"
-#include <stdio.h>
 
 bool is_directive_type_is(char line[], int *offset, char compare[]){
-    int i = *offset;
+    int i = 0;
 
-    printf("iii: %s ,,, %s\n", line, compare);
-    for (; i < MAX_DIRECTIVE_SIZE; i++) {
+    for (; i < MAX_DIRECTIVE_SIZE+1; i++) {
         if(compare[i] == '\0'){
-            *offset = i;
+            *offset += i-1;
             return TRUE;
         }
 
-        if (line[i] != compare[i])
+        if (line[i+*offset] != compare[i])
             return FALSE;
     }
+
     return FALSE;
 }

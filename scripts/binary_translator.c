@@ -46,16 +46,10 @@ int array_of_int_to_binaryINT(int list[], int size_of_list){
     return binary;
 }
 
-
-
-// add Roee
-/* Function to translate a word into binary format */
-void translateToBinary(char *word) {
+/* Function to translate a word into binary format *//*
+void translate_to_binary(char *word) {
     // Calculate the length of the word
     int length = strlen(word);
-
-    // Print message indicating the start of binary translation
-    printf("Binary translation: ");
 
     // Iterate through each character in the word
     for (int i = 0; i < length; i++) {
@@ -70,22 +64,5 @@ void translateToBinary(char *word) {
 
     // Print a newline character to separate output
     printf("\n");
-}
+}*/
 
-/* Main function */
-int main() {
-    // Define a character array to store the word
-    char word[100];
-
-    // Prompt the user to enter a word
-    printf("Enter a word: ");
-
-    // Read the word entered by the user
-    scanf("%s", word);
-
-    // Call the function to translate the word into binary format
-    translateToBinary(word);
-
-    // Return 0 to indicate successful completion of the program
-    return 0;
-}
