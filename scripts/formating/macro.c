@@ -1,6 +1,4 @@
 #include "macro.h"
-#include <stdio.h>
-#include <string.h>
 
 bool is_ending_macro(const char line[]);
 bool extra_char_at_end(const char line[], int loc);
@@ -61,10 +59,10 @@ void get_macro_lines(line_node **node, macro *macro, error *error){
 
 bool is_ending_macro(const char line[]){
     int i;
-    for (i = 0; 7 > i; i++) {
+
+    for (i = 0; 7 > i; i++)
         if (line[i] != END_MACRO[i])
             return FALSE;
-    }
 
     return TRUE;
 }
@@ -77,13 +75,10 @@ macro* is_line_call_macro(macros *macros, line_node *node, error *error){
             if (macros->macro[i].macro_name[k] == '\0'){
                 if (extra_char_at_end(node->line_text.content, k)==FALSE)
                     return &macros->macro[i];
-
                 break;
             }
-
             k++;
         }
-
         k=0;
     }
 
