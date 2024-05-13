@@ -12,6 +12,8 @@ typedef struct line_text{
 
 typedef struct line_data{
     tag tag;
+    bool directive;
+    int offset;
 } line_data;
 
 typedef struct line_node{
