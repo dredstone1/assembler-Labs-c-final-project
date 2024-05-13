@@ -4,23 +4,12 @@
 
 #include "hexadecimal_translator.h"
 #include "hexadecimal_translator.h"
-#define
+
 /* Function to translate a word into hexadecimal format */
-void translateToHex(char *word) {
-    // Calculate the length of the word
-    int length = strlen(word);
+int translateToHex(char *word, int len) {
+    int i, k;
 
-    // Print message indicating the start of hexadecimal translation
-    printf("Hexadecimal translation: ");
 
-    // Iterate through each character in the word
-    for (int i = 0; i < length; i++) {
-        // Print the hexadecimal representation of the ASCII value of the character
-        printf("%X ", (int)word[i]);
-    }
-
-    // Print a newline character to separate output
-    printf("\n");
 }
 
 /* Main function */
