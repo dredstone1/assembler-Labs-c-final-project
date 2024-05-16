@@ -1,5 +1,5 @@
-#ifndef MMN14_DIRECTIVE_LINE_TYPE_H
-#define MMN14_DIRECTIVE_LINE_TYPE_H
+#ifndef MMN14_OPERATION_LINE_TYPE_H
+#define MMN14_OPERATION_LINE_TYPE_H
 
 #include "../data/boolean.h"
 
@@ -43,9 +43,9 @@ typedef enum oparation_type {
 }operation_type;
 
 
-typedef struct oparation_line {
+typedef struct operation_line {
     operation_type type;
-} oparation_line;
+} operation_line;
 
-bool is_oparation_type_is(char line[], int *offset, char compare[]);
-#endif //MMN14_DIRECTIVE_LINE_TYPE_H
+bool is_operation_type_is(char line[], int *offset, char compare[]);
+#endif //MMN14_OPERATION_LINE_TYPE_H

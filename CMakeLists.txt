@@ -36,5 +36,5 @@ add_executable(mmn14
         scripts/formating/directive_line_type.h
         scripts/octal_translator.c
         scripts/octal_translator.h
-        scripts/formating/oparation_line_type.c
-        scripts/formating/oparation_line_type.h)
+        scripts/formating/operation_line_type.c
+        scripts/formating/operation_line_type.h)

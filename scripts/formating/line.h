@@ -3,7 +3,8 @@
 
 #include "../data/tag.h"
 #include "directive_line_type.h"
-#include "oparation_line_type.h"
+#include "operation_line_type.h"
+#include "line.h"
 
 #define LINE_SIZE 80
 #define LINE_JUMPER_SIZE 1
@@ -17,7 +18,7 @@ typedef struct line_data{
     bool directive;
     int offset;
     directive_line directive_line;
-    oparation_line operation_line;
+    operation_line operation_line;
 } line_data;
 
 typedef struct line_node{

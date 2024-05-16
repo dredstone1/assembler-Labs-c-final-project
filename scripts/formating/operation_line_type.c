@@ -1,4 +1,4 @@
-#include "oparation_line_type.h"
+#include "operation_line_type.h"
 
 bool is_operation_type_is(char line[], int *offset, char compare[]){
     int i = 0;
