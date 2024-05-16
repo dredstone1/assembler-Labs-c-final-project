@@ -11,7 +11,6 @@ void read_file(file *file1, error *error) {
     int i = 0, line_number = 0;
     bool found = FALSE;
     line_node *last_line;
-
     FILE *files = fopen(file1->filename, "r");
 
     last_line = create_line_node(NULL, NULL);

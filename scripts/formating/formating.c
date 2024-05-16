@@ -24,7 +24,7 @@ int main(){
 
     post_formating(&file1, &error, &macros);
     first_pass(&file1, &error);
-
+    
     free_file_lines(&file1);
     return 0;
 }
@@ -70,7 +70,7 @@ void post_formating(file *file1, error *error, macros *macros) {
             temp = is_line_call_macro(macros, node, error);
             if (temp != NULL) {
                 push_to_macro(&prev_node, temp->macro_lines);
-                last_macro = TRUE;
+                last_macro = 1 ;
             }
         }
 

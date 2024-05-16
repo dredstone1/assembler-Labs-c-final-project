@@ -81,3 +81,41 @@ void set_direct_line_type(line_node *node){
         /*error undefined direct line type*/
     }
 }
+
+void set_operation_line_type(line_node *node){
+    if(is_directive_type_is(node->line_text.content, &node->line_data->offset, DATA_OPERATION))
+        node->line_data->directive_line.type = MOV;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, STRING_OPERATION))
+        node->line_data->directive_line.type = CMP;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, ENTRY_OPERATION))
+        node->line_data->directive_line.type = ADD;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, EXTERN_OPERATION))
+        node->line_data->directive_line.type = SUB;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, LEA_OPERATION))
+        node->line_data->directive_line.type = LEA;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, CLR_OPERATION))
+        node->line_data->directive_line.type = CLR;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, NOT_OPERATION))
+        node->line_data->directive_line.type = NOT;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, INC_OPERATION))
+        node->line_data->directive_line.type = INC;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, DEC_OPERATION))
+        node->line_data->directive_line.type = DEC;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, JMP_OPERATION))
+        node->line_data->directive_line.type = JMP;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, BNE_OPERATION))
+        node->line_data->directive_line.type = BNE;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, RED_OPERATION))
+        node->line_data->directive_line.type = RED;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, PRN_OPERATION))
+        node->line_data->directive_line.type = PRN;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, JSR_OPERATION))
+        node->line_data->directive_line.type = JSR;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, RTS_OPERATION))
+        node->line_data->directive_line.type = RTS;
+    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, STOP_OPERATION))
+        node->line_data->directive_line.type = STOP;
+    else{
+        /*error undefined operation type*/
+    }
+}
