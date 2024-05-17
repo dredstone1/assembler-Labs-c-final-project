@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../systems/file.h"
+#include "other.h"
 
-void first_pass(file *file1, error *error);
-void get_start_tag(line_node *node, error *error);
+void first_pass(file *file1);
+void get_start_tag(line_node *node);
 void post_formating(file *file1, error *error, macros *macros);
-void format_line(line_node *node, error *error, pos *pos);
-void set_line_type(line_node *node, error *error);
+void format_line(line_node *node);
+void set_line_type(line_node *node);
 
 int main(){
     file file1;
@@ -23,114 +25,98 @@ int main(){
     read_file(&file1, &error);
 
     post_formating(&file1, &error, &macros);
-    first_pass(&file1, &error);
-    
+    first_pass(&file1);
+
     free_file_lines(&file1);
     return 0;
 }
 
 
-void first_pass(file *file1, error *error){
+void first_pass(file *file1){
     line_node *temp = file1->first_line;
 
     add_data_object_to_lines(temp);
 
     while (temp != NULL) {
-        format_line(temp, error, &file1->pos);
+        format_line(temp);
 
         temp = temp->next;
     }
 }
 
 void post_formating(file *file1, error *error, macros *macros) {
-    line_node *node, *prev_node;
+    line_node **node, *prev_node, **new_block, **temp2;
     macro *temp;
-    bool last_macro = FALSE;
+    line_text word;
 
-    node = file1->first_line;
+    int offset;
+
+
+    node = &file1->first_line;
     macros->number_of_macros = 0;
 
-    while (node != NULL) {
-        if (is_line_macro(node->line_text.content, &file1->pos)) {
-            macros->number_of_macros++;
+    while (*node != NULL) {
+        offset=0;
+        get_next_word(&word, &offset, (*node)->line_text.content, " \t\0", 3);
 
-            macros->macro = (macro*)realloc(macros->macro, macros->number_of_macros * sizeof(macro));
-            if (macros->macro == NULL) {
-                error->error_type = MEMORY_ALLOCATION_FAILED;
-                return;
-            }
+        if (is_line_macro(word.content)==TRUE) {
 
-            set_macro_name(node->line_text.content, &macros->macro[macros->number_of_macros-1], &file1->pos);
-            get_macro_lines(&(prev_node->next), &macros->macro[macros->number_of_macros-1], error);
+            skip_spaces_and_tags(&offset, (*node)->line_text.content);
 
-            node = prev_node->next;
+            get_next_word(&word, &offset, (*node)->line_text.content, " \t\0", 3);
+
+            new_block = read_macro_lines(node);
+
+            create_new_macro(word.content, new_block, macros, error);
+
         }
 
         if(macros->number_of_macros>0) {
-            temp = is_line_call_macro(macros, node, error);
+            temp = is_line_call_macro(macros, *node, error);
             if (temp != NULL) {
                 push_to_macro(&prev_node, temp->macro_lines);
-                last_macro = 1 ;
             }
         }
 
-        if(last_macro)
-            node = prev_node->next;
-
-        prev_node = node;
         file1->pos.line++;
-        node = node->next;
+        node = &(*node)->next;
         temp= NULL;
     }
 }
 
 
-void format_line(line_node *node, error *error, pos *pos){
-    get_start_tag(node, error);
-    set_line_type(node, error);
+void format_line(line_node *node){
+    node->line_data->offset = 0;
+
+    skip_spaces_and_tags(&node->line_data->offset, node->line_text.content);
+    get_start_tag(node);
+    set_line_type(node);
 
     if (node->line_data->directive == TRUE)
         set_direct_line_type(node);
+    else
+        set_operation_line_type(node);
 }
 
 
 
 
-void get_start_tag(line_node *node, error *error) {
-    int i;
-    bool found_text = FALSE;
-
+void get_start_tag(line_node *node) {
+    int i=0;
     node->line_data->tag.tag = FALSE;
-    node->line_data->offset = 0;
-
-    for (i = 0; i < MAX_TAG_SIZE; i++) {
-        if (node->line_text.content[i] == ' ' || node->line_text.content[i] == '\t') {
-            if (found_text)
-                return;
-        } else if (node->line_text.content[i] == '\n' || node->line_text.content[i] == '\0' || node->line_text.content[i] == '.')
-            return;
-        else if (node->line_text.content[i] == ':') {
-            if (found_text) {
-                node->line_data->tag.name[i] = '\0';
-                node->line_data->tag.tag = TRUE;
-                node->line_data->offset = i+1;
-                return;
-            }
-
-            error->error_type = UNDEFINED_TAG_NAME;
-            return;
-        } else {
-            if (is_legal_char_tag(node->line_text.content[i]) == FALSE)
-                return;
-
-            found_text = TRUE;
-            node->line_data->tag.name[i] = node->line_text.content[i];
-        }
+    while (is_legal_char_tag(node->line_text.content[i]) == TRUE) {
+        node->line_data->tag.name[i] = node->line_text.content[i];
+        i++;
     }
-    return;
+
+    if (node->line_text.content[i] == ':') {
+        node->line_data->tag.name[i] = '\0';
+        node->line_data->tag.tag = TRUE;
+        node->line_data->offset = i+1;
+    }
 }
 
-void set_line_type(line_node *node, error *error){
+void set_line_type(line_node *node){
     int i;
 
     node->line_data->directive = FALSE;

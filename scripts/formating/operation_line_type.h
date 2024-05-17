@@ -23,7 +23,7 @@
 
 
 
-typedef enum oparation_type {
+typedef enum operation_type {
     MOV,
     CMP,
     ADD,

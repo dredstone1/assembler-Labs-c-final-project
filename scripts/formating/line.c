@@ -1,74 +1,46 @@
 #include "line.h"
+#include "other.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-void print_linked_list(line_node *head) {
-    line_node *temp = head;
+bool is_char_separator(char c, char separators[], int separators_amount);
 
-    while(temp != NULL) {
-        printf("->> %s ", temp->line_text.content);
-        temp = temp->next;
-    }
+void skip_spaces_and_tags(int *offset, char line[]){
+    while (line[*offset] == ' ' || line[*offset] == '\t')
+        (*offset)++;
 }
 
-line_node *create_line_node(line_node *next, line_data *line_data){
-    line_node *node = (line_node *)malloc(sizeof(line_node));
-    if (node == NULL)
-        return NULL;
+void get_next_word(line_text *line_text, int *offset, char line[], char separators[], int separators_amount){
+    int i = 0;
+    printf("offset: %d\n", *offset);
+    while (is_char_separator(line[i+*offset], separators, separators_amount)==FALSE) {
+        line_text->content[i] = line[i+*offset];
+        i++;
+    }
 
-    node->line_data = line_data;
-    node->next = next;
-    return node;
+    line_text->content[i] = '\0';
+    *offset += i;
 }
 
 
-
-
-line_node *copy_block_of_nodes(line_node **last_node, line_node *node) {
-    line_node *new_node;
-
-    if (node == NULL) {
-        *last_node = NULL;
-        return NULL;
+bool is_char_separator(char c, char separators[], int separators_amount){
+    int i;
+    for(i=0; i<separators_amount; i++){
+        if(c==separators[i])
+            return TRUE;
     }
 
-    new_node = create_line_node(NULL, node->line_data);
-    if (new_node == NULL) {
-        *last_node = NULL;
-        return NULL;
-    }
-
-    /*Copy the line_text content*/
-    strncpy(new_node->line_text.content, node->line_text.content, LINE_SIZE);
-
-    /*Copy the line_number*/
-    new_node->line_number = node->line_number;
-
-    /*Recursively copy the rest of the nodes*/
-    new_node->next = copy_block_of_nodes(last_node, node->next);
-
-    /*If this is the last node in the block, set the last_node pointer*/
-    if (new_node->next == NULL)
-        *last_node = new_node;
-
-    return new_node;
-}
-
-void add_data_object_to_lines(line_node *head) {
-    line_node *temp = head;
-
-    while(temp != NULL) {
-        temp->line_data = (line_data *)malloc(sizeof(line_data));
-        if (temp->line_data == NULL)
-            return;
-
-        temp = temp->next;
-    }
+    return FALSE;
 }
 
 void set_direct_line_type(line_node *node){
-    if(is_directive_type_is(node->line_text.content, &node->line_data->offset, DATA_DIRECTIVE))
+    line_text word;
+
+    get_next_word(&word, &node->line_data->offset, node->line_text.content, " \t,", 2);
+
+
+/*    if(is_directive_type_is(node->line_text.content, &node->line_data->offset, DATA_DIRECTIVE))
         node->line_data->directive_line.type = DATA;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, STRING_DIRECTIVE))
         node->line_data->directive_line.type = STRING;
@@ -78,44 +50,47 @@ void set_direct_line_type(line_node *node){
         node->line_data->directive_line.type = EXTERN;
     else{
 
-        /*error undefined direct line type*/
-    }
+        *//*error undefined direct line type*//*
+    }*/
 }
 
 void set_operation_line_type(line_node *node){
+    skip_spaces_and_tags(&node->line_data->offset, node->line_text.content);
+
     if(is_directive_type_is(node->line_text.content, &node->line_data->offset, DATA_OPERATION))
-        node->line_data->directive_line.type = MOV;
+        node->line_data->operation_line.type = MOV;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, STRING_OPERATION))
-        node->line_data->directive_line.type = CMP;
+        node->line_data->operation_line.type = CMP;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, ENTRY_OPERATION))
-        node->line_data->directive_line.type = ADD;
+        node->line_data->operation_line.type = ADD;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, EXTERN_OPERATION))
-        node->line_data->directive_line.type = SUB;
+        node->line_data->operation_line.type = SUB;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, LEA_OPERATION))
-        node->line_data->directive_line.type = LEA;
+        node->line_data->operation_line.type = LEA;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, CLR_OPERATION))
-        node->line_data->directive_line.type = CLR;
+        node->line_data->operation_line.type = CLR;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, NOT_OPERATION))
-        node->line_data->directive_line.type = NOT;
+        node->line_data->operation_line.type = NOT;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, INC_OPERATION))
-        node->line_data->directive_line.type = INC;
+        node->line_data->operation_line.type = INC;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, DEC_OPERATION))
-        node->line_data->directive_line.type = DEC;
+        node->line_data->operation_line.type = DEC;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, JMP_OPERATION))
-        node->line_data->directive_line.type = JMP;
+        node->line_data->operation_line.type = JMP;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, BNE_OPERATION))
-        node->line_data->directive_line.type = BNE;
+        node->line_data->operation_line.type = BNE;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, RED_OPERATION))
-        node->line_data->directive_line.type = RED;
+        node->line_data->operation_line.type = RED;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, PRN_OPERATION))
-        node->line_data->directive_line.type = PRN;
+        node->line_data->operation_line.type = PRN;
     else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, JSR_OPERATION))
-        node->line_data->directive_line.type = JSR;
-    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, RTS_OPERATION))
-        node->line_data->directive_line.type = RTS;
-    else if(is_directive_type_is(node->line_text.content, &node->line_data->offset, STOP_OPERATION))
-        node->line_data->directive_line.type = STOP;
+        node->line_data->operation_line.type = JSR;
+    else if (is_directive_type_is(node->line_text.content, &node->line_data->offset, RTS_OPERATION))
+        node->line_data->operation_line.type = RTS;
+    else if (is_directive_type_is(node->line_text.content, &node->line_data->offset, STOP_OPERATION))
+        node->line_data->operation_line.type = STOP;
     else{
+
         /*error undefined operation type*/
     }
 }
