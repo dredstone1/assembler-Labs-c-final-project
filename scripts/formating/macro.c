@@ -1,14 +1,25 @@
 #include "macro.h"
+#include <string.h>
+#include <stdio.h>
 
 bool is_ending_macro(const char line[]);
 bool extra_char_at_end(const char line[], int loc);
 
-bool is_line_macro(const char line[], pos *pos){
-    for (pos->column = 0; 5 > pos->column; pos->column++)
-        if (line[pos->column] != MACRO[pos->column])
-            return FALSE;
+bool is_line_macro(const char line[]){
+    return strcmp(line, MACRO)==FALSE;
+}
 
-    return TRUE;
+void create_new_macro(char macro_name[], line_node **node, macros *macros, error *error){
+    macros->number_of_macros++;
+
+    macros->macro = (macro*)realloc(macros->macro, macros->number_of_macros * sizeof(macro));
+    if (macros->macro == NULL) {
+        error->error_type = MEMORY_ALLOCATION_FAILED;
+        return;
+    }
+
+    strcpy(macros->macro[macros->number_of_macros-1].macro_name, macro_name);
+
 }
 
 void set_macro_name(const char line[], macro *macro, pos *pos) {
@@ -38,22 +49,19 @@ void set_macro_name(const char line[], macro *macro, pos *pos) {
 }
 
 
-void get_macro_lines(line_node **node, macro *macro, error *error){
-    line_node *last_node, *temp;
+line_node **read_macro_lines(line_node **head) {
+    line_node *next_node, **macro_node;
 
-    last_node = *node;
-    macro->macro_lines = (*node)->next;
-    while (last_node!=NULL){
-        if (is_ending_macro(last_node->next->line_text.content)){
-            temp = last_node->next->next;
-            last_node->next = NULL;
-            *node = temp;
-            break;
-        }
+    macro_node = &(*head)->next;
+    next_node = *head;
 
-        macro->number_of_macro_lines++;
-        last_node = last_node->next;
-    }
+    while (next_node->next != NULL && is_ending_macro(next_node->next->line_text.content) == FALSE)
+        next_node = next_node->next;
+
+    *head = next_node->next->next;
+    next_node->next = NULL;
+
+    return macro_node;
 }
 
 
