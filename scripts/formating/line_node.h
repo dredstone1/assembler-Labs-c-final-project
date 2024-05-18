@@ -28,7 +28,10 @@ typedef struct line_node{
 
 void print_linked_list(line_node *head);
 line_node *create_line_node(line_node *next, line_data *line_data);
-line_node *copy_block_of_nodes(line_node **last_node, line_node *node);
+line_node *duplicate_lines_node(line_node *node);
 void add_data_object_to_lines(line_node *head);
+void add_node_to_end(line_node *old, line_node *new);
+char* combine_line_nodes_text(line_node *node, int line_amount);
+int get_line_node_length(line_node *node);
 
 #endif //MMN14_LINE_NODE_H

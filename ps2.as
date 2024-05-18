@@ -13,6 +13,10 @@ m_macr
 dec K
 jmp LOOP
 END: stop
+macr test
+cmp r3, #-6
+bne END
+endmacr
 STR:  .string "abcd"
 LIST: .data 6, -9
 .data -100

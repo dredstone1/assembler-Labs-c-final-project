@@ -1,12 +1,9 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "../systems/file.h"
-#include "other.h"
 
 void first_pass(file *file1);
 void get_start_tag(line_node *node);
-void post_formating(file *file1, error *error, macros *macros);
+void post_formating(file *file1, macros *macros);
 void format_line(line_node *node);
 void set_line_type(line_node *node);
 
@@ -15,18 +12,23 @@ int main(){
     error error;
     macros macros;
 
+    char *combined;
     file1.pos.column = 0;
     file1.pos.line = 0;
 
     error.error_type = NOTHING;
     file1.number_of_rows = 0;
     file1.filename = "C:\\Users\\mayan\\Desktop\\shared\\mmn14_files\\ps2.as";
-
     read_file(&file1, &error);
 
-    post_formating(&file1, &error, &macros);
-    first_pass(&file1);
+    post_formating(&file1, &macros);
+    printf("number of rows: %d\n", file1.number_of_rows);
+    combined = combine_line_nodes_text(file1.first_line, file1.number_of_rows);
+    create_n_write_file(combined, "C:\\Users\\mayan\\Desktop\\shared\\mmn14_files\\ps2.am");
+    free(combined);
 
+/*    first_pass(&file1);*/
+    printf("eeee");
     free_file_lines(&file1);
     return 0;
 }
@@ -44,43 +46,41 @@ void first_pass(file *file1){
     }
 }
 
-void post_formating(file *file1, error *error, macros *macros) {
-    line_node **node, *prev_node, **new_block, **temp2;
+void post_formating(file *file1, macros *macros) {
+    line_node **node = &file1->first_line, **new_block;
     macro *temp;
+    int offset;
     line_text word;
 
-    int offset;
-
-
-    node = &file1->first_line;
     macros->number_of_macros = 0;
+    macros->macro = NULL;
 
     while (*node != NULL) {
         offset=0;
+
+        skip_spaces_and_tags(&offset, (*node)->line_text.content);
         get_next_word(&word, &offset, (*node)->line_text.content, " \t\0", 3);
+        skip_spaces_and_tags(&offset, (*node)->line_text.content);
 
         if (is_line_macro(word.content)==TRUE) {
-
-            skip_spaces_and_tags(&offset, (*node)->line_text.content);
-
             get_next_word(&word, &offset, (*node)->line_text.content, " \t\0", 3);
-
             new_block = read_macro_lines(node);
-
-            create_new_macro(word.content, new_block, macros, error);
-
+            add_macro(word.content, new_block, macros);
+            printf("macro name: %d\n", macros->number_of_macros);
+            file1->number_of_rows -= macros->macro[macros->number_of_macros].number_of_macro_lines;
         }
 
         if(macros->number_of_macros>0) {
-            temp = is_line_call_macro(macros, *node, error);
+            temp = get_macro_from_name(macros, *node);
+
             if (temp != NULL) {
-                push_to_macro(&prev_node, temp->macro_lines);
+                file1->number_of_rows += temp->number_of_macro_lines-1;
+                replace_line_to_macro(*temp, node);
             }
         }
 
         file1->pos.line++;
         node = &(*node)->next;
-        temp= NULL;
     }
 }
 

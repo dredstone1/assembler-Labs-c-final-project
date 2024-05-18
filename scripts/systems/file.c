@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "error.h"
+
 void free_line(line_node *node);
 
 void read_file(file *file1, error *error) {
@@ -71,4 +72,13 @@ void free_line(line_node *node){
 
     free(node->line_data);
     free(node);
+}
+
+void create_n_write_file(char content[], char file_name[]){
+    printf("eee: %s", content);
+    FILE *file;
+    file = fopen(file_name, "w");
+    fprintf(file, "%s\n", content);
+    fclose(file);
+    printf("kkkk4");
 }

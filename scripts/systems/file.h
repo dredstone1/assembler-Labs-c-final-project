@@ -19,5 +19,6 @@ typedef struct file{
 void read_file(file *file1, error *error);
 void print_pos(pos pos);
 void free_file_lines(file *file1);
+void create_n_write_file(char content[], char file_name[]);
 
 #endif //MMN14_FILE_H

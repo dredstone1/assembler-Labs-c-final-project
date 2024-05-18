@@ -9,17 +9,18 @@ bool is_line_macro(const char line[]){
     return strcmp(line, MACRO)==FALSE;
 }
 
-void create_new_macro(char macro_name[], line_node **node, macros *macros, error *error){
+void add_macro(char macro_name[], line_node **node, macros *macros) {
     macros->number_of_macros++;
-
-    macros->macro = (macro*)realloc(macros->macro, macros->number_of_macros * sizeof(macro));
+    macros->macro = realloc(macros->macro, (size_t)(macros->number_of_macros * sizeof(macro)));
     if (macros->macro == NULL) {
-        error->error_type = MEMORY_ALLOCATION_FAILED;
+        // error not enough memory
         return;
     }
 
-    strcpy(macros->macro[macros->number_of_macros-1].macro_name, macro_name);
-
+    // Update the newly allocated macro
+    strcpy(macros->macro[macros->number_of_macros - 1].macro_name, macro_name);
+    macros->macro[macros->number_of_macros - 1].number_of_macro_lines = get_line_node_length(*node);
+    macros->macro[macros->number_of_macros - 1].macro_lines = *node;
 }
 
 void set_macro_name(const char line[], macro *macro, pos *pos) {
@@ -75,19 +76,19 @@ bool is_ending_macro(const char line[]){
     return TRUE;
 }
 
-macro* is_line_call_macro(macros *macros, line_node *node, error *error){
+macro* get_macro_from_name(macros *macros, line_node *node){
     int i,k=0;
+    line_text word;
+
+    skip_spaces_and_tags(&k, node->line_text.content);
+    get_next_word(&word, &k, node->line_text.content, " \t\0", 3);
+
+    if (extra_char_at_end(node->line_text.content, k)==TRUE)
+        return NULL;
 
     for (i = 0; macros->number_of_macros > i; i++) {
-        while (node->line_text.content[k]==macros->macro[i].macro_name[k] || macros->macro[i].macro_name[k]=='\0') {
-            if (macros->macro[i].macro_name[k] == '\0'){
-                if (extra_char_at_end(node->line_text.content, k)==FALSE)
-                    return &macros->macro[i];
-                break;
-            }
-            k++;
-        }
-        k=0;
+        if (strcmp(word.content, macros->macro[i].macro_name)==FALSE)
+            return &macros->macro[i];
     }
 
     return NULL;
@@ -103,23 +104,9 @@ bool extra_char_at_end(const char line[], int loc){
     return TRUE;
 }
 
-void push_to_macro(line_node **prev, line_node *new) {
-    line_node *last_node, *new_copy, *next_node;
-
-    if (*prev == NULL || new == NULL)
-        return;
-
-    /*Create a copy of the new node (and any nodes after it)*/
-    new_copy = copy_block_of_nodes(&last_node, new);
-    if (new_copy == NULL)
-        return;
-
-    /*Save the node that is currently next to the prev node*/
-    next_node = (*prev)->next;
-
-    /*Set the copied block to be the next block of the prev node*/
-    (*prev)->next = new_copy;
-
-    /*Set the originally next node to be the next node of the last node in the copied block*/
-    last_node->next = next_node->next;
+void replace_line_to_macro(macro macro, line_node **node){
+    line_node *temp;
+    temp = duplicate_lines_node(macro.macro_lines);
+    add_node_to_end(temp,(*node)->next);
+    *node = temp;
 }

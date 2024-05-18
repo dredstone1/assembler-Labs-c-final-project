@@ -9,7 +9,6 @@
 #define MACRO "macr"
 #define END_MACRO "endmacr"
 
-
 typedef struct macro{
     line_node *macro_lines;
     int number_of_macro_lines;
@@ -22,9 +21,10 @@ typedef struct macros{
 } macros;
 
 bool is_line_macro(const char line[]);
-void create_new_macro(char macro_name[], line_node **node, macros *macros, error *error);
+void add_macro(char macro_name[], line_node **node, macros *macros);
 void set_macro_name(const char line[], macro *macro, pos *pos);
 line_node **read_macro_lines(line_node **head);
-macro* is_line_call_macro(macros *macros, line_node *node, error *error);
-void push_to_macro(line_node **prev, line_node *new);
+macro* get_macro_from_name(macros *macros, line_node *node);
+void replace_line_to_macro(macro macro, line_node **node);
+
 #endif //MMN14_MACRO_H

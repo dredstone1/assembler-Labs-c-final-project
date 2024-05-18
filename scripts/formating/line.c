@@ -1,8 +1,5 @@
 #include "line.h"
-#include "other.h"
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 
 bool is_char_separator(char c, char separators[], int separators_amount);
 
@@ -13,7 +10,7 @@ void skip_spaces_and_tags(int *offset, char line[]){
 
 void get_next_word(line_text *line_text, int *offset, char line[], char separators[], int separators_amount){
     int i = 0;
-    printf("offset: %d\n", *offset);
+
     while (is_char_separator(line[i+*offset], separators, separators_amount)==FALSE) {
         line_text->content[i] = line[i+*offset];
         i++;

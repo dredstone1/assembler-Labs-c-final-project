@@ -38,7 +38,7 @@ add_executable(mmn14
         scripts/octal_translator.h
         scripts/formating/operation_line_type.c
         scripts/formating/operation_line_type.h
-        scripts/formating/other.c
-        scripts/formating/other.h
         scripts/formating/line_node.c
-        scripts/formating/line_node.h)
+        scripts/formating/line_node.h
+        scripts/systems/am_files.c
+        scripts/systems/am_files.h)
