@@ -1,84 +1,67 @@
 #include "file.h"
+#include "../formating/line.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include "error.h"
+#include <errno.h>
+#include <string.h>
 
 void free_line(line_node *node);
 
 void read_file(file *file1, error *error) {
-    size_t bytesRead = 1;
-    char c;
+    char word[LINE_SIZE];
+    line_text word_temp;
     int i = 0, line_number = 0;
-    bool found = FALSE;
     line_node *last_line;
     FILE *files = fopen(file1->filename, "r");
-
-    last_line = create_line_node(NULL, NULL);
-    file1->first_line = last_line;
-
     if (files == NULL) {
         error->error_type = FILE_NOT_FOUND;
         return;
     }
 
-    while (bytesRead != 0) {
-        bytesRead = fread(&c, sizeof(char), 1, files);
+    last_line = create_line_node(NULL, NULL);
+    file1->first_line = last_line;
 
-        if (c == '\n') {
-            line_number++;
-            if (found == TRUE) {
-                last_line->line_text.content[i] = '\0';
-
-                found = FALSE;
-                i = 0;
-            }
-        } else if (c == '\r')
+    while (fgets(word, sizeof(char)*LINE_SIZE, files) != NULL) {
+        i=0;
+        skip_spaces_and_tags(&i, word);
+        line_number++;
+        if (word[i] == ';' || word[i] == '\n')
             continue;
-        else if (c == ' ' || c == '\t') {
-            if (found == TRUE)
-                last_line->line_text.content[i++] = c;
-        } else {
-            if (found == FALSE){
-                if (file1->number_of_rows>0)
-                    last_line = last_line->next = create_line_node(NULL, NULL);
 
-                i = 0;
-                file1->number_of_rows++;
-                last_line->line_number = line_number;
-            }
+        i=0;
+        get_next_word(&word_temp, &i, word, "\r\n", 2);
+        word_temp.content[i]= '\0';
+        if (file1->number_of_rows>0)
+            last_line = last_line->next = create_line_node(NULL, NULL);
 
-            found = TRUE;
-            last_line->line_text.content[i++] = c;
-        }
+        strcpy(last_line->line_text.content,word_temp.content);
+        file1->number_of_rows++;
+        last_line->line_number = line_number;
     }
 
     fclose(files);
 }
 
-void print_pos(pos pos) {
-    printf("%d, %d", pos.line, pos.column);
+void print_pos(int line, int column) {
+    printf("%d, %d", line, column);
 }
 
 void free_file_lines(file *file1){
     free_line(file1->first_line);
 }
 
-void free_line(line_node *node){
-    if (node == NULL)
-        return;
+void write_to_file_file(file file, char file_name[]){
+    line_node *node = file.first_line;
+    FILE *file1 = fopen(file_name, "w");
 
-    free_line(node->next);
+    while (node!=NULL){
+        fprintf(file1, "%s--->%d", node->line_text.content, node->line_number);
+        if(node->next!=NULL)
+            fprintf(file1, "\n");
 
-    free(node->line_data);
-    free(node);
-}
+        node = node->next;
+    }
 
-void create_n_write_file(char content[], char file_name[]){
-    printf("eee: %s", content);
-    FILE *file;
-    file = fopen(file_name, "w");
-    fprintf(file, "%s\n", content);
-    fclose(file);
-    printf("kkkk4");
+    fclose(file1);
 }

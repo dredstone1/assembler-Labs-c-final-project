@@ -1,5 +1,4 @@
 #include "line.h"
-#include <stdio.h>
 
 bool is_char_separator(char c, char separators[], int separators_amount);
 
@@ -18,6 +17,12 @@ void get_next_word(line_text *line_text, int *offset, char line[], char separato
 
     line_text->content[i] = '\0';
     *offset += i;
+}
+
+void get_next_word_n_skip(line_text *line_text, int *offset, char line[], char separators[], int separators_amount){
+    skip_spaces_and_tags(offset, line);
+    get_next_word(line_text, offset, line, separators, separators_amount);
+    skip_spaces_and_tags(offset, line);
 }
 
 
@@ -91,3 +96,5 @@ void set_operation_line_type(line_node *node){
         /*error undefined operation type*/
     }
 }
+
+

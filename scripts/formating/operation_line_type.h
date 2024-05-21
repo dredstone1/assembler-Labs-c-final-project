@@ -21,8 +21,6 @@
 #define RTS_OPERATION "rts "
 #define STOP_OPERATION "stop "
 
-
-
 typedef enum operation_type {
     MOV,
     CMP,
@@ -41,7 +39,6 @@ typedef enum operation_type {
     RTS,
     STOP
 }operation_type;
-
 
 typedef struct operation_line {
     operation_type type;

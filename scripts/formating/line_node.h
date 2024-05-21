@@ -33,5 +33,9 @@ void add_data_object_to_lines(line_node *head);
 void add_node_to_end(line_node *old, line_node *new);
 char* combine_line_nodes_text(line_node *node, int line_amount);
 int get_line_node_length(line_node *node);
+void offset_line_node_by(line_node *node, int offset);
+void set_offset_line_node(line_node *node, int offset);
+void offset_line_node_by_i(line_node *node);
+void free_line(line_node *node);
 
 #endif //MMN14_LINE_NODE_H

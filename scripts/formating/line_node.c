@@ -58,25 +58,6 @@ line_node* duplicate_line_node(line_node *node) {
     return new_node;
 }
 
-char* combine_line_nodes_text(line_node *node, int line_amount){
-    char *file_text = (char*)malloc(sizeof(char) * (line_amount * (LINE_SIZE)));
-    line_node* temp;
-
-    if (file_text == NULL){
-        /*error: not enough memory*/
-        return NULL;
-    }
-
-    temp = node;
-    while(temp != NULL) {
-        strncat(file_text, temp->line_text.content, LINE_SIZE);
-        strncat (file_text, "\n", 1);
-        temp = temp->next;
-    }
-
-    return file_text;
-}
-
 line_node *duplicate_lines_node(line_node *node) {
     line_node *next_node, *head;
 
@@ -116,11 +97,43 @@ void add_data_object_to_lines(line_node *head) {
 
 int get_line_node_length(line_node *node){
     int i=0;
-
     while (node!=NULL){
         node = node->next;
         i++;
     }
 
     return i;
+}
+
+void offset_line_node_by(line_node *node, int offset) {
+    while (node != NULL) {
+        node->line_number +=offset;
+        node = node->next;
+    }
+}
+
+void offset_line_node_by_i(line_node *node) {
+    int i=0;
+    while (node != NULL) {
+        node->line_number +=i;
+        node = node->next;
+        i++;
+    }
+}
+
+void set_offset_line_node(line_node *node, int offset) {
+    while (node != NULL) {
+        node->line_number = offset;
+        node = node->next;
+    }
+}
+
+void free_line(line_node *node){
+    if (node == NULL)
+        return;
+
+    free_line(node->next);
+
+    free(node->line_data);
+    free(node);
 }

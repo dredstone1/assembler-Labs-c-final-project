@@ -20,8 +20,6 @@ typedef struct directive_line {
     directive_type type;
 } directive_line;
 
-
-
 bool is_directive_type_is(char line[], int *offset, char compare[]);
 
 #endif //MMN14_DIRECTIVE_LINE_TYPE_H

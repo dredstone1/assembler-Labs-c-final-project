@@ -6,15 +6,8 @@ void handel_error(error *error){
 
 }
 
-void print_error_pos(pos pos){
+void print_error_pos(int line, int column){
     printf("(");
-    print_pos(pos);
+    print_pos(line, column);
     printf(")");
 }
-
-/*void print_line(line line){
-*//*
-    printf("%s", line.content);
-*//*
-}*/
-

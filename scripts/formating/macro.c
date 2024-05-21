@@ -1,10 +1,8 @@
 #include "macro.h"
 #include <string.h>
-#include <stdio.h>
 
 bool is_ending_macro(const char line[]);
 bool extra_char_at_end(const char line[], int loc);
-
 bool is_line_macro(const char line[]){
     return strcmp(line, MACRO)==FALSE;
 }
@@ -17,38 +15,13 @@ void add_macro(char macro_name[], line_node **node, macros *macros) {
         return;
     }
 
-    // Update the newly allocated macro
+    set_offset_line_node(*node, 0);
+    offset_line_node_by_i(*node);
+
     strcpy(macros->macro[macros->number_of_macros - 1].macro_name, macro_name);
     macros->macro[macros->number_of_macros - 1].number_of_macro_lines = get_line_node_length(*node);
     macros->macro[macros->number_of_macros - 1].macro_lines = *node;
 }
-
-void set_macro_name(const char line[], macro *macro, pos *pos) {
-    int i;
-    bool found_text = FALSE;
-
-    for (i=0; pos->column < LINE_SIZE; pos->column++) {
-        if (line[pos->column] == '\0') {
-            if (found_text) {
-                macro->macro_name[i] = '\0';
-                return;
-            }
-
-            /*error undefined macro name*/
-        } if (line[pos->column] == ' ' || line[pos->column] == '\t') {
-            if (!found_text)
-                continue;
-
-            /*error extra text after the macro name*/
-        } else if (line[pos->column] == '\r')
-            continue;
-        else {
-            macro->macro_name[i++] = line[pos->column];
-            found_text = TRUE;
-        }
-    }
-}
-
 
 line_node **read_macro_lines(line_node **head) {
     line_node *next_node, **macro_node;
@@ -65,6 +38,13 @@ line_node **read_macro_lines(line_node **head) {
     return macro_node;
 }
 
+void free_macros(macros *macros) {
+    int i;
+    for (i = 0; macros->number_of_macros > i; i++)
+        free_line(macros->macro[i].macro_lines);
+
+    free(macros->macro);
+}
 
 bool is_ending_macro(const char line[]){
     int i;
@@ -81,7 +61,7 @@ macro* get_macro_from_name(macros *macros, line_node *node){
     line_text word;
 
     skip_spaces_and_tags(&k, node->line_text.content);
-    get_next_word(&word, &k, node->line_text.content, " \t\0", 3);
+    get_next_word(&word, &k, node->line_text.content, " \t\0", 23);
 
     if (extra_char_at_end(node->line_text.content, k)==TRUE)
         return NULL;
@@ -105,8 +85,40 @@ bool extra_char_at_end(const char line[], int loc){
 }
 
 void replace_line_to_macro(macro macro, line_node **node){
-    line_node *temp;
-    temp = duplicate_lines_node(macro.macro_lines);
+    line_node *temp = duplicate_lines_node(macro.macro_lines);
     add_node_to_end(temp,(*node)->next);
-    *node = temp;
+    set_offset_line_node(temp->next, (*node)->line_number);
+    offset_line_node_by_i(temp->next);
+    offset_line_node_by(temp->next, macro.number_of_macro_lines-2);
+    *node = temp->next;
+}
+
+void handle_macros(line_node **first_file_node,int *number_of_rows, macros *macros){
+    line_node **node = first_file_node;
+    macro *temp;
+    int offset;
+    line_text word;
+
+    macros->number_of_macros = 0;
+    macros->macro = NULL;
+
+    while (*node != NULL) {
+        offset=0;
+        get_next_word_n_skip(&word, &offset, (*node)->line_text.content, " \t\0", 3);
+
+        if (is_line_macro(word.content)==TRUE) {
+            get_next_word(&word, &offset, (*node)->line_text.content, " \t\0", 3);
+            add_macro(word.content, read_macro_lines(node), macros);
+            number_of_rows -= macros->macro[macros->number_of_macros - 1].number_of_macro_lines + 2;
+            offset_line_node_by(*node, -(macros->macro[macros->number_of_macros - 1].number_of_macro_lines+2));
+        }
+        if (macros->number_of_macros>0) {
+            temp = get_macro_from_name(macros, *node);
+            if (temp != NULL) {
+                number_of_rows += temp->number_of_macro_lines;
+                replace_line_to_macro(*temp, node);
+            }
+        }
+        node = &(*node)->next;
+    }
 }

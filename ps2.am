@@ -1,0 +1,29 @@
+MAIN: add r3, LIST--->1
+LOOP: prn #48--->2
+cmp r3, #-6--->3
+bne END--->4
+lea STR, r6--->5
+inc r6--->6
+mov *r6,K--->7
+k--->8
+l--->9
+sub r1, r4--->10
+cmp r3, #-6--->11
+bne END--->12
+cmp r3, #-6--->13
+bne END--->14
+cmp r3, #-6--->15
+bne END--->16
+dec K--->17
+jmp LOOP--->18
+END: stop--->19
+STR:  .string "abcd"--->20
+LIST: .data 6, -9--->21
+.data -100--->22
+K: .data 31vdp--->23
+cmp r3, #-6s--->24
+bne END44--->25
+ieee--->26
+p--->27
+ e;re34r2ewa--->28
+ eee--->29

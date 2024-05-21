@@ -26,8 +26,6 @@ add_executable(mmn14
         scripts/data/boolean.h
         scripts/data/tag.c
         scripts/data/tag.h
-        scripts/data/pos.c
-        scripts/data/pos.h
         scripts/formating/macro.c
         scripts/formating/macro.h
         scripts/formating/line.c
@@ -40,5 +38,4 @@ add_executable(mmn14
         scripts/formating/operation_line_type.h
         scripts/formating/line_node.c
         scripts/formating/line_node.h
-        scripts/systems/am_files.c
-        scripts/systems/am_files.h)
+)

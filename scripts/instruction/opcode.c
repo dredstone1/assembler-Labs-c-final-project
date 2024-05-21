@@ -6,4 +6,3 @@ int opcode_to_binary(opcode code){
         return intBINARY_to_binary(code);
     return EMPTY_OPCODE_ERROR_VALUE;
 }
-

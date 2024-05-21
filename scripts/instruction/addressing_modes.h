@@ -1,7 +1,6 @@
 #ifndef MMN14_ADDRESSING_MODES_H
 #define MMN14_ADDRESSING_MODES_H
 
-
 typedef enum {
     IMMEDIATE,
     DIRECT,

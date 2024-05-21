@@ -3,7 +3,6 @@
 
 #include "../data/boolean.h"
 #include "error.h"
-#include "../data/pos.h"
 #include "../formating/macro.h"
 #include "../formating/line.h"
 
@@ -13,12 +12,11 @@ typedef struct file{
     char *filename;
     bool ext;
     bool ent;
-    pos pos;
 } file;
 
 void read_file(file *file1, error *error);
-void print_pos(pos pos);
+void print_pos(int line, int column);
 void free_file_lines(file *file1);
-void create_n_write_file(char content[], char file_name[]);
+void write_to_file_file(file file, char file_name[]);
 
 #endif //MMN14_FILE_H
