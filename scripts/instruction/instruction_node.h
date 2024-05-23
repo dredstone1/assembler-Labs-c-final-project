@@ -1,0 +1,8 @@
+//
+// Created by mayan on 23/05/2024.
+//
+
+#ifndef MMN14_INSTRUCTION_NODE_H
+#define MMN14_INSTRUCTION_NODE_H
+
+#endif //MMN14_INSTRUCTION_NODE_H

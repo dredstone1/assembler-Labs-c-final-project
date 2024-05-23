@@ -10,10 +10,6 @@ add_executable(mmn14
         scripts/instruction/opcode.h
         scripts/instruction/word.c
         scripts/instruction/word.h
-        scripts/instruction/addressing_modes.c
-        scripts/instruction/addressing_modes.h
-        scripts/instruction/operand_address.c
-        scripts/instruction/operand_address.h
         scripts/binary_translator.c
         scripts/binary_translator.h
         scripts/formating/formating.c
@@ -38,4 +34,12 @@ add_executable(mmn14
         scripts/formating/operation_line_type.h
         scripts/formating/line_node.c
         scripts/formating/line_node.h
+        scripts/instruction/instruction.c
+        scripts/instruction/instruction.h
+        scripts/instruction/instruction_node.c
+        scripts/instruction/instruction_node.h
+        scripts/instruction/symbol_table.c
+        scripts/instruction/symbol_table.h
+        scripts/instruction/symbol_node.c
+        scripts/instruction/symbol_node.h
 )
