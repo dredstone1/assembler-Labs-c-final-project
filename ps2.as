@@ -2,7 +2,7 @@ MAIN: add r3, LIST
     LOOP: prn #48
     macr    m_macr
 cmp r3, #-6
-bne ENDq
+bne ENDqo
 endmacr
 m_macr
 lea STR, r6

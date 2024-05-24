@@ -2,8 +2,8 @@
 #define MMN14_MACRO_H
 
 #include <stdlib.h>
-#include "line.h"
-#include "../systems/error.h"
+#include "../../data/line.h"
+#include "../../systems/error.h"
 
 #define MACRO "macr"
 #define END_MACRO "endmacr"

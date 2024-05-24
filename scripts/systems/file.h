@@ -3,15 +3,12 @@
 
 #include "../data/boolean.h"
 #include "error.h"
-#include "../formating/macro.h"
-#include "../formating/line.h"
+#include "../data/line.h"
 
 typedef struct file{
     line_node *first_line;
-    int number_of_rows;
+    int *number_of_rows;
     char *filename;
-    bool ext;
-    bool ent;
 } file;
 
 void read_file(file *file1, error *error);
