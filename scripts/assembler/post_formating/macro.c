@@ -3,7 +3,6 @@
 
 bool is_ending_macro(const char line[]);
 bool extra_char_at_end(const char line[], int loc);
-
 bool is_line_macro(const char line[]){
     return strcmp(line, MACRO)==FALSE;
 }
@@ -62,12 +61,12 @@ macro* get_macro_from_name(macros *macros, line_node *node){
     char word[LINE_SIZE];
 
     skip_spaces_and_tags(&k, node->line_text.content);
-    get_next_word(word, &k, node->line_text.content, " \t\0", 23);
+    get_next_word(word, &k, node->line_text.content, " \t\0", 3, TRUE);
 
     if (extra_char_at_end(node->line_text.content, k)==TRUE)
         return NULL;
 
-    for (i = 0; i < macros->number_of_macros; i++) {
+    for (i = 0; macros->number_of_macros > i; i++) {
         if (strcmp(word, macros->macro[i].macro_name)==FALSE)
             return &macros->macro[i];
     }
@@ -105,10 +104,10 @@ void handle_macros(line_node **first_file_node,int *number_of_rows, macros *macr
 
     while (*node != NULL) {
         offset=0;
-        get_next_word_n_skip(word, &offset, (*node)->line_text.content, " \t\0", 3);
+        get_next_word_n_skip(word, &offset, (*node)->line_text.content, " \t\0", 3, TRUE);
 
         if (is_line_macro(word)==TRUE) {
-            get_next_word(word, &offset, (*node)->line_text.content, " \t\0", 3);
+            get_next_word(word, &offset, (*node)->line_text.content, " \t\0", 3, TRUE);
             add_macro(word, read_macro_lines(node), macros);
             number_of_rows -= macros->macro[macros->number_of_macros - 1].number_of_macro_lines + 2;
             offset_line_node_by(*node, -(macros->macro[macros->number_of_macros - 1].number_of_macro_lines+2));

@@ -1,24 +1,24 @@
-MAIN: add r3, LIST--->1
-    LOOP: prn #48--->2
-m_macr--->3
-lea STR, r6--->4
-inc r6--->5
-mov *r6,K--->6
-k--->7
-l--->8
-sub r1, r4--->9
-m_macr--->10
-m_macr--->11
-m_macr--->12
-dec K--->14
-jmp LOOP--->15
-END: stop--->16
-STR:  .string "abcd"--->17
-LIST: .data 6, -9--->18
-.data -100--->19
-K: .data 31vdp--->20
-test--->21
-ieee--->22
-p--->23
- e;re34r2ewa--->24
- eee--->25
+.entry LIST--->1
+.extern fn1--->2
+MAIN:  add r3, LIST--->3
+   jsr fn1--->4
+LOOP: prn #48--->5
+        lea STR, r6--->6
+        cmp r3, #-6--->7
+        bne END--->8
+        inc r6--->9
+        mov *r6, L3--->10
+        sub r1, r4--->11
+        cmp r3, #-6--->12
+        bne END--->13
+        add r7, *r6--->14
+        clr K--->15
+        sub L3, L3--->16
+.entry MAIN--->17
+        jmp LOOP--->18
+END:     stop--->19
+STR:    .string "abcd"--->20
+LIST:   .data 6, -9--->21
+.data   -100--->22
+K:      .data 31--->23
+.extern L3--->24

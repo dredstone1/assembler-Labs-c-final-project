@@ -1,35 +1,27 @@
-MAIN: add r3, LIST
-    LOOP: prn #48
-    macr    m_macr
-cmp r3, #-6
-bne ENDqo
+.entry LIST
+.extern fn1
+MAIN:  add r3, LIST
+   jsr fn1
+LOOP: prn #48
+macr m_macr
+        cmp r3, #-6
+        bne END
 endmacr
-m_macr
-lea STR, r6
-inc r6
-mov *r6,K
-k
-l
-sub r1, r4
-m_macr
-m_macr
-m_macr
-
-dec K
-jmp LOOP
-END: stop
-macr test
-cmp r3, #-6s
-bne END44
-endmacr
-STR:  .string "abcd"
-LIST: .data 6, -9
-.data -100
-K: .data 31vdp
-test
-ieee
-p
- e;re34r2ewa
- eee
-
-
+        lea STR, r6
+        m_macr
+        inc r6
+        mov *r6, L3
+        sub r1, r4
+        cmp r3, #-6
+        bne END
+        add r7, *r6
+        clr K
+        sub L3, L3
+.entry MAIN
+        jmp LOOP
+END:     stop
+STR:    .string "abcd"
+LIST:   .data 6, -9
+.data   -100
+K:      .data 31
+.extern L3

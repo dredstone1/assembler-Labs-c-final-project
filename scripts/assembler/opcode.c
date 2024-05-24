@@ -1,30 +1,37 @@
 #include "opcode.h"
 #include <string.h>
-
+#include <stdio.h>
 const char *opcode_names[] = {
-        "MOV",
-        "CMP",
-        "ADD",
-        "SUB",
-        "LEA",
-        "CLR",
-        "NOT",
-        "INC",
-        "DEC",
-        "JMP",
-        "BNE",
-        "RED",
-        "PRN",
-        "JSR",
-        "RTS",
-        "STOP"
+        "mov",
+        "cmp",
+        "add",
+        "sub",
+        "lea",
+        "clr",
+        "not",
+        "inc",
+        "dec",
+        "jmp",
+        "bne",
+        "red",
+        "prn",
+        "jsr",
+        "rts",
+        "stop"
 };
 
-opcode get_opcode_from_string(const char* str) {
-    for (int i = 0; i < sizeof(opcode_names) / sizeof(opcode_names[0]); i++) {
-        if (strcmp(str, opcode_names[i]) == 0)
-            return (opcode)i; // Cast to opcode enum
+opcode get_opcode_from_string(const char *str) {
+    opcode code = MOV;
+    for (; code <= STOP; code++) {
+        if (strcmp(str, opcode_names[code]) == 0) {
+            return code;
+        }
     }
-
-    return -1; // Invalid opcode
+/*
+    printf("comparing %s to %s\n", str, opcode_names[code-1]);
+*/
+    return -1; // Or handle invalid opcodes differently
 }
+
+
+

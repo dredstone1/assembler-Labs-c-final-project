@@ -1,7 +1,9 @@
 #include "first_pass.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include "words_block.h"
 #include "../symbol/symbol.h"
+#include "../line_data.h"
 
 void format_line(char line[LINE_SIZE], word_list_block *word_block);
 
@@ -20,17 +22,25 @@ void first_pass(file *file1){
 }
 
 void format_line(char line[LINE_SIZE], word_list_block *word_block){
-    int offset;
+    int offset=0;
     char *symbol;
+    line_data *data = (line_data*) malloc(sizeof(line_data));
 
     symbol = get_symbol(line, &offset);
-
+/*
+    printf("symbol: %d\n", offset);
+*/
+    line_data_set(data, offset, line);
 
 
     if (symbol != NULL) {
+/*
         printf("symbol: %s\n", symbol);
+*/
         /*add_symbol_to_symbol_table(word_block, symbol);*/
     }
+    free(symbol);
+    free(data);
 }
 
 

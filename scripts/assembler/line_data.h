@@ -28,4 +28,6 @@ typedef struct line_data{
     line_command *command;
 } line_data;
 
+void line_data_set(line_data *data, int offset, char line[]);
+
 #endif //MMN14_LINE_DATA_H

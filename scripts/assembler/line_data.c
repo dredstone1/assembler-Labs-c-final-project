@@ -1,25 +1,41 @@
 #include "line_data.h"
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
-line_command* line_command_set(int offset, char line[]);
+line_command* line_command_set(int offset, char line[], char first_word[]);
 
 void line_data_set(line_data *data, int offset, char line[]){
     char word[LINE_SIZE];
-    get_next_word_n_skip(word, &offset, line, " \t\0", 2);
+    get_next_word_n_skip(word, &offset, line, " \t\0", 3,FALSE);
+/*
+    printf("word: %d <-> %s\n", word[0], line);
+*/
     if (word[0] == '.') {
-        data->command = line_command_set(offset, line);
+
     }
     else{
+        data->command = line_command_set(offset, line, word);
 
     }
 }
 
-line_command* line_command_set(int offset, char line[]){
-    line_command *command = (line_command*)malloc(sizeof(line_command));
+line_command* line_command_set(int offset, char line[], char first_word[LINE_SIZE]) {
     char word[LINE_SIZE];
-    get_next_word_n_skip(word, &offset, line, " \t\0", 2);
+    strcpy(word, first_word);
+
+    line_command *command = (line_command*)malloc(sizeof(line_command));
+    if (command == NULL) {
+        /*error, memory allocation failed*/
+        return NULL;
+    }
 
     command->opcode = get_opcode_from_string(word);
+    if (command->opcode == -1) {
+        /*error, command not found*/
+        return NULL;
+    }
+
     return command;
 }
 

@@ -29,7 +29,7 @@ void read_file(file *file1, error *error) {
             continue;
 
         i=0;
-        get_next_word(word_temp, &i, word, "\r\n", 2);
+        get_next_word(word_temp, &i, word, "\r\n", 2, TRUE);
         word_temp[i]= '\0';
         if (file1->number_of_rows>0)
             last_line = last_line->next = create_line_node(NULL);
