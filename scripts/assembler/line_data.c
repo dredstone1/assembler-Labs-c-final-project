@@ -54,5 +54,6 @@ line_command* line_command_set(int offset, char line[], char first_word[]) {
         return NULL;
     }
 
+
     return command;
 }

@@ -46,4 +46,6 @@ add_executable(mmn14
         scripts/assembler/opcode.h
         scripts/assembler/directive.c
         scripts/assembler/directive.h
+        scripts/assembler/operands/variables.c
+        scripts/assembler/operands/variables.h
 )
