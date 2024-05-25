@@ -59,7 +59,7 @@ macro* get_macro_from_name(macros *macros, line_node *node){
     int i,k=0;
     char word[LINE_SIZE];
 
-    skip_spaces_and_tags(&k, node->line_text.content);
+    skip_spaces_and_tabs(&k, node->line_text.content);
     get_next_word(word, &k, node->line_text.content, " \t\0", 3, TRUE);
 
     if (extra_char_at_end(node->line_text.content, k)==TRUE)

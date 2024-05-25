@@ -3,7 +3,7 @@
 
 bool is_char_separator(char c, char separators[], int separators_amount);
 
-void skip_spaces_and_tags(int *offset, char line[]){
+void skip_spaces_and_tabs(int *offset, char line[]){
     while (line[*offset] == ' ' || line[*offset] == '\t')
         (*offset)++;
 }
@@ -22,9 +22,9 @@ void get_next_word(char line_text[], int *offset, char line[], char separators[]
 }
 
 void get_next_word_n_skip(char line_text[], int *offset, char line[], char separators[], int separators_amount, bool set_offset){
-    skip_spaces_and_tags(offset, line);
+    skip_spaces_and_tabs(offset, line);
     get_next_word(line_text, offset, line, separators, separators_amount, set_offset);
-    skip_spaces_and_tags(offset, line);
+    skip_spaces_and_tabs(offset, line);
 }
 
 bool is_char_separator(char c, char separators[], int separators_amount) {

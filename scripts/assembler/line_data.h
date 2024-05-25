@@ -13,8 +13,7 @@ typedef struct line_directive{
 
 typedef struct line_command{
     opcode opcode;
-    char variable_src[LINE_SIZE];
-    char variable_tar[LINE_SIZE];
+    int variables[2];
 } line_command;
 
 typedef struct line_data{

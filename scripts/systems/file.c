@@ -23,7 +23,7 @@ void read_file(file *file1, error *error) {
 
     while (fgets(word, sizeof(char)*LINE_SIZE, files) != NULL) {
         i=0;
-        skip_spaces_and_tags(&i, word);
+        skip_spaces_and_tabs(&i, word);
         line_number++;
         if (word[i] == ';' || word[i] == '\n')
             continue;

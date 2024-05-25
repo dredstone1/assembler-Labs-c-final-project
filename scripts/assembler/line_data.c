@@ -5,6 +5,8 @@
 
 line_command* line_command_set(int offset, char line[], char first_word[]);
 line_directive* line_directive_set(int offset, char line[], char first_word[]);
+void handle_variables_command(int offset, char line[], line_command *command);
+int get_next_variable(int *offset, char line[]);
 
 void line_data_set(line_data *data, int offset, char line[]){
     char word[LINE_SIZE];
@@ -54,7 +56,27 @@ line_command* line_command_set(int offset, char line[], char first_word[]) {
         return NULL;
     }
 
-
+    handle_variables_command(offset, line, command);
 
     return command;
+}
+
+void handle_variables_command(int offset, char line[], line_command *command){
+    int amount_of_variable = amount_of_variables_from_opcode(command->opcode), i;
+
+    for (i=0; i<amount_of_variable; i++){
+        command->variables[i] = get_next_variable(&offset, line);
+    }
+}
+
+int get_next_variable(int *offset, char line[]){
+    int variable;
+
+}
+
+bool is_separator_between(char line[], int *offset, char separator, char){
+    int i;
+    skip_spaces_and_tabs(offset, line);
+
+    return FALSE;
 }
