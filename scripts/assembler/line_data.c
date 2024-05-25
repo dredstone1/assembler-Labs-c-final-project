@@ -2,6 +2,7 @@
 #include "directive.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 line_command* line_command_set(int offset, char line[], char first_word[]);
 line_directive* line_directive_set(int offset, char line[], char first_word[]);
@@ -13,7 +14,7 @@ bool is_register(char word[]);
 
 void line_data_set(line_data *data, int offset, char line[]){
     char word[LINE_SIZE];
-    get_next_word_n_skip(word, &offset, line, " \t\0", 3,FALSE);
+    get_next_word_n_skip(word, &offset, line, " \t\0", 3);
 
     if (word[0] == '.') {
         data->directive = line_directive_set(offset, line, word);
@@ -69,14 +70,15 @@ void handle_variables_command(int offset, char line[], line_command *command){
     for (i=0; i<amount_of_variable; i++){
         command->variables[i] = get_next_variable(&offset, line);
     }
+    printf("variable: %d\n", command->variables[0].value);
 }
 
 variable get_next_variable(int *offset, char line[]){
     variable variable;
     char word[LINE_SIZE];
 
-    get_next_word(word, offset, line, " ,\t\0", 5, TRUE);
-
+    get_next_word_n_skip(word, offset, line, " ,\t\0", 4);
+    printf("offset: %d\n", *offset);
     if (word[0] == '#') {
         word[0] = 0;
         variable.value = get_number(word);
@@ -85,12 +87,15 @@ variable get_next_variable(int *offset, char line[]){
     if (is_register(word)) {
         if (word[0]=='*') {
             variable.type = REGISTER_INDIRECT;
+            word[0] = '0';
+            word[1] = '0';
         }
         else {
             variable.type = REGISTER_DIRECT;
+            word[0] = '0';
         }
-        word[0] = '0';
-        word[1] = '0';
+
+
         variable.value = atoi(word);
     }
     else {

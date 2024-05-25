@@ -8,7 +8,7 @@ void skip_spaces_and_tabs(int *offset, char line[]){
         (*offset)++;
 }
 
-void get_next_word(char line_text[], int *offset, char line[], char separators[], int separators_amount, bool set_offset){
+void get_next_word(char line_text[], int *offset, char line[], char separators[], int separators_amount){
     int i = 0;
 
     while (is_char_separator(line[i+*offset], separators, separators_amount)==FALSE) {
@@ -17,13 +17,12 @@ void get_next_word(char line_text[], int *offset, char line[], char separators[]
     }
 
     line_text[i] = '\0';
-    if (set_offset == TRUE)
-        *offset += i;
+    *offset += i;
 }
 
-void get_next_word_n_skip(char line_text[], int *offset, char line[], char separators[], int separators_amount, bool set_offset){
+void get_next_word_n_skip(char line_text[], int *offset, char line[], char separators[], int separators_amount){
     skip_spaces_and_tabs(offset, line);
-    get_next_word(line_text, offset, line, separators, separators_amount, set_offset);
+    get_next_word(line_text, offset, line, separators, separators_amount);
     skip_spaces_and_tabs(offset, line);
 }
 

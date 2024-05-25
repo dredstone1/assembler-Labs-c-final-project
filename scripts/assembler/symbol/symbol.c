@@ -8,7 +8,7 @@ char* get_symbol(char line[], int *offset) {
     int i=0;
     char *symbol = malloc(sizeof(char) * LINE_SIZE);
 
-    get_next_word_n_skip(symbol, &i, line, " :\t \0", 4, TRUE);
+    get_next_word_n_skip(symbol, &i, line, " :\t \0", 4);
     if(line[i] != ':')
         return NULL;
 
