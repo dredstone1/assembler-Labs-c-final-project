@@ -4,16 +4,10 @@
 #include "../data/line.h"
 #include "symbol/symbol_node.h"
 #include "opcode.h"
-
-typedef enum line_directive_type{
-    DATA,
-    STRING,
-    ENTRY,
-    EXTERN
-} line_directive_type;
+#include "directive.h"
 
 typedef struct line_directive{
-    line_directive_type type;
+    directive_type type;
     int variables[];
 } line_directive;
 

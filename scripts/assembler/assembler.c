@@ -6,5 +6,6 @@ void assembler(file file){
     post_formating(&file);
     first_pass(&file);
 
+
     free_file_lines(&file);
 }

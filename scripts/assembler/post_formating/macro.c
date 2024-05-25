@@ -48,7 +48,6 @@ void free_macros(macros *macros) {
 
 bool is_ending_macro(const char line[]){
     int i;
-
     for (i = 0; 7 > i; i++)
         if (line[i] != END_MACRO[i])
             return FALSE;

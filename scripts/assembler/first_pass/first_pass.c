@@ -27,16 +27,11 @@ void format_line(char line[LINE_SIZE], word_list_block *word_block){
     line_data *data = (line_data*) malloc(sizeof(line_data));
 
     symbol = get_symbol(line, &offset);
-/*
-    printf("symbol: %d\n", offset);
-*/
+
     line_data_set(data, offset, line);
 
 
     if (symbol != NULL) {
-/*
-        printf("symbol: %s\n", symbol);
-*/
         /*add_symbol_to_symbol_table(word_block, symbol);*/
     }
     free(symbol);

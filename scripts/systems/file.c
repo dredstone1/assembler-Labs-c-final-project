@@ -55,7 +55,7 @@ void write_to_file_file(file file, char file_name[]){
     FILE *file1 = fopen(file_name, "w");
 
     while (node!=NULL){
-        fprintf(file1, "%s--->%d", node->line_text.content, node->line_number);
+        fprintf(file1, "%s", node->line_text.content);
         if(node->next!=NULL)
             fprintf(file1, "\n");
 

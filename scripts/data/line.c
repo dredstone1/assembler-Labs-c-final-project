@@ -4,7 +4,6 @@
 bool is_char_separator(char c, char separators[], int separators_amount);
 
 void skip_spaces_and_tags(int *offset, char line[]){
-
     while (line[*offset] == ' ' || line[*offset] == '\t')
         (*offset)++;
 }

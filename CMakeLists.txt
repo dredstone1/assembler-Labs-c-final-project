@@ -20,8 +20,6 @@ add_executable(mmn14
         scripts/assembler/post_formating/macro.h
         scripts/data/line.c
         scripts/data/line.h
-        scripts/assembler/directive_line_type.c
-        scripts/assembler/directive_line_type.h
         scripts/octal_translator.c
         scripts/octal_translator.h
         scripts/data/line_node.c
@@ -46,4 +44,6 @@ add_executable(mmn14
         scripts/assembler/symbol/symbol.h
         scripts/assembler/opcode.c
         scripts/assembler/opcode.h
+        scripts/assembler/directive.c
+        scripts/assembler/directive.h
 )
