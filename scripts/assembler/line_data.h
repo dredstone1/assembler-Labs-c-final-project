@@ -6,6 +6,13 @@
 #include "opcode.h"
 #include "directive.h"
 
+typedef enum variable_type{
+    IMMEDIATE,
+    DIRECT,
+    REGISTER_INDIRECT,
+    REGISTER_DIRECT
+} variable_type;
+
 typedef struct line_directive{
     directive_type type;
     int variables[];
@@ -13,12 +20,13 @@ typedef struct line_directive{
 
 typedef struct variable{
     int value;
-    int type;
+    variable_type type;
+    char symbol[MAX_SYMBOL_SIZE];
 } variable;
 
 typedef struct line_command{
     opcode opcode;
-    int variables[2];
+    variable variables[2];
 } line_command;
 
 typedef struct line_data{

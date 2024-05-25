@@ -6,7 +6,10 @@
 line_command* line_command_set(int offset, char line[], char first_word[]);
 line_directive* line_directive_set(int offset, char line[], char first_word[]);
 void handle_variables_command(int offset, char line[], line_command *command);
-int get_next_variable(int *offset, char line[]);
+variable get_next_variable(int *offset, char line[]);
+bool is_number(char word[]);
+int get_number(char word[]);
+bool is_register(char word[]);
 
 void line_data_set(line_data *data, int offset, char line[]){
     char word[LINE_SIZE];
@@ -17,7 +20,6 @@ void line_data_set(line_data *data, int offset, char line[]){
     }
     else{
         data->command = line_command_set(offset, line, word);
-
     }
 }
 
@@ -70,28 +72,60 @@ void handle_variables_command(int offset, char line[], line_command *command){
 }
 
 variable get_next_variable(int *offset, char line[]){
-    int variable;
+    variable variable;
     char word[LINE_SIZE];
+
     get_next_word(word, offset, line, " ,\t\0", 5, TRUE);
-    get_variable_from_string(word);
-}
 
-variable get_variable_from_string(char word[]) {
     if (word[0] == '#') {
-
+        word[0] = 0;
+        variable.value = get_number(word);
+        variable.type = IMMEDIATE;
     }
-    if (word[0] == '*') {
-
+    if (is_register(word)) {
+        if (word[0]=='*') {
+            variable.type = REGISTER_INDIRECT;
+        }
+        else {
+            variable.type = REGISTER_DIRECT;
+        }
+        word[0] = '0';
+        word[1] = '0';
+        variable.value = atoi(word);
     }
+    else {
+        variable.type = DIRECT;
+        strcpy(variable.symbol, word);
+    }
+    return variable;
 }
 
-int get_register_code_from_string(char word[]){
-    if (word[0] == 'r' && word[1] >= '0' && word[1] <= '7') {
-        return word[1] - '0';
+bool is_register(char word[]) {
+    if (word[0] == 'r' && word[1] >= '0' && word[1] <= '7' && word[2] == '\0')
+        return TRUE;
+
+    return FALSE;
+}
+
+int get_number(char word[]){
+    if (is_number(word)==FALSE)
+        return 0;
+
+    return atoi(word);
+}
+
+
+bool is_number(char word[]){
+    int i;
+    for (i=0; word[i] != '\0'; i++){
+        if ((word[i] >= '0' && word[i] <= '9') || word[i] == '-'|| word[i] == '+')
+            continue;
+        return FALSE;
     }
 
-    return -1;
+    return TRUE;
 }
+
 
 bool is_separator_between(char line[], int *offset, char separator){
     skip_spaces_and_tabs(offset, line);
