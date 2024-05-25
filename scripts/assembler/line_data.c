@@ -69,14 +69,36 @@ void handle_variables_command(int offset, char line[], line_command *command){
     }
 }
 
-int get_next_variable(int *offset, char line[]){
+variable get_next_variable(int *offset, char line[]){
     int variable;
-
+    char word[LINE_SIZE];
+    get_next_word(word, offset, line, " ,\t\0", 5, TRUE);
+    get_variable_from_string(word);
 }
 
-bool is_separator_between(char line[], int *offset, char separator, char){
-    int i;
+variable get_variable_from_string(char word[]) {
+    if (word[0] == '#') {
+
+    }
+    if (word[0] == '*') {
+
+    }
+}
+
+int get_register_code_from_string(char word[]){
+    if (word[0] == 'r' && word[1] >= '0' && word[1] <= '7') {
+        return word[1] - '0';
+    }
+
+    return -1;
+}
+
+bool is_separator_between(char line[], int *offset, char separator){
     skip_spaces_and_tabs(offset, line);
+    if (line[*offset] == separator){
+        skip_spaces_and_tabs(offset, line);
+        return TRUE;
+    }
 
     return FALSE;
 }

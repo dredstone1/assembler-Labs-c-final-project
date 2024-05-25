@@ -11,6 +11,11 @@ typedef struct line_directive{
     int variables[];
 } line_directive;
 
+typedef struct variable{
+    int value;
+    int type;
+} variable;
+
 typedef struct line_command{
     opcode opcode;
     int variables[2];
