@@ -8,6 +8,19 @@ void skip_spaces_and_tabs(int *offset, char line[]){
         (*offset)++;
 }
 
+int count_char_until_not_separator(char line[], char c, int *offset, char separators[], int separators_amount){
+    int count = 0;
+    int i = 0;
+
+    while (is_char_separator(line[*offset + i], separators, separators_amount)==TRUE){
+        if (line[*offset + i] == c)
+            count++;
+        (*offset)++;
+    }
+
+    return count;
+}
+
 void get_next_word(char line_text[], int *offset, char line[], char separators[], int separators_amount){
     int i = 0;
 

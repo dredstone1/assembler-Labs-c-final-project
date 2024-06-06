@@ -9,4 +9,6 @@ typedef struct symbol_table{
     int amount_of_symbols;
 } symbol_table;
 
-#endif //MMN14_SYMBOL_TABLE_H
+void add_symbol_to_symbol_table(symbol_table *table, symbol_node *node);
+
+#endif

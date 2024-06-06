@@ -6,6 +6,8 @@
 #include "opcode.h"
 #include "directive.h"
 
+#define MAX_LIST_SIZE 77 /*80 - 3 = MAX_LINE_SIZE - MIN_DIRECTIVE_TYPE_NAME*/
+
 typedef enum variable_type{
     IMMEDIATE,
     DIRECT,
@@ -13,16 +15,17 @@ typedef enum variable_type{
     REGISTER_DIRECT
 } variable_type;
 
-typedef struct line_directive{
-    directive_type type;
-    int variables[];
-} line_directive;
-
 typedef struct variable{
     int value;
     variable_type type;
     char symbol[MAX_SYMBOL_SIZE];
 } variable;
+
+typedef struct line_directive{
+    directive_type type;
+    int variables[MAX_LIST_SIZE];
+    variable variable;
+} line_directive;
 
 typedef struct line_command{
     opcode opcode;

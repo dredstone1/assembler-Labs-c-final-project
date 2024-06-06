@@ -1,6 +1,6 @@
-.entry LIST
-.extern fn1
-MAIN:  add r3 , LIST
+LIST:   .data 6, -9
+
+MAIN:  add *r3 ,  r3
    jsr fn1
 LOOP: prn #48
 macr m_macr

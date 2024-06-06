@@ -11,6 +11,9 @@ variable get_next_variable(int *offset, char line[]);
 bool is_number(char word[]);
 int get_number(char word[]);
 bool is_register(char word[]);
+void handle_variables_directive(int offset, char line[], line_directive *directive);
+void handle_variables_string(char line[], int *offset, int variables[]);
+void handle_variables_data(char line[], int *offset, int variables[]);
 
 void line_data_set(line_data *data, int offset, char line[]){
     char word[LINE_SIZE];
@@ -39,9 +42,68 @@ line_directive* line_directive_set(int offset, char line[], char first_word[]){
         /*error, command not found*/
         return NULL;
     }
+    handle_variables_directive(offset, line, directive);
+
 
     return directive;
 }
+
+void handle_variables_directive(int offset, char line[], line_directive *directive){
+    if (directive->type == ENTRY || directive->type == EXTERN) {
+        directive->variable = get_next_variable(&offset, line);
+        return;
+    } else{
+
+    }
+}
+
+void set_variables_list(int offset, char line[], line_directive *directive){
+    if (directive->type == DATA) {
+        handle_variables_data(line, &offset, directive->variables);
+    }
+    else{
+        handle_variables_string(line, &offset, directive->variables);
+    }
+}
+
+void handle_variables_data(char line[], int *offset, int variables[]){
+    int i, coma_count;
+    char word[LINE_SIZE];
+
+    for (i=0; i<MAX_LIST_SIZE; i++){
+        coma_count = count_char_until_not_separator(line, ',', offset, " ,\t\0", 4);
+
+        if (i==0){
+            if (coma_count != 0) {
+                /*invalid comma error*/
+            }
+        }
+        else{
+            if (coma_count == 0) {
+                /*missing comma error*/
+            } else if (coma_count > 1) {
+                /*extra comma error*/
+            }
+        }
+
+        get_next_word_n_skip(word, offset, line, " ,\t\0", 4);
+        variables[i] = get_number(get_next_word(offset, line));
+    }
+
+}
+
+void handle_variables_string(char line[], int *offset, int variables[]){
+    int i;
+
+    for (i=0; i<MAX_LIST_SIZE; i++){
+        count_char_until_not_separator(line, ',', offset, " ,\t\0", 4);
+        variables[i] = get_number(get_next_word(offset, line));
+    }
+
+}
+
+
+
 
 line_command* line_command_set(int offset, char line[], char first_word[]) {
     char word[LINE_SIZE];
@@ -68,34 +130,30 @@ void handle_variables_command(int offset, char line[], line_command *command){
     int amount_of_variable = amount_of_variables_from_opcode(command->opcode), i;
 
     for (i=0; i<amount_of_variable; i++){
+        count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
         command->variables[i] = get_next_variable(&offset, line);
     }
-    printf("variable: %d\n", command->variables[0].value);
 }
+
 
 variable get_next_variable(int *offset, char line[]){
     variable variable;
     char word[LINE_SIZE];
-
     get_next_word_n_skip(word, offset, line, " ,\t\0", 4);
-    printf("offset: %d\n", *offset);
+
     if (word[0] == '#') {
-        word[0] = 0;
-        variable.value = get_number(word);
+        variable.value = get_number(word+1);
         variable.type = IMMEDIATE;
     }
     if (is_register(word)) {
         if (word[0]=='*') {
             variable.type = REGISTER_INDIRECT;
-            word[0] = '0';
             word[1] = '0';
         }
-        else {
+        else
             variable.type = REGISTER_DIRECT;
-            word[0] = '0';
-        }
 
-
+        word[0] = '0';
         variable.value = atoi(word);
     }
     else {
@@ -106,7 +164,11 @@ variable get_next_variable(int *offset, char line[]){
 }
 
 bool is_register(char word[]) {
-    if (word[0] == 'r' && word[1] >= '0' && word[1] <= '7' && word[2] == '\0')
+    int offset = 0;
+    if (word[0] == '*')
+        offset = 1;
+
+    if (word[offset] == 'r' && word[offset+1] >= '0' && word[offset+1] <= '7' && word[offset+2] == '\0')
         return TRUE;
 
     return FALSE;
@@ -141,3 +203,5 @@ bool is_separator_between(char line[], int *offset, char separator){
 
     return FALSE;
 }
+
+
