@@ -12,5 +12,6 @@ typedef struct word_list_block{
 
 void line_data_to_word_list_block(word_list_block *block, line_data *data);
 word_list_block* create_new_word_list_block();
+void combine_word_list_blocks(word_list_block *block1, word_list_block *block2, char line[LINE_SIZE]);
 
 #endif

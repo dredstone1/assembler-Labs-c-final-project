@@ -17,7 +17,6 @@ typedef enum variable_type{
 } variable_type;
 
 typedef struct variable{
-    bool used;
     int value;
     variable_type type;
     char symbol[MAX_SYMBOL_SIZE];
@@ -26,6 +25,7 @@ typedef struct variable{
 typedef struct line_directive{
     directive_type type;
     int variables[MAX_LIST_SIZE];
+    int amount_of_variables;
     variable variable;
 } line_directive;
 
@@ -41,4 +41,4 @@ typedef struct line_data{
 
 void line_data_set(line_data *data, int offset, char line[]);
 
-#endif //MMN14_LINE_DATA_H
+#endif
