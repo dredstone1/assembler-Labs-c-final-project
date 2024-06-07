@@ -7,6 +7,7 @@
 typedef struct word_list_block{
     word_node *head;
     word_node *tail;
+    int size;
 } word_list_block;
 
 void line_data_to_word_list_block(word_list_block *block, line_data *data);
