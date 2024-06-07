@@ -14,6 +14,7 @@ bool is_register(char word[]);
 void handle_variables_directive(int offset, char line[], line_directive *directive);
 void handle_variables_string(char line[], int *offset, int variables[]);
 void handle_variables_data(char line[], int *offset, int variables[]);
+void set_variables_list(int offset, char line[], line_directive *directive);
 
 void line_data_set(line_data *data, int offset, char line[]){
     char word[LINE_SIZE];
@@ -53,7 +54,7 @@ void handle_variables_directive(int offset, char line[], line_directive *directi
         directive->variable = get_next_variable(&offset, line);
         return;
     } else{
-
+        set_variables_list(offset, line, directive);
     }
 }
 
@@ -87,22 +88,36 @@ void handle_variables_data(char line[], int *offset, int variables[]){
         }
 
         get_next_word_n_skip(word, offset, line, " ,\t\0", 4);
-        variables[i] = get_number(get_next_word(offset, line));
+        variables[i] = get_number(word);
+        if (variables[i] == 0) {
+            break;
+        }
     }
 
 }
 
 void handle_variables_string(char line[], int *offset, int variables[]){
-    int i;
-
-    for (i=0; i<MAX_LIST_SIZE; i++){
-        count_char_until_not_separator(line, ',', offset, " ,\t\0", 4);
-        variables[i] = get_number(get_next_word(offset, line));
+    char word[LINE_SIZE];
+    skip_spaces_and_tabs(offset, line);
+    if (line[*offset] != '\"') {
+        /*missing " error*/
     }
+
+    get_next_word(word, offset, line, "\"\0", 2);
+    if (line[*offset] != '\"') {
+        /*missing " error*/
+    }
+
+    variables = (int *) word;
 
 }
 
-
+void cast_string_to_int_array(char string[], int int_array[]){
+    int i;
+    for (i=0; string[i] != '\0'; i++){
+        array[i] = string[i];
+    }
+}
 
 
 line_command* line_command_set(int offset, char line[], char first_word[]) {

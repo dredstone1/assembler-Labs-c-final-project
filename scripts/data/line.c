@@ -8,6 +8,8 @@ void skip_spaces_and_tabs(int *offset, char line[]){
         (*offset)++;
 }
 
+
+
 int count_char_until_not_separator(char line[], char c, int *offset, char separators[], int separators_amount){
     int count = 0;
     int i = 0;
