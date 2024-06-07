@@ -12,7 +12,8 @@ typedef enum variable_type{
     IMMEDIATE,
     DIRECT,
     REGISTER_INDIRECT,
-    REGISTER_DIRECT
+    REGISTER_DIRECT,
+    NONE= -1
 } variable_type;
 
 typedef struct variable{

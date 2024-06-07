@@ -1,4 +1,4 @@
-MAIN: add r3, LIST
+MAIN: sub r1, r4
 LIST:   .data 6, -9
 
 MAIN:  add *r3 ,  r3

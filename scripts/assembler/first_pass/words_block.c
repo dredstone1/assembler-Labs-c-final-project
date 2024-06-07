@@ -32,7 +32,6 @@ void line_data_to_word_list_block(word_list_block *block, line_data *data){
 }
 
 void handle_command_type(word_list_block *block, line_data *data){
-    printf("Handling command type: %d\n", get_amount_of_words_from_command(data->command));
     insert_words_nodes_into_block(block, get_amount_of_words_from_command(data->command));
     block->head->word = create_new_first_word(data);
 
@@ -53,7 +52,7 @@ word create_new_first_word(line_data *data){
 }
 
 void handle_operands_command(line_command *command, word_list_block *block){
-    word_node *current_node = block->head;
+    word_node *current_node = block->head->next;
     int i = 0;
 
     while (current_node != NULL) {
@@ -66,10 +65,10 @@ void handle_operands_command(line_command *command, word_list_block *block){
             if (i==0)
                 insert_operand_into_word(&current_node->word, command->variables[i].value);
             else
-                insert_operand_into_word(&current_node->word, command->variables[i].value<<operand_bit_size);
+                insert_operand_into_word(&current_node->word, command->variables[i].value<<operand_bit_shift);
 
             if (current_node->next == NULL) {
-                insert_operand_into_word(&current_node->word, command->variables[i + 1].value<<operand_bit_size);
+                insert_operand_into_word(&current_node->word, command->variables[i + 1].value<<operand_bit_shift);
                 set_ARE_into_word(&current_node->word, A);
             }
 
@@ -84,10 +83,8 @@ void handle_operands_command(line_command *command, word_list_block *block){
 int get_amount_of_words_from_command(line_command *command){
     int amount = 1;
     amount += amount_of_variables_from_opcode(command->opcode);
-
     if (command->variables[0].type>1 && command->variables[1].type >1)
         amount--;
-
     return amount;
 }
 

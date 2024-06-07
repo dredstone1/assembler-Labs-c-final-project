@@ -138,14 +138,10 @@ line_command* line_command_set(int offset, char line[], char first_word[]) {
 
 void handle_variables_command(int offset, char line[], line_command *command){
     int amount_of_variable = amount_of_variables_from_opcode(command->opcode), i;
-    printf("amount_of_variable: %d\n", amount_of_variable);
-    command->variables[0].type = -1;
-    command->variables[1].type = -1;
-    printf("command->variables[0].type: %d\n", command->variables[0].type);
+    command->variables[0].type = command->variables[1].type = NONE;
 
     for (i=0; i<amount_of_variable; i++){
         count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
-
         command->variables[(amount_of_variable-1)-i] = get_next_variable(&offset, line);
     }
 }

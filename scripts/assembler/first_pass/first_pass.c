@@ -34,7 +34,6 @@ void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block,
 
     line_data_to_word_list_block(current_line_word_block, &data);
 
-
     if (symbol != NULL) {
 /*
         add_symbol_to_symbol_table(table, create_symbol_node(symbol, data->address));
