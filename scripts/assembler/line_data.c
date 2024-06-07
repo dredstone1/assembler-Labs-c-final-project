@@ -15,6 +15,7 @@ void handle_variables_directive(int offset, char line[], line_directive *directi
 void handle_variables_string(char line[], int *offset, int variables[]);
 void handle_variables_data(char line[], int *offset, int variables[]);
 void set_variables_list(int offset, char line[], line_directive *directive);
+void cast_string_to_int_array(char string[], int int_array[]);
 
 void line_data_set(line_data *data, int offset, char line[]){
     char word[LINE_SIZE];
@@ -107,16 +108,17 @@ void handle_variables_string(char line[], int *offset, int variables[]){
     if (line[*offset] != '\"') {
         /*missing " error*/
     }
-
-    variables = (int *) word;
-
+    cast_string_to_int_array(word, variables);
 }
 
 void cast_string_to_int_array(char string[], int int_array[]){
-    int i;
-    for (i=0; string[i] != '\0'; i++){
-        array[i] = string[i];
+    int i = 0;
+
+    do {
+        int_array[i] = string[i];
+        i++;
     }
+    while (string[i] != '\0');
 }
 
 
@@ -207,16 +209,3 @@ bool is_number(char word[]){
 
     return TRUE;
 }
-
-
-bool is_separator_between(char line[], int *offset, char separator){
-    skip_spaces_and_tabs(offset, line);
-    if (line[*offset] == separator){
-        skip_spaces_and_tabs(offset, line);
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
-
