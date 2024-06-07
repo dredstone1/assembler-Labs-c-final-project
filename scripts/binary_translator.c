@@ -46,6 +46,7 @@ int array_of_int_to_binaryINT(int list[], int size_of_list){
     return binary;
 }
 
+
 /* Function to translate a word into binary format *//*
 void translate_to_binary(char *word) {
     // Calculate the length of the word

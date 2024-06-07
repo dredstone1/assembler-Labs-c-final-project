@@ -28,4 +28,4 @@ typedef enum opcode{
 int amount_of_variables_from_opcode(opcode code);
 opcode get_opcode_from_string(const char* str);
 
-#endif //MMN14_OPCODE_H
+#endif

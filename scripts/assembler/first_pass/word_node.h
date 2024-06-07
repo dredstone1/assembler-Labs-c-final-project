@@ -4,8 +4,10 @@
 #include "word.h"
 
 typedef struct word_node{
-    word *word;
+    word word;
     struct word_node *next;
 } word_node;
 
-#endif //MMN14_WORD_NODE_H
+word_node* create_new_word_node(word word);
+
+#endif

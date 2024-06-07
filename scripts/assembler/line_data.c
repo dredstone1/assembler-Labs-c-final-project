@@ -2,7 +2,6 @@
 #include "directive.h"
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 line_command* line_command_set(int offset, char line[], char first_word[]);
 line_directive* line_directive_set(int offset, char line[], char first_word[]);
@@ -21,12 +20,10 @@ void line_data_set(line_data *data, int offset, char line[]){
     char word[LINE_SIZE];
     get_next_word_n_skip(word, &offset, line, " \t\0", 3);
 
-    if (word[0] == '.') {
+    if (word[0] == '.')
         data->directive = line_directive_set(offset, line, word);
-    }
-    else{
+    else
         data->command = line_command_set(offset, line, word);
-    }
 }
 
 line_directive* line_directive_set(int offset, char line[], char first_word[]){
@@ -51,21 +48,18 @@ line_directive* line_directive_set(int offset, char line[], char first_word[]){
 }
 
 void handle_variables_directive(int offset, char line[], line_directive *directive){
-    if (directive->type == ENTRY || directive->type == EXTERN) {
+    if (directive->type == ENTRY || directive->type == EXTERN)
         directive->variable = get_next_variable(&offset, line);
-        return;
-    } else{
+    else
         set_variables_list(offset, line, directive);
-    }
 }
 
 void set_variables_list(int offset, char line[], line_directive *directive){
-    if (directive->type == DATA) {
+    if (directive->type == DATA)
         handle_variables_data(line, &offset, directive->variables);
-    }
-    else{
+
+    else
         handle_variables_string(line, &offset, directive->variables);
-    }
 }
 
 void handle_variables_data(char line[], int *offset, int variables[]){
@@ -103,7 +97,7 @@ void handle_variables_string(char line[], int *offset, int variables[]){
     if (line[*offset] != '\"') {
         /*missing " error*/
     }
-
+    (*offset)++;
     get_next_word(word, offset, line, "\"\0", 2);
     if (line[*offset] != '\"') {
         /*missing " error*/
@@ -114,11 +108,9 @@ void handle_variables_string(char line[], int *offset, int variables[]){
 void cast_string_to_int_array(char string[], int int_array[]){
     int i = 0;
 
-    do {
+    do
         int_array[i] = string[i];
-        i++;
-    }
-    while (string[i] != '\0');
+    while (string[i++] != '\0');
 }
 
 
@@ -148,7 +140,8 @@ void handle_variables_command(int offset, char line[], line_command *command){
 
     for (i=0; i<amount_of_variable; i++){
         count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
-        command->variables[i] = get_next_variable(&offset, line);
+
+        command->variables[(amount_of_variable-1)-i] = get_next_variable(&offset, line);
     }
 }
 

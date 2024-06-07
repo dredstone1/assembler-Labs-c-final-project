@@ -3,5 +3,5 @@
 
 int int_to_octal(int num);
 
-#endif //MMN14_OCTAL_TRANSLATOR_H
+#endif
 

@@ -10,26 +10,29 @@ void format_line(char line[LINE_SIZE], word_list_block *word_block, symbol_table
 
 void first_pass(file *file1){
     line_node *current_line = file1->first_line;
-    word_list_block *words_block, *current_word_block;
+    word_list_block *current_line_word_block, file_code_block;
     symbol_table table;
-    word_node *current_word;
+
 
     while (current_line != NULL) {
-        current_word_block = create_word_list_block();
-        format_line(current_line->line_text.content, current_word_block, &table);
+        current_line_word_block = create_new_word_list_block();
+        format_line(current_line->line_text.content, current_line_word_block, &table);
 
         current_line = current_line->next;
     }
 }
 
-void format_line(char line[LINE_SIZE], word_list_block *word_block, symbol_table *table){
+void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block, symbol_table *table){
     int offset=0;
     char *symbol;
     line_data data;
-
+    data.directive = NULL;
+    data.command = NULL;
     symbol = get_symbol(line, &offset);
 
     line_data_set(&data, offset, line);
+
+    line_data_to_word_list_block(current_line_word_block, &data);
 
 
     if (symbol != NULL) {

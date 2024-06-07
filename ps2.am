@@ -1,3 +1,4 @@
+MAIN: add r3, LIST
 LIST:   .data 6, -9
 MAIN:  add *r3 ,  r3
    jsr fn1

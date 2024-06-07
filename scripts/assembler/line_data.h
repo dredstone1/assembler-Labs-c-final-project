@@ -16,6 +16,7 @@ typedef enum variable_type{
 } variable_type;
 
 typedef struct variable{
+    bool used;
     int value;
     variable_type type;
     char symbol[MAX_SYMBOL_SIZE];
