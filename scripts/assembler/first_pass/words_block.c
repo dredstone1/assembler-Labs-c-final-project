@@ -1,6 +1,5 @@
 #include "words_block.h"
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 
 void handle_command_type(word_list_block *block, line_data *data);
@@ -56,13 +55,13 @@ word create_new_first_word(line_data *data){
 void handle_operands_command(line_command *command, word_list_block *block){
     word_node *current_node = block->head->next;
     int i = 0;
-
     while (current_node != NULL) {
+
         if (command->variables[i].type == IMMEDIATE) {
             insert_operand_into_word(&current_node->word, command->variables[i].value);
             set_ARE_into_word(&current_node->word, A);
         } else if (command->variables[i].type == DIRECT) {
-            insert_operand_into_word(&current_node->word, command->variables[i].value);
+            insert_operand_into_word(&current_node->word, 0);
             strcpy(current_node->symbol, command->variables[i].symbol);
         } else if (command->variables[i].type == REGISTER_INDIRECT || command->variables[i].type == REGISTER_DIRECT) {
             if (i==1)
@@ -141,4 +140,27 @@ void combine_word_list_blocks(word_list_block *block1, word_list_block *block2, 
     block1->tail->next = block2->head;
     block1->tail = block2->tail;
     block1->size += block2->size;
+}
+
+void add_symbols_to_code_block(word_list_block *block, symbol_table *symbol_table) {
+    word_node *current_node = block->head;
+    symbol *symbol;
+
+    while (current_node != NULL) {
+        if (current_node->symbol[0] != '\0') {
+            symbol = get_symbol_address_from_symbol_name(symbol_table, current_node->symbol);
+            if (symbol == NULL) {
+                // error symbol not found
+                return;
+            }
+
+            insert_operand_into_word(&current_node->word, symbol->address);
+            if (symbol->type == EXTERNAL)
+                set_ARE_into_word(&current_node->word, E);
+            else
+                set_ARE_into_word(&current_node->word, R);
+        }
+
+        current_node = current_node->next;
+    }
 }

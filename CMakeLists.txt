@@ -28,8 +28,8 @@ add_executable(mmn14
         scripts/assembler/symbol/symbol_table.h
         scripts/assembler/symbol/symbol_node.c
         scripts/assembler/symbol/symbol_node.h
-        scripts/assembler/first_pass/first_pass.c
-        scripts/assembler/first_pass/first_pass.h
+        scripts/assembler/first_pass/code_translation.c
+        scripts/assembler/first_pass/code_translation.h
         scripts/assembler/assembler.c
         scripts/assembler/assembler.h
         scripts/assembler/first_pass/word_node.c

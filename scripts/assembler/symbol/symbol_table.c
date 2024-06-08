@@ -32,3 +32,15 @@ bool is_symbol_legal(symbol_table *table, char label[MAX_SYMBOL_SIZE]){
     }
     return TRUE;
 }
+
+symbol* get_symbol_address_from_symbol_name(symbol_table *table, char label[MAX_SYMBOL_SIZE]){
+    symbol_node *current_node = table->head;
+
+    while (current_node != NULL) {
+        if (current_node->symbol.type != ENTRY_ && strcmp(current_node->symbol.label, label) == 0)
+            return &current_node->symbol;
+
+        current_node = current_node->next;
+    }
+    return NULL;
+}

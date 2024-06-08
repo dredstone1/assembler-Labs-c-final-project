@@ -1,19 +1,29 @@
-#include "first_pass.h"
+#include "code_translation.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "words_block.h"
-#include "../symbol/symbol_table.h"
 #include "../../octal_translator.h"
-#include <string.h>
 
 void format_line(char line[LINE_SIZE], word_list_block *word_block, symbol_table *table, int IC);
+void first_pass(file *file1, symbol_table *table, word_list_block *file_code_block);
 
-void first_pass(file *file1){
-    line_node *current_line = file1->first_line;
-    word_list_block *current_line_word_block, *file_code_block;
-    symbol_table *table = create_symbol_table();
-    file_code_block = create_new_word_list_block();
+void translate_code(file *file1){
+    word_list_block *file_code_block = create_new_word_list_block();
     word_node *current_word;
+    symbol_table *table = create_symbol_table();
+    first_pass(file1, table, file_code_block);
+
+    add_symbols_to_code_block(file_code_block, table);
+    current_word = file_code_block->head;
+    while (current_word != NULL) {
+        printf("%d\n", int_to_octal(current_word->word));
+        current_word = current_word->next;
+    }
+}
+
+void first_pass(file *file1, symbol_table *table, word_list_block *file_code_block){
+    line_node *current_line = file1->first_line;
+    word_list_block *current_line_word_block;
     int IC = 100;
 
     while (current_line != NULL) {
@@ -25,23 +35,6 @@ void first_pass(file *file1){
         }
         current_line = current_line->next;
     }
-    current_word = file_code_block->head;
-
-    while (current_word != NULL) {
-        for (int i = 0; i < current_word->word->size; i++) {
-            printf("%d\n", current_word->word->word[i]);
-        }
-    }
-
-    current_word = file_code_block->head;
-    while (current_word != NULL) {
-        printf("%d\n", int_to_octal(current_word->word));
-        current_word = current_word->next;
-    }
-}
-
-void add_symbol_to_codes(){
-
 }
 
 void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block, symbol_table *table, int IC) {
@@ -65,41 +58,3 @@ void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block,
     }
     free(symbol);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-
-void set_line_type(line_node *node){
-    int i;
-
-    node->line_data->directive = FALSE;
-
-    for (i = node->line_data->offset; i < MAX_TAG_SIZE; i++) {
-        if (node->line_text.content[i] == ' ' || node->line_text.content[i] == '\t')
-            continue;
-        else if (node->line_text.content[i] =='.') {
-            node->line_data->directive = TRUE;
-            node->line_data->offset = i+1;
-        }
-
-        return;
-    }
-}
-*/
