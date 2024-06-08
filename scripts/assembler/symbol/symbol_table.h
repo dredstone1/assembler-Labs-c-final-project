@@ -10,5 +10,6 @@ typedef struct symbol_table{
 } symbol_table;
 
 void add_symbol_to_symbol_table(symbol_table *table, symbol_node *node);
+symbol_table *create_symbol_table();
 
 #endif

@@ -10,7 +10,6 @@ void insert_words_nodes_into_block(word_list_block *block, int amount_of_words);
 word create_new_first_word(line_data *data);
 void handle_operands_command(line_command *command, word_list_block *block);
 void handle_operands_directive_list(line_directive *directive, word_list_block *block);
-void handle_operands_directive_single(line_directive *directive, word_list_block *block);
 
 word_list_block* create_new_word_list_block(){
     word_list_block *block = (word_list_block*)malloc(sizeof(word_list_block));
@@ -85,16 +84,14 @@ void handle_operands_command(line_command *command, word_list_block *block){
 int get_amount_of_words_from_command(line_command *command){
     int amount = 1;
     amount += amount_of_variables_from_opcode(command->opcode);
-    if (command->variables[0].type>1 && command->variables[1].type >1)
+    if (command->variables[0].type>1 && command->variables[1].type>1)
         amount--;
     return amount;
 }
 
 void handle_directive_type(word_list_block *block, line_data *data){
-    if (data->directive->type == DATA || data->directive->type == STRING) {
-        insert_words_nodes_into_block(block, data->directive->amount_of_variables);
-        handle_operands_directive_list(data->directive, block);
-    }
+    insert_words_nodes_into_block(block, data->directive->amount_of_variables);
+    handle_operands_directive_list(data->directive, block);
 }
 
 void handle_operands_directive_list(line_directive *directive, word_list_block *block){
@@ -106,17 +103,6 @@ void handle_operands_directive_list(line_directive *directive, word_list_block *
         current_node = current_node->next;
     }
 }
-
-void handle_operands_directive_single(line_directive *directive, word_list_block *block){
-    word_node *current_node = block->head;
-    int i = 0;
-
-    while(current_node != NULL){
-        current_node->word = directive->variable.value;
-        current_node = current_node->next;
-    }
-}
-
 
 void insert_words_nodes_into_block(word_list_block *block, int amount_of_words){
     for (int i=0; i<amount_of_words; i++)

@@ -5,29 +5,29 @@
 #include <string.h>
 
 line_command* line_command_set(int offset, char line[], char first_word[]);
-line_directive* line_directive_set(int offset, char line[], char first_word[]);
+line_directive* line_directive_set(int offset, char line[], char first_word[], symbol symbol[]);
 void handle_variables_command(int offset, char line[], line_command *command);
 variable get_next_variable(int *offset, char line[]);
 bool is_number(char word[]);
 int get_number(char word[]);
 bool is_register(char word[]);
-void handle_variables_directive(int offset, char line[], line_directive *directive);
+void handle_variables_directive(int offset, char line[], line_directive *directive, symbol symbol[]);
 void handle_variables_string(char line[], int *offset, int variables[], int *amount_of_variables);
 void handle_variables_data(char line[], int *offset, int variables[], int *amount_of_variables);
 void set_variables_list(int offset, char line[], line_directive *directive);
 void cast_string_to_int_array(char string[], int int_array[], int *length);
 
-void line_data_set(line_data *data, int offset, char line[]){
+void line_data_set(line_data *data, int offset, char line[], symbol symbol[]){
     char word[LINE_SIZE];
     get_next_word_n_skip(word, &offset, line, " \t\0", 3);
 
     if (word[0] == '.')
-        data->directive = line_directive_set(offset, line, word);
+        data->directive = line_directive_set(offset, line, word, symbol);
     else
         data->command = line_command_set(offset, line, word);
 }
 
-line_directive* line_directive_set(int offset, char line[], char first_word[]){
+line_directive* line_directive_set(int offset, char line[], char first_word[], symbol symbol[]){
     char word[LINE_SIZE];
     strcpy(word, first_word);
 
@@ -42,15 +42,22 @@ line_directive* line_directive_set(int offset, char line[], char first_word[]){
         /*error, command not found*/
         return NULL;
     }
-    handle_variables_directive(offset, line, directive);
-
+    handle_variables_directive(offset, line, directive, symbol);
 
     return directive;
 }
 
-void handle_variables_directive(int offset, char line[], line_directive *directive){
-    if (directive->type == ENTRY || directive->type == EXTERN)
-        directive->variable = get_next_variable(&offset, line);
+void handle_variables_directive(int offset, char line[], line_directive *directive, symbol *symbol){
+    variable variable_temp;
+    if (directive->type == ENTRY_ || directive->type == EXTERNAL) {
+        if (symbol->label[0] != '\0') {
+            /*contain start_symbol in external or entry line error*/
+            return;
+        }
+        variable_temp = get_next_variable(&offset, line);
+        strcpy(symbol->label, variable_temp.symbol);
+        symbol->type = (symbol_type)directive->type;
+    }
     else
         set_variables_list(offset, line, directive);
 }

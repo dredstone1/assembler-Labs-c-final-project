@@ -3,6 +3,18 @@
 
 #define MAX_SYMBOL_SIZE 31
 
-char* get_symbol(char line[], int *offset);
+typedef enum symbol_type{
+    START = 0,
+    EXTERNAL = 3,
+    ENTRY_ = 2
+} symbol_type;
 
-#endif //MMN14_SYMBOL_H
+typedef struct symbol{
+    symbol_type type;
+    char label[MAX_SYMBOL_SIZE];
+    int address;
+} symbol;
+
+symbol* get_symbol(char line[], int *offset);
+
+#endif
