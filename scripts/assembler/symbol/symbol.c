@@ -4,7 +4,6 @@
 #include "../../data/line.h"
 #include <string.h>
 
-
 symbol* get_symbol(char line[], int *offset) {
     int i=0;
     symbol *symbol_obj = (symbol*)malloc(sizeof(symbol));

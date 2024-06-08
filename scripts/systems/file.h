@@ -17,5 +17,7 @@ void print_pos(int line, int column);
 void free_file_lines(file *file1);
 void write_to_file_file(file file);
 void write_to_file_object(word_list_block *block, char fileName[]);
+void write_to_file_entry(symbol_table *symbol_table, char fileName[]);
+void write_to_file_external(word_list_block *block, char fileName[], symbol_table *table);
 
 #endif //MMN14_FILE_H

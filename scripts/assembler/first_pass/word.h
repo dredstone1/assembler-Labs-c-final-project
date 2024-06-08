@@ -20,10 +20,12 @@ typedef enum ARE{
 } ARE;
 
 
-typedef short word;
+typedef unsigned short word;
 
 void set_opcode_into_word(word *word, opcode op_code);
 void insert_operand_type_into_word(word *word, operand op, variable_type type);
 void set_ARE_into_word(word *word, ARE are);
 void insert_operand_into_word(word *word, int value);
+void insert_value_into_word(word *word, int value);
+
 #endif

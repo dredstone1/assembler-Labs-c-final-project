@@ -26,6 +26,8 @@ void translate_code(file *file1){
 
 void create_files(word_list_block *file_code_block, symbol_table *table, char file_name[]){
     write_to_file_object(file_code_block, file_name);
+    write_to_file_entry(table, file_name);
+    write_to_file_external(file_code_block, file_name, table);
 }
 
 void first_pass(file *file1, symbol_table *table, word_list_block *file_code_block){
@@ -56,11 +58,14 @@ void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block,
     line_data_to_word_list_block(current_line_word_block, &data);
 
     if (symbol->label[0] != '\0') {
-        if (is_symbol_legal(table, symbol->label)==FALSE) {
+/*        if (is_symbol_legal(table, symbol->label)==FALSE) {
             // error symbol already exists
             return;
-        }
-        symbol->address = IC;
+        }*/
+        if (data.directive != NULL && data.directive->type == EXTERNAL)
+            symbol->address = 0;
+        else
+            symbol->address = IC;
         add_symbol_to_symbol_table(table, create_symbol_node(*symbol));
     }
     free(symbol);

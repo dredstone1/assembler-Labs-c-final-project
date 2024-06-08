@@ -1,6 +1,7 @@
 #include "words_block.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 void handle_command_type(word_list_block *block, line_data *data);
 void handle_directive_type(word_list_block *block, line_data *data);
@@ -41,12 +42,16 @@ void handle_command_type(word_list_block *block, line_data *data){
 
 word create_new_first_word(line_data *data){
     word new_word;
+    int amount_of_operands = amount_of_variables_from_opcode(data->command->opcode);
+
     (new_word) = 0;
     set_opcode_into_word(&new_word, data->command->opcode);
-
-    insert_operand_type_into_word(&new_word, SOURCE, data->command->variables[0].type);
-    insert_operand_type_into_word(&new_word, DESTINATION, data->command->variables[1].type);
-
+    if (amount_of_operands == 2) {
+        insert_operand_type_into_word(&new_word, SOURCE, data->command->variables[1].type);
+        insert_operand_type_into_word(&new_word, DESTINATION, data->command->variables[0].type);
+    }else {
+        insert_operand_type_into_word(&new_word, DESTINATION, data->command->variables[0].type);
+    }
     set_ARE_into_word(&new_word, A);
 
     return new_word;
@@ -54,31 +59,28 @@ word create_new_first_word(line_data *data){
 
 void handle_operands_command(line_command *command, word_list_block *block){
     word_node *current_node = block->head->next;
-    int i = 0;
-    while (current_node != NULL) {
+    int i = amount_of_variables_from_opcode(command->opcode)-1;
 
+    while (current_node != NULL) {
         if (command->variables[i].type == IMMEDIATE) {
+            printf("value: %d\n", command->variables[i].value);
             insert_operand_into_word(&current_node->word, command->variables[i].value);
             set_ARE_into_word(&current_node->word, A);
         } else if (command->variables[i].type == DIRECT) {
-            insert_operand_into_word(&current_node->word, 0);
             strcpy(current_node->symbol, command->variables[i].symbol);
         } else if (command->variables[i].type == REGISTER_INDIRECT || command->variables[i].type == REGISTER_DIRECT) {
-            if (i==1)
+            if (i==0)
                 insert_operand_into_word(&current_node->word, command->variables[i].value);
             else
                 insert_operand_into_word(&current_node->word, command->variables[i].value<<operand_bit_shift);
 
-            if (current_node->next == NULL) {
-                insert_operand_into_word(&current_node->word, command->variables[i + 1].value<<operand_bit_shift);
-                set_ARE_into_word(&current_node->word, A);
-            }
+            if (command->variables[i-1].type > 1)
+                insert_operand_into_word(&current_node->word, command->variables[i-1].value);
 
             set_ARE_into_word(&current_node->word, A);
         }
         current_node = current_node->next;
-
-        i++;
+        i--;
     }
 }
 
@@ -102,7 +104,7 @@ void handle_operands_directive_list(line_directive *directive, word_list_block *
     int i = 0;
 
     while(current_node != NULL){
-        current_node->word = directive->variables[i++];
+        insert_value_into_word(&current_node->word, directive->variables[i++]);
         current_node = current_node->next;
     }
 }
@@ -155,9 +157,9 @@ void add_symbols_to_code_block(word_list_block *block, symbol_table *symbol_tabl
             }
 
             insert_operand_into_word(&current_node->word, symbol->address);
-            if (symbol->type == EXTERNAL)
+            if (symbol->type == EXTERNAL) {
                 set_ARE_into_word(&current_node->word, E);
-            else
+            } else
                 set_ARE_into_word(&current_node->word, R);
         }
 

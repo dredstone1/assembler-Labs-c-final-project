@@ -16,6 +16,7 @@ void handle_variables_string(char line[], int *offset, int variables[], int *amo
 void handle_variables_data(char line[], int *offset, int variables[], int *amount_of_variables);
 void set_variables_list(int offset, char line[], line_directive *directive);
 void cast_string_to_int_array(char string[], int int_array[], int *length);
+void get_2_operands(int offset, char line[], variable variables[2]);
 
 void line_data_set(line_data *data, int offset, char line[], symbol symbol[]){
     char word[LINE_SIZE];
@@ -91,13 +92,13 @@ void handle_variables_data(char line[], int *offset, int variables[], int *amoun
         }
 
         get_next_word_n_skip(word, offset, line, " ,\t\0", 4);
-        (*amount_of_variables)++;
         variables[i] = get_number(word);
         if (variables[i] == 0) {
             break;
         }
+        (*amount_of_variables)++;
     }
-
+    printf("amount of variables: %d\n", *amount_of_variables);
 }
 
 void handle_variables_string(char line[], int *offset, int variables[], int *amount_of_variables){
@@ -143,13 +144,28 @@ line_command* line_command_set(int offset, char line[], char first_word[]) {
 }
 
 void handle_variables_command(int offset, char line[], line_command *command){
-    int amount_of_variable = amount_of_variables_from_opcode(command->opcode), i;
+    int amount_of_variable, i;
     command->variables[0].type = command->variables[1].type = NONE;
 
-    for (i=0; i<amount_of_variable; i++){
+    amount_of_variable=amount_of_variables_from_opcode(command->opcode);
+
+    if (amount_of_variable == 2)
+        get_2_operands(offset, line, command->variables);
+    else if (amount_of_variable == 1)
+        command->variables[0] = get_next_variable(&offset, line);
+/*
+    for (i = amount_of_variable; i>0; i--){
         count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
-        command->variables[1-((amount_of_variable-1)-i)] = get_next_variable(&offset, line);
-    }
+        if (amount_of_variable)
+        command->variables[amount_of_variable-i] = get_next_variable(&offset, line);
+    }*/
+}
+
+void get_2_operands(int offset, char line[], variable variables[2]){
+    count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
+    variables[1] = get_next_variable(&offset, line);
+    count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
+    variables[0] = get_next_variable(&offset, line);
 }
 
 
@@ -162,7 +178,7 @@ variable get_next_variable(int *offset, char line[]){
         variable.value = get_number(word+1);
         variable.type = IMMEDIATE;
     }
-    if (is_register(word)) {
+    else if (is_register(word)) {
         if (word[0]=='*') {
             variable.type = REGISTER_INDIRECT;
             word[1] = '0';
