@@ -16,7 +16,6 @@ void handle_variables_string(char line[], int *offset, int variables[], int *amo
 void handle_variables_data(char line[], int *offset, int variables[], int *amount_of_variables);
 void set_variables_list(int offset, char line[], line_directive *directive);
 void cast_string_to_int_array(char string[], int int_array[], int *length);
-void get_2_operands(int offset, char line[], variable variables[2]);
 
 void line_data_set(line_data *data, int offset, char line[], symbol symbol[]){
     char word[LINE_SIZE];
@@ -144,30 +143,19 @@ line_command* line_command_set(int offset, char line[], char first_word[]) {
 }
 
 void handle_variables_command(int offset, char line[], line_command *command){
-    int amount_of_variable, i;
+    int amount_of_variable;
     command->variables[0].type = command->variables[1].type = NONE;
 
     amount_of_variable=amount_of_variables_from_opcode(command->opcode);
 
-    if (amount_of_variable == 2)
-        get_2_operands(offset, line, command->variables);
-    else if (amount_of_variable == 1)
-        command->variables[0] = get_next_variable(&offset, line);
-/*
-    for (i = amount_of_variable; i>0; i--){
+    if (amount_of_variable == 2) {
         count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
-        if (amount_of_variable)
-        command->variables[amount_of_variable-i] = get_next_variable(&offset, line);
-    }*/
+        command->variables[1] = get_next_variable(&offset, line);
+        count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
+        command->variables[0] = get_next_variable(&offset, line);
+    }else if (amount_of_variable == 1)
+        command->variables[0] = get_next_variable(&offset, line);
 }
-
-void get_2_operands(int offset, char line[], variable variables[2]){
-    count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
-    variables[1] = get_next_variable(&offset, line);
-    count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
-    variables[0] = get_next_variable(&offset, line);
-}
-
 
 variable get_next_variable(int *offset, char line[]){
     variable variable;

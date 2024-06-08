@@ -1,7 +1,7 @@
 #include "symbol.h"
 #include <stdlib.h>
-#include "../../data/line_node.h"
-#include "../../data/line.h"
+#include "../../../data/line_node.h"
+#include "../../../data/line.h"
 #include <string.h>
 
 symbol* get_symbol(char line[], int *offset) {

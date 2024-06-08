@@ -5,4 +5,4 @@
 
 void translate_code(file *file1);
 
-#endif //MMN14_CODE_TRANSLATION_H
+#endif

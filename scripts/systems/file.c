@@ -1,20 +1,23 @@
 #include "file.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "error.h"
-#include "../octal_translator.h"
+#include "../assembler/translation/utilities/octal_translator.h"
 #include <string.h>
 
 void free_line(line_node *node);
 
-void read_file(file *file1, error *error) {
-    char word[LINE_SIZE];
-    char word_temp[LINE_SIZE];
+void read_file(file *file1) {
+    char word[LINE_SIZE], word_temp[LINE_SIZE], *dot = strrchr(file1->filename, '.');
     int i = 0, line_number = 0;
     line_node *last_line;
-    FILE *files = fopen(file1->filename, "r");
+    FILE *files;
+
+    if (dot != NULL)
+        strncpy(dot, ".as", 3);
+
+    files = fopen(file1->filename, "r");
     if (files == NULL) {
-        error->error_type = FILE_NOT_FOUND;
+        /*file not found error*/
         return;
     }
 
@@ -54,70 +57,70 @@ void free_file_lines(file *file1){
 void write_to_file_file(file file){
     char *file_name = strdup(file.filename), *dot = strrchr(file_name, '.');
     line_node *node = file.first_line;
+    FILE *new_file;
 
-    if (dot != NULL) {
-        // Change the extension to .am
+    if (dot != NULL)
         strncpy(dot, ".am", 3);
-    }
 
-
-    FILE *file1 = fopen(file_name, "w");
+    new_file = fopen(file_name, "w");
 
     while (node!=NULL){
-        fprintf(file1, "%s", node->line_text.content);
+        fprintf(new_file, "%s", node->line_text.content);
         if(node->next!=NULL)
-            fprintf(file1, "\n");
+            fprintf(new_file, "\n");
 
         node = node->next;
     }
 
-    fclose(file1);
+    fclose(new_file);
 }
 
 void write_to_file_object(word_list_block *block, char fileName[]){
     word_node *node = block->head;
     char *file_name = strdup(fileName), *dot = strrchr(file_name, '.');
     int DC = 100;
+    FILE *file;
 
-    if (dot != NULL) {
-        // Change the extension to .am
+    if (dot != NULL)
         strncpy(dot, ".ob", 3);
-    }
 
-    FILE *file1 = fopen(file_name, "w");
+    file = fopen(file_name, "w");
 
     while (node!=NULL){
-        fprintf(file1, "%04d %05d", DC, int_to_octal(node->word));
+        fprintf(file, "%04d %05d", DC, int_to_octal(node->word));
         if(node->next!=NULL)
-            fprintf(file1, "\n");
+            fprintf(file, "\n");
 
         node = node->next;
         DC++;
     }
 
-    fclose(file1);
+    fclose(file);
 }
 
 void write_to_file_external(word_list_block *block, char fileName[], symbol_table *table){
     word_node *node = block->head;
-    char *file_name = strdup(fileName), *dot = strrchr(file_name, '.');
+    char *file_name, *dot;
+    FILE *file = NULL;
     int DC = 100;
     symbol *symbol;
-    if (dot != NULL) {
-        // Change the extension to .am
-        strncpy(dot, ".ext", 3);
-    }
-
-    FILE *file1 = fopen(file_name, "w");
 
     while (node!=NULL){
         if (node->symbol[0]!='\0') {
             symbol = get_symbol_address_from_symbol_name(table, node->symbol);
 
             if (symbol != NULL && symbol->type == EXTERNAL) {
-                fprintf(file1, "%s  %d", node->symbol, DC);
+                if (file==NULL){
+                    file_name = strdup(fileName);
+                    dot = strrchr(file_name, '.');
+                    if (dot != NULL)
+                        strncpy(dot, ".ext", 4);
+
+                    file = fopen(file_name, "w");
+                }
+                fprintf(file, "%s  %d", node->symbol, DC);
                 if (node->next != NULL)
-                    fprintf(file1, "\n");
+                    fprintf(file, "\n");
             }
         }
 
@@ -125,25 +128,32 @@ void write_to_file_external(word_list_block *block, char fileName[], symbol_tabl
         DC++;
     }
 
-    fclose(file1);
+    fclose(file);
 }
 
 void write_to_file_entry(symbol_table *symbol_table, char fileName[]){
     symbol_node *node = symbol_table->head;
-    char *file_name = strdup(fileName), *dot = strrchr(file_name, '.');
-
-    if (dot != NULL) {
-        // Change the extension to .am
-        strncpy(dot, ".ent", 4);
-    }
-
-    FILE *file1 = fopen(file_name, "w");
+    char *file_name, *dot;
+    symbol *symbol;
+    FILE *file1 = NULL;
 
     while (node!=NULL){
         if (node->symbol.type == ENTRY_) {
-            fprintf(file1, "%s  %d", node->symbol.label, node->symbol.address);
-            if (node->next != NULL)
-                fprintf(file1, "\n");
+            symbol = get_symbol_address_from_symbol_name(symbol_table, node->symbol.label);
+            if (symbol != NULL) {
+                if (file1 == NULL){
+                    file_name = strdup(fileName);
+                    dot = strrchr(file_name, '.');
+                    if (dot != NULL)
+                        strncpy(dot, ".ent", 4);
+
+                    file1 = fopen(file_name, "w");
+                }
+
+                fprintf(file1, "%s  %d", symbol->label, symbol->address);
+                if (node->next != NULL)
+                    fprintf(file1, "\n");
+            }
         }
 
         node = node->next;

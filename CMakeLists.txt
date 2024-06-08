@@ -4,10 +4,6 @@ project(mmn14 C)
 set(CMAKE_C_STANDARD 11)
 
 add_executable(mmn14
-        scripts/compiler.h
-        scripts/compiler.c
-        scripts/binary_translator.c
-        scripts/binary_translator.h
         scripts/assembler/post_formating/post_formating.c
         scripts/assembler/post_formating/post_formating.h
         scripts/systems/file.c
@@ -20,32 +16,30 @@ add_executable(mmn14
         scripts/assembler/post_formating/macro.h
         scripts/data/line.c
         scripts/data/line.h
-        scripts/octal_translator.c
-        scripts/octal_translator.h
+        scripts/assembler/translation/utilities/octal_translator.c
+        scripts/assembler/translation/utilities/octal_translator.h
         scripts/data/line_node.c
         scripts/data/line_node.h
-        scripts/assembler/symbol/symbol_table.c
-        scripts/assembler/symbol/symbol_table.h
-        scripts/assembler/symbol/symbol_node.c
-        scripts/assembler/symbol/symbol_node.h
-        scripts/assembler/first_pass/code_translation.c
-        scripts/assembler/first_pass/code_translation.h
-        scripts/assembler/assembler.c
-        scripts/assembler/assembler.h
-        scripts/assembler/first_pass/word_node.c
-        scripts/assembler/first_pass/word_node.h
-        scripts/assembler/first_pass/words_block.c
-        scripts/assembler/first_pass/words_block.h
-        scripts/assembler/first_pass/word.c
-        scripts/assembler/first_pass/word.h
-        scripts/assembler/line_data.c
-        scripts/assembler/line_data.h
-        scripts/assembler/symbol/symbol.c
-        scripts/assembler/symbol/symbol.h
-        scripts/assembler/opcode.c
-        scripts/assembler/opcode.h
-        scripts/assembler/directive.c
-        scripts/assembler/directive.h
-        scripts/assembler/operands/variables.c
-        scripts/assembler/operands/variables.h
+        scripts/assembler/translation/symbol/symbol_table.c
+        scripts/assembler/translation/symbol/symbol_table.h
+        scripts/assembler/translation/symbol/symbol_node.c
+        scripts/assembler/translation/symbol/symbol_node.h
+        scripts/assembler/translation/code_translation.c
+        scripts/assembler/translation/code_translation.h
+        scripts/assembler.c
+        scripts/assembler.h
+        scripts/assembler/translation/word/word_node.c
+        scripts/assembler/translation/word/word_node.h
+        scripts/assembler/translation/word/words_block.c
+        scripts/assembler/translation/word/words_block.h
+        scripts/assembler/translation/word/word.c
+        scripts/assembler/translation/word/word.h
+        scripts/assembler/translation/utilities/line_data.c
+        scripts/assembler/translation/utilities/line_data.h
+        scripts/assembler/translation/symbol/symbol.c
+        scripts/assembler/translation/symbol/symbol.h
+        scripts/assembler/translation/utilities/opcode.c
+        scripts/assembler/translation/utilities/opcode.h
+        scripts/assembler/translation/utilities/directive.c
+        scripts/assembler/translation/utilities/directive.h
 )

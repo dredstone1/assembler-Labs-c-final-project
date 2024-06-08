@@ -2,7 +2,6 @@
 #define MMN14_WORDS_BLOCK_H
 
 #include "word_node.h"
-#include "../line_data.h"
 #include "../symbol/symbol_table.h"
 
 typedef struct word_list_block{

@@ -10,4 +10,4 @@ typedef enum directive_type{
 
 directive_type get_directive_from_string(const char *str);
 
-#endif //MMN14_DIRECTIVE_H
+#endif

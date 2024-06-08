@@ -1,8 +1,6 @@
 #include "code_translation.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "words_block.h"
-#include "../../octal_translator.h"
 
 void format_line(char line[LINE_SIZE], word_list_block *word_block, symbol_table *table, int IC);
 void first_pass(file *file1, symbol_table *table, word_list_block *file_code_block);
@@ -10,17 +8,10 @@ void create_files(word_list_block *file_code_block, symbol_table *table, char fi
 
 void translate_code(file *file1){
     word_list_block *file_code_block = create_new_word_list_block();
-    word_node *current_word;
     symbol_table *table = create_symbol_table();
     first_pass(file1, table, file_code_block);
 
     add_symbols_to_code_block(file_code_block, table);
-    current_word = file_code_block->head;
-    while (current_word != NULL) {
-        printf("%d\n", int_to_octal(current_word->word));
-        current_word = current_word->next;
-    }
-
     create_files(file_code_block, table, file1->filename);
 }
 
@@ -58,10 +49,6 @@ void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block,
     line_data_to_word_list_block(current_line_word_block, &data);
 
     if (symbol->label[0] != '\0') {
-/*        if (is_symbol_legal(table, symbol->label)==FALSE) {
-            // error symbol already exists
-            return;
-        }*/
         if (data.directive != NULL && data.directive->type == EXTERNAL)
             symbol->address = 0;
         else

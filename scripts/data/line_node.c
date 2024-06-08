@@ -21,9 +21,7 @@ line_node* duplicate_line_node(line_node *node) {
     if (new_node == NULL)
         return NULL;
 
-    /*Copy the line_text content*/
     strncpy(new_node->line_text.content, node->line_text.content, LINE_SIZE);
-    /*Copy the line_number*/
     new_node->line_number = node->line_number;
 
     return new_node;
@@ -50,7 +48,6 @@ void add_node_to_end(line_node *old, line_node *new) {
     line_node *temp = old;
     while(temp->next != NULL)
         temp = temp->next;
-
     temp->next = new;
 }
 
@@ -60,7 +57,6 @@ int get_line_node_length(line_node *node){
         node = node->next;
         i++;
     }
-
     return i;
 }
 
@@ -92,6 +88,5 @@ void free_line(line_node *node){
         return;
 
     free_line(node->next);
-
     free(node);
 }

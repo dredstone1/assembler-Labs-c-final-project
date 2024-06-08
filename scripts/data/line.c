@@ -3,12 +3,10 @@
 
 bool is_char_separator(char c, char separators[], int separators_amount);
 
-void skip_spaces_and_tabs(int *offset, char line[]){
+void skip_spaces_and_tabs(int *offset, char line[]) {
     while (line[*offset] == ' ' || line[*offset] == '\t')
         (*offset)++;
 }
-
-
 
 int count_char_until_not_separator(char line[], char c, int *offset, char separators[], int separators_amount){
     int count = 0;

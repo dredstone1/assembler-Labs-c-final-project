@@ -1,10 +1,10 @@
 #ifndef MMN14_LINE_DATA_H
 #define MMN14_LINE_DATA_H
 
-#include "../data/line.h"
-#include "symbol/symbol_node.h"
+#include "../../../data/line.h"
 #include "opcode.h"
 #include "directive.h"
+#include "../symbol/symbol.h"
 
 #define MAX_LIST_SIZE 77 /*80 - 3 = MAX_LINE_SIZE - MIN_DIRECTIVE_TYPE_NAME*/
 
@@ -26,7 +26,6 @@ typedef struct line_directive{
     directive_type type;
     int variables[MAX_LIST_SIZE];
     int amount_of_variables;
-    variable variable;
 } line_directive;
 
 typedef struct line_command{

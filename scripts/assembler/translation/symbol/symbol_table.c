@@ -17,20 +17,7 @@ symbol_table *create_symbol_table(){
     symbol_table *table = (symbol_table *)malloc(sizeof(symbol_table));
     table->head = NULL;
     table->tail = NULL;
-    table->amount_of_symbols = 0;
     return table;
-}
-
-bool is_symbol_legal(symbol_table *table, char label[MAX_SYMBOL_SIZE]){
-    symbol_node *current_node = table->head;
-
-    while (current_node != NULL) {
-        if (current_node->symbol.type != ENTRY_ && strcmp(current_node->symbol.label, label) == 0)
-            return FALSE;
-
-        current_node = current_node->next;
-    }
-    return TRUE;
 }
 
 symbol* get_symbol_address_from_symbol_name(symbol_table *table, char label[MAX_SYMBOL_SIZE]){

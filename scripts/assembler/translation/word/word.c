@@ -1,4 +1,6 @@
 #include "word.h"
+#include "../utilities/opcode.h"
+#include "../utilities/line_data.h"
 
 void set_opcode_into_word(word *word, opcode op_code){
     (*word) |= op_code<<opcode_bit_shift;

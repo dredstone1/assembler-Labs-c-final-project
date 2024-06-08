@@ -19,4 +19,4 @@ typedef struct error {
 
 void handel_error(error *error);
 
-#endif //MMN14_ERROR_H
+#endif

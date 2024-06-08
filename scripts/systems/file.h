@@ -4,7 +4,9 @@
 #include "../data/boolean.h"
 #include "error.h"
 #include "../data/line.h"
-#include "../assembler/first_pass/words_block.h"
+#include "../assembler/translation/word/words_block.h"
+#include "../assembler/translation/symbol/symbol_table.h"
+
 
 typedef struct file{
     line_node *first_line;
@@ -12,7 +14,7 @@ typedef struct file{
     char *filename;
 } file;
 
-void read_file(file *file1, error *error);
+void read_file(file *file1);
 void print_pos(int line, int column);
 void free_file_lines(file *file1);
 void write_to_file_file(file file);
@@ -20,4 +22,4 @@ void write_to_file_object(word_list_block *block, char fileName[]);
 void write_to_file_entry(symbol_table *symbol_table, char fileName[]);
 void write_to_file_external(word_list_block *block, char fileName[], symbol_table *table);
 
-#endif //MMN14_FILE_H
+#endif
