@@ -7,13 +7,10 @@
 void free_line(line_node *node);
 
 void read_file(file *file1) {
-    char word[LINE_SIZE], word_temp[LINE_SIZE], *dot = strrchr(file1->filename, '.');
+    char word[LINE_SIZE], word_temp[LINE_SIZE];
     int i = 0, line_number = 0;
     line_node *last_line;
     FILE *files;
-
-    if (dot != NULL)
-        strncpy(dot, ".as", 3);
 
     files = fopen(file1->filename, "r");
     if (files == NULL) {
@@ -160,4 +157,14 @@ void write_to_file_entry(symbol_table *symbol_table, char fileName[]){
     }
 
     fclose(file1);
+}
+
+void add_ending_to_file_name(char **fileName){
+    int file_name_length = strlen(*fileName);
+    *fileName = realloc(*fileName, sizeof(char) * (file_name_length + 4));
+    if (*fileName == NULL) {
+        /*not enough memory error*/
+        return;
+    }
+    strcpy(*fileName+file_name_length, ".as");
 }

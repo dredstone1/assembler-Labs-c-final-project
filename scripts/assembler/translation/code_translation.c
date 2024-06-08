@@ -13,6 +13,9 @@ void translate_code(file *file1){
 
     add_symbols_to_code_block(file_code_block, table);
     create_files(file_code_block, table, file1->filename);
+
+    free_symbol_table(table);
+    free_word_list_block(file_code_block);
 }
 
 void create_files(word_list_block *file_code_block, symbol_table *table, char file_name[]){
@@ -31,7 +34,7 @@ void first_pass(file *file1, symbol_table *table, word_list_block *file_code_blo
         format_line(current_line->line_text.content, current_line_word_block, table, IC);
         if (current_line_word_block->head != NULL) {
             IC += current_line_word_block->size;
-            combine_word_list_blocks(file_code_block, current_line_word_block, current_line->line_text.content);
+            combine_word_list_blocks(file_code_block, current_line_word_block);
         }
         current_line = current_line->next;
     }

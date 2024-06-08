@@ -31,3 +31,15 @@ symbol* get_symbol_address_from_symbol_name(symbol_table *table, char label[MAX_
     }
     return NULL;
 }
+
+void free_symbol_table(symbol_table *table){
+    symbol_node *current_node = table->head;
+    symbol_node *next_node;
+
+    while (current_node != NULL) {
+        next_node = current_node->next;
+        free(current_node);
+        current_node = next_node;
+    }
+    free(table);
+}

@@ -92,12 +92,10 @@ void handle_variables_data(char line[], int *offset, int variables[], int *amoun
 
         get_next_word_n_skip(word, offset, line, " ,\t\0", 4);
         variables[i] = get_number(word);
-        if (variables[i] == 0) {
+        if (variables[i] == 0)
             break;
-        }
         (*amount_of_variables)++;
     }
-    printf("amount of variables: %d\n", *amount_of_variables);
 }
 
 void handle_variables_string(char line[], int *offset, int variables[], int *amount_of_variables){

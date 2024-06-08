@@ -63,12 +63,11 @@ void handle_operands_command(line_command *command, word_list_block *block){
 
     while (current_node != NULL) {
         if (command->variables[i].type == IMMEDIATE) {
-            printf("value: %d\n", command->variables[i].value);
             insert_operand_into_word(&current_node->word, command->variables[i].value);
             set_ARE_into_word(&current_node->word, A);
-        } else if (command->variables[i].type == DIRECT) {
+        } else if (command->variables[i].type == DIRECT)
             strcpy(current_node->symbol, command->variables[i].symbol);
-        } else if (command->variables[i].type == REGISTER_INDIRECT || command->variables[i].type == REGISTER_DIRECT) {
+        else if (command->variables[i].type == REGISTER_INDIRECT || command->variables[i].type == REGISTER_DIRECT) {
             if (i==0)
                 insert_operand_into_word(&current_node->word, command->variables[i].value);
             else
@@ -131,7 +130,7 @@ void add_word_node_to_block(word_list_block *block){
     block->size++;
 }
 
-void combine_word_list_blocks(word_list_block *block1, word_list_block *block2, char line[LINE_SIZE]){
+void combine_word_list_blocks(word_list_block *block1, word_list_block *block2){
     if (block1->head == NULL) {
         block1->head = block2->head;
         block1->tail = block2->tail;
@@ -165,4 +164,16 @@ void add_symbols_to_code_block(word_list_block *block, symbol_table *symbol_tabl
 
         current_node = current_node->next;
     }
+}
+
+void free_word_list_block(word_list_block *block){
+    word_node *current_node = block->head;
+    word_node *next_node;
+
+    while (current_node != NULL) {
+        next_node = current_node->next;
+        free(current_node);
+        current_node = next_node;
+    }
+    free(block);
 }
