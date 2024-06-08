@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "error.h"
+#include "../assembler/first_pass/words_block.h"
+#include "../octal_translator.h"
 #include <string.h>
 
 void free_line(line_node *node);
@@ -50,12 +52,42 @@ void free_file_lines(file *file1){
     free_line(file1->first_line);
 }
 
-void write_to_file_file(file file, char file_name[]){
+void write_to_file_file(file file){
+    char *file_name = strdup(file.filename), *dot = strrchr(file_name, '.');
     line_node *node = file.first_line;
+
+    if (dot != NULL) {
+        // Change the extension to .am
+        strncpy(dot, ".am", 3);
+    }
+
+
     FILE *file1 = fopen(file_name, "w");
 
     while (node!=NULL){
         fprintf(file1, "%s", node->line_text.content);
+        if(node->next!=NULL)
+            fprintf(file1, "\n");
+
+        node = node->next;
+    }
+
+    fclose(file1);
+}
+
+void write_to_file_object(word_list_block *block, char fileName[]){
+    word_node *node = block->head;
+    char *file_name = strdup(fileName), *dot = strrchr(file_name, '.');
+
+    if (dot != NULL) {
+        // Change the extension to .am
+        strncpy(dot, ".ob", 3);
+    }
+
+    FILE *file1 = fopen(file_name, "w");
+
+    while (node!=NULL){
+        fprintf(file1, "%d", int_to_octal(node->word));
         if(node->next!=NULL)
             fprintf(file1, "\n");
 

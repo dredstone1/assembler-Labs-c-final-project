@@ -6,6 +6,7 @@
 
 void format_line(char line[LINE_SIZE], word_list_block *word_block, symbol_table *table, int IC);
 void first_pass(file *file1, symbol_table *table, word_list_block *file_code_block);
+void create_files(word_list_block *file_code_block, symbol_table *table, char file_name[]);
 
 void translate_code(file *file1){
     word_list_block *file_code_block = create_new_word_list_block();
@@ -19,6 +20,12 @@ void translate_code(file *file1){
         printf("%d\n", int_to_octal(current_word->word));
         current_word = current_word->next;
     }
+
+    create_files(file_code_block, table, file1->filename);
+}
+
+void create_files(word_list_block *file_code_block, symbol_table *table, char file_name[]){
+    write_to_file_object(file_code_block, file_name);
 }
 
 void first_pass(file *file1, symbol_table *table, word_list_block *file_code_block){
