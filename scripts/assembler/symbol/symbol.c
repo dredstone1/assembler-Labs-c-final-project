@@ -15,6 +15,7 @@ symbol* get_symbol(char line[], int *offset) {
         return symbol_obj;
 
     strcpy(symbol_obj->label, word);
+    symbol_obj->type = START;
 
     *offset += i+1;
     return symbol_obj;

@@ -1,6 +1,7 @@
 #include "words_block.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 void handle_command_type(word_list_block *block, line_data *data);
 void handle_directive_type(word_list_block *block, line_data *data);
@@ -57,12 +58,13 @@ void handle_operands_command(line_command *command, word_list_block *block){
     int i = 0;
 
     while (current_node != NULL) {
-        if (command->variables[i].type == 0) {
+        if (command->variables[i].type == IMMEDIATE) {
             insert_operand_into_word(&current_node->word, command->variables[i].value);
             set_ARE_into_word(&current_node->word, A);
-        } else if (command->variables[i].type == 1) {
+        } else if (command->variables[i].type == DIRECT) {
             insert_operand_into_word(&current_node->word, command->variables[i].value);
-        } else if (command->variables[i].type == 2 || command->variables[i].type == 3) {
+            strcpy(current_node->symbol, command->variables[i].symbol);
+        } else if (command->variables[i].type == REGISTER_INDIRECT || command->variables[i].type == REGISTER_DIRECT) {
             if (i==1)
                 insert_operand_into_word(&current_node->word, command->variables[i].value);
             else
@@ -90,6 +92,8 @@ int get_amount_of_words_from_command(line_command *command){
 }
 
 void handle_directive_type(word_list_block *block, line_data *data){
+    if (data->directive->type == ENTRY_ || data->directive->type == EXTERNAL)
+        return;
     insert_words_nodes_into_block(block, data->directive->amount_of_variables);
     handle_operands_directive_list(data->directive, block);
 }

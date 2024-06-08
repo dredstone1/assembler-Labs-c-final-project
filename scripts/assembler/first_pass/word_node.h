@@ -5,6 +5,7 @@
 
 typedef struct word_node{
     word word;
+    char symbol[MAX_SYMBOL_SIZE];
     struct word_node *next;
 } word_node;
 

@@ -26,10 +26,22 @@ void first_pass(file *file1){
         current_line = current_line->next;
     }
     current_word = file_code_block->head;
+
+    while (current_word != NULL) {
+        for (int i = 0; i < current_word->word->size; i++) {
+            printf("%d\n", current_word->word->word[i]);
+        }
+    }
+
+    current_word = file_code_block->head;
     while (current_word != NULL) {
         printf("%d\n", int_to_octal(current_word->word));
         current_word = current_word->next;
     }
+}
+
+void add_symbol_to_codes(){
+
 }
 
 void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block, symbol_table *table, int IC) {
@@ -41,12 +53,13 @@ void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block,
     symbol = get_symbol(line, &offset);
 
     line_data_set(&data, offset, line, symbol);
-
-    if (data.directive != NULL && (data.directive->type == EXTERN || data.directive->type == ENTRY))
-        line_data_to_word_list_block(current_line_word_block, &data);
-
+    line_data_to_word_list_block(current_line_word_block, &data);
 
     if (symbol->label[0] != '\0') {
+        if (is_symbol_legal(table, symbol->label)==FALSE) {
+            // error symbol already exists
+            return;
+        }
         symbol->address = IC;
         add_symbol_to_symbol_table(table, create_symbol_node(*symbol));
     }

@@ -1,5 +1,6 @@
 #include "symbol_table.h"
 #include <stdlib.h>
+#include <string.h>
 
 void add_symbol_to_symbol_table(symbol_table *table, symbol_node *node){
     if(table->head == NULL){
@@ -18,4 +19,16 @@ symbol_table *create_symbol_table(){
     table->tail = NULL;
     table->amount_of_symbols = 0;
     return table;
+}
+
+bool is_symbol_legal(symbol_table *table, char label[MAX_SYMBOL_SIZE]){
+    symbol_node *current_node = table->head;
+
+    while (current_node != NULL) {
+        if (current_node->symbol.type != ENTRY_ && strcmp(current_node->symbol.label, label) == 0)
+            return FALSE;
+
+        current_node = current_node->next;
+    }
+    return TRUE;
 }
