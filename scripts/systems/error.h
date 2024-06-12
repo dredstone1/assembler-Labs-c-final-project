@@ -3,6 +3,11 @@
 
 #include "../data/boolean.h"
 
+/*error messages*/
+#define FILE_NOT_FOUND_MESSAGE "File not found:"
+
+
+
 typedef enum error_type{
     NOTHING,
     FILE_NOT_FOUND,

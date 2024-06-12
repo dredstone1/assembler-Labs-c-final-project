@@ -11,3 +11,7 @@ void print_error_pos(int line, int column){
     print_pos(line, column);
     printf(")");
 }
+
+void add_error_message(error *error, char error_message[], int *params){
+    error->error_message = message;
+}

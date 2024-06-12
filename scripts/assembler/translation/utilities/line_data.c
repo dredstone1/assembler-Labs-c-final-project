@@ -109,6 +109,7 @@ void handle_variables_data(char line[], int *offset, int variables[], int *amoun
 
 void handle_variables_string(char line[], int *offset, int variables[], int *amount_of_variables, error *error){
     char word[LINE_SIZE];
+
     skip_spaces_and_tabs(offset, line);
     if (line[*offset] != '\"') {
         /*missing " error*/
