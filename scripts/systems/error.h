@@ -4,7 +4,9 @@
 #include "../data/boolean.h"
 
 /*error messages*/
-#define FILE_NOT_FOUND_MESSAGE "File not found:"
+#define FILE_NOT_FOUND_MESSAGE "File not found: %S"
+#define MEMORY_ALLOCATION_FAILED "Memory allocation failed"
+#define UNDEFINED_TAG_NAME_MESSAGE "DIRECTIVE_TYPE_MISSING"
 
 
 
