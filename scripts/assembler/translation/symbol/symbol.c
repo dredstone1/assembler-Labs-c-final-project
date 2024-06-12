@@ -4,9 +4,13 @@
 #include "../../../data/line.h"
 #include <string.h>
 
-symbol* get_symbol(char line[], int *offset) {
+symbol* get_symbol(char line[], int *offset, error *error) {
     int i=0;
     symbol *symbol_obj = (symbol*)malloc(sizeof(symbol));
+    if (symbol_obj == NULL) {
+        return NULL;
+    }
+
     char word[LINE_SIZE];
     symbol_obj->label[0] = '\0';
     get_next_word_n_skip(word, &i, line, " :\t \0", 4);

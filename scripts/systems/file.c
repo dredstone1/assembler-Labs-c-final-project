@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include "../assembler/translation/utilities/octal_translator.h"
 #include <string.h>
+#include "error.h"
 
 void free_line(line_node *node);
 
-void read_file(file *file1) {
+void read_file(file *file1, error *error) {
     char word[LINE_SIZE], word_temp[LINE_SIZE];
     int i = 0, line_number = 0;
     line_node *last_line;
@@ -14,12 +15,17 @@ void read_file(file *file1) {
 
     files = fopen(file1->filename, "r");
     if (files == NULL) {
-        /*file not found error*/
+        error->error_type = MEMORY_ALLOCATION_FAILED;
         return;
     }
 
     file1->number_of_rows = 0;
     last_line = create_line_node(NULL);
+    if (last_line == NULL) {
+        error->error_type = MEMORY_ALLOCATION_FAILED;
+        return;
+    }
+
     file1->first_line = last_line;
 
     while (fgets(word, sizeof(char)*LINE_SIZE, files) != NULL) {
@@ -34,6 +40,11 @@ void read_file(file *file1) {
         word_temp[i]= '\0';
         if (file1->number_of_rows>0)
             last_line = last_line->next = create_line_node(NULL);
+
+        if (last_line == NULL) {
+            error->error_type = MEMORY_ALLOCATION_FAILED;
+            return;
+        }
 
         strcpy(last_line->line_text.content,word_temp);
         file1->number_of_rows++;
@@ -159,10 +170,11 @@ void write_to_file_entry(symbol_table *symbol_table, char fileName[]){
     fclose(file1);
 }
 
-void add_ending_to_file_name(char **fileName){
+void add_ending_to_file_name(char **fileName, error *error){
     int file_name_length = strlen(*fileName);
     *fileName = realloc(*fileName, sizeof(char) * (file_name_length + 4));
     if (*fileName == NULL) {
+        error->error_type = MEMORY_ALLOCATION_FAILED;
         /*not enough memory error*/
         return;
     }

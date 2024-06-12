@@ -38,6 +38,6 @@ typedef struct line_data{
     line_command *command;
 } line_data;
 
-void line_data_set(line_data *data, int offset, char line[], symbol symbol[]);
+void line_data_set(line_data *data, int offset, char line[], symbol symbol[], error *error);
 
 #endif

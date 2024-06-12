@@ -7,7 +7,12 @@ typedef enum error_type{
     NOTHING,
     FILE_NOT_FOUND,
     UNDEFINED_TAG_NAME,
-    MEMORY_ALLOCATION_FAILED
+    MEMORY_ALLOCATION_FAILED,
+    DIRECTIVE_TYPE_MISSING,
+    SYMBOL_IN_EXTERNAL_OR_ENTRY,
+    INVALID_COMMA,
+    MISSING_COMMA,
+    EXTRA_COMMA,
 }error_type;
 
 typedef struct error {

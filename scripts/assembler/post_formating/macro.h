@@ -20,11 +20,11 @@ typedef struct macros{
 } macros;
 
 bool is_line_macro(const char line[]);
-void add_macro(char macro_name[], line_node **node, macros *macros);
+void add_macro(char macro_name[], line_node **node, macros *macros, error *error);
 line_node **read_macro_lines(line_node **head);
 macro* get_macro_from_name(macros *macros, line_node *node);
 void replace_line_to_macro(macro macro, line_node **node);
 void free_macros(macros *macros);
-void handle_macros(line_node **first_file_node,int *number_of_rows, macros *macros);
+void handle_macros(line_node **first_file_node,int *number_of_rows, macros *macros, error *error);
 
 #endif //MMN14_MACRO_H

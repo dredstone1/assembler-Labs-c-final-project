@@ -1,4 +1,5 @@
 #include "words_block.h"
+#include "../../../systems/error.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -12,10 +13,10 @@ word create_new_first_word(line_data *data);
 void handle_operands_command(line_command *command, word_list_block *block);
 void handle_operands_directive_list(line_directive *directive, word_list_block *block);
 
-word_list_block* create_new_word_list_block(){
+word_list_block* create_new_word_list_block(error *error){
     word_list_block *block = (word_list_block*)malloc(sizeof(word_list_block));
     if (block == NULL) {
-        /*error, memory allocation failed*/
+        error->error_type = MEMORY_ALLOCATION_FAILED;
         return NULL;
     }
 

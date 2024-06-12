@@ -1,6 +1,8 @@
 #ifndef MMN14_SYMBOL_H
 #define MMN14_SYMBOL_H
 
+#include "../../../systems/error.h"
+
 #define MAX_SYMBOL_SIZE 31
 
 typedef enum symbol_type{
@@ -15,6 +17,6 @@ typedef struct symbol{
     int address;
 } symbol;
 
-symbol* get_symbol(char line[], int *offset);
+symbol* get_symbol(char line[], int *offset, error *error);
 
 #endif

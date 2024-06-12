@@ -1,4 +1,5 @@
 #include "symbol_table.h"
+#include "../../../systems/error.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -13,8 +14,13 @@ void add_symbol_to_symbol_table(symbol_table *table, symbol_node *node){
     }
 }
 
-symbol_table *create_symbol_table(){
+symbol_table *create_symbol_table(error *error){
     symbol_table *table = (symbol_table *)malloc(sizeof(symbol_table));
+    if (table == NULL) {
+        error->error_type = MEMORY_ALLOCATION_FAILED;
+        return NULL;
+    }
+
     table->head = NULL;
     table->tail = NULL;
     return table;

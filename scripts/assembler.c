@@ -19,8 +19,8 @@ void run_assembler(char **files_paths, int number_of_files){
     for (i = 1; i < number_of_files; ++i) {
         file.filename = files_paths[i];
         add_ending_to_file_name(&file.filename);
-        read_file(&file);
-        post_formating(&file);
+        read_file(&file, &error);
+        post_formating(&file, &error);
         translate_code(&file);
 
         free_file_lines(&file);

@@ -4,53 +4,56 @@
 #include <stdio.h>
 #include <string.h>
 
-line_command* line_command_set(int offset, char line[], char first_word[]);
-line_directive* line_directive_set(int offset, char line[], char first_word[], symbol symbol[]);
+line_command* line_command_set(int offset, char line[], char first_word[], error *error);
+line_directive* line_directive_set(int offset, char line[], char first_word[], symbol symbol[], error *error);
 void handle_variables_command(int offset, char line[], line_command *command);
 variable get_next_variable(int *offset, char line[]);
 bool is_number(char word[]);
 int get_number(char word[]);
 bool is_register(char word[]);
-void handle_variables_directive(int offset, char line[], line_directive *directive, symbol symbol[]);
-void handle_variables_string(char line[], int *offset, int variables[], int *amount_of_variables);
-void handle_variables_data(char line[], int *offset, int variables[], int *amount_of_variables);
-void set_variables_list(int offset, char line[], line_directive *directive);
+void handle_variables_directive(int offset, char line[], line_directive *directive, symbol *symbol, error *error);
+void handle_variables_string(char line[], int *offset, int variables[], int *amount_of_variables, error *error);
+void handle_variables_data(char line[], int *offset, int variables[], int *amount_of_variables, error *error);
+void set_variables_list(int offset, char line[], line_directive *directive, error *error);
 void cast_string_to_int_array(char string[], int int_array[], int *length);
 
-void line_data_set(line_data *data, int offset, char line[], symbol symbol[]){
+void line_data_set(line_data *data, int offset, char line[], symbol symbol[], error *error){
     char word[LINE_SIZE];
     get_next_word_n_skip(word, &offset, line, " \t\0", 3);
 
     if (word[0] == '.')
-        data->directive = line_directive_set(offset, line, word, symbol);
+        data->directive = line_directive_set(offset, line, word, symbol, error);
     else
-        data->command = line_command_set(offset, line, word);
+        data->command = line_command_set(offset, line, word, error);
 }
 
-line_directive* line_directive_set(int offset, char line[], char first_word[], symbol symbol[]){
+line_directive* line_directive_set(int offset, char line[], char first_word[], symbol symbol[], error *error) {
     char word[LINE_SIZE];
     strcpy(word, first_word);
 
     line_directive *directive = (line_directive*)malloc(sizeof(line_directive));
     if (directive == NULL) {
         /*error, memory allocation failed*/
+        error->error_type = MEMORY_ALLOCATION_FAILED;
         return NULL;
     }
 
     directive->type = get_directive_from_string(word);
     if (directive->type == -1) {
+        error->error_type = DIRECTIVE_TYPE_MISSING;
         /*error, command not found*/
         return NULL;
     }
-    handle_variables_directive(offset, line, directive, symbol);
+    handle_variables_directive(offset, line, directive, symbol, error);
 
     return directive;
 }
 
-void handle_variables_directive(int offset, char line[], line_directive *directive, symbol *symbol){
+void handle_variables_directive(int offset, char line[], line_directive *directive, symbol *symbol, error *error) {
     variable variable_temp;
     if (directive->type == ENTRY_ || directive->type == EXTERNAL) {
         if (symbol->label[0] != '\0') {
+            error->error_type = SYMBOL_IN_EXTERNAL_OR_ENTRY;
             /*contain start_symbol in external or entry line error*/
             return;
         }
@@ -59,18 +62,18 @@ void handle_variables_directive(int offset, char line[], line_directive *directi
         symbol->type = (symbol_type)directive->type;
     }
     else
-        set_variables_list(offset, line, directive);
+        set_variables_list(offset, line, directive, error);
 }
 
-void set_variables_list(int offset, char line[], line_directive *directive){
+void set_variables_list(int offset, char line[], line_directive *directive, error *error){
     directive->amount_of_variables = 0;
     if (directive->type == DATA)
-        handle_variables_data(line, &offset, directive->variables, &directive->amount_of_variables);
+        handle_variables_data(line, &offset, directive->variables, &directive->amount_of_variables, error);
     else
-        handle_variables_string(line, &offset, directive->variables, &directive->amount_of_variables);
+        handle_variables_string(line, &offset, directive->variables, &directive->amount_of_variables, error);
 }
 
-void handle_variables_data(char line[], int *offset, int variables[], int *amount_of_variables){
+void handle_variables_data(char line[], int *offset, int variables[], int *amount_of_variables, error *error){
     int i, coma_count;
     char word[LINE_SIZE];
 
@@ -79,13 +82,19 @@ void handle_variables_data(char line[], int *offset, int variables[], int *amoun
 
         if (i==0){
             if (coma_count != 0) {
+                error->error_type = INVALID_COMMA;
+                return;
                 /*invalid comma error*/
             }
         }
         else{
             if (coma_count == 0) {
+                error->error_type = MISSING_COMMA;
+                return;
                 /*missing comma error*/
             } else if (coma_count > 1) {
+                error->error_type = EXTRA_COMMA;
+                return;
                 /*extra comma error*/
             }
         }
@@ -98,7 +107,7 @@ void handle_variables_data(char line[], int *offset, int variables[], int *amoun
     }
 }
 
-void handle_variables_string(char line[], int *offset, int variables[], int *amount_of_variables){
+void handle_variables_string(char line[], int *offset, int variables[], int *amount_of_variables, error *error){
     char word[LINE_SIZE];
     skip_spaces_and_tabs(offset, line);
     if (line[*offset] != '\"') {
@@ -119,7 +128,7 @@ void cast_string_to_int_array(char string[], int int_array[], int *length){
 }
 
 
-line_command* line_command_set(int offset, char line[], char first_word[]) {
+line_command* line_command_set(int offset, char line[], char first_word[], error *error) {
     char word[LINE_SIZE];
     strcpy(word, first_word);
 
