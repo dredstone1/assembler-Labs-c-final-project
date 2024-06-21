@@ -1,8 +1,6 @@
 #include "words_block.h"
-#include "../../../systems/error.h"
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 void handle_command_type(word_list_block *block, line_data *data);
 void handle_directive_type(word_list_block *block, line_data *data);
@@ -16,7 +14,7 @@ void handle_operands_directive_list(line_directive *directive, word_list_block *
 word_list_block* create_new_word_list_block(error_array *error){
     word_list_block *block = (word_list_block*)malloc(sizeof(word_list_block));
     if (block == NULL) {
-        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL);
+        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", "");
         return NULL;
     }
 

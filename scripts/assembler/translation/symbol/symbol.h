@@ -17,6 +17,6 @@ typedef struct symbol{
     int address;
 } symbol;
 
-symbol* get_symbol(char line[], int *offset, error_array *error);
+symbol* get_symbol(char line[], int *offset);
 
 #endif

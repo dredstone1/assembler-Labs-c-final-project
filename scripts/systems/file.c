@@ -15,14 +15,14 @@ void read_file(file *file1, error_array *error) {
 
     files = fopen(file1->filename, "r");
     if (files == NULL) {
-        add_error(error, FILE_NOT_FOUND, 0, 0, 0, WARNING);
+        add_error(error, FILE_NOT_FOUND, 0, 0, 0, WARNING, "", file1->filename);
         return;
     }
 
     file1->number_of_rows = 0;
     last_line = create_line_node(NULL);
     if (last_line == NULL) {
-        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL);
+        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", "");
         return;
     }
 
@@ -42,7 +42,7 @@ void read_file(file *file1, error_array *error) {
             last_line = last_line->next = create_line_node(NULL);
 
         if (last_line == NULL) {
-            add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL);
+            add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", "");
             return;
         }
 
@@ -175,7 +175,7 @@ void add_ending_to_file_name(char **fileName, error_array *error){
     *fileName = realloc(*fileName, sizeof(char) * (file_name_length + 4));
     
     if (*fileName == NULL) {
-        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL);
+        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", "");
         return;
     }
     strcpy(*fileName+file_name_length, ".as");

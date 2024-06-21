@@ -1,12 +1,12 @@
 .entry LIST
-.extern1 fn1
+.extern fn1
 MAIN: add r3, LIST
 jsr fn1
 LOOP: prn #48
-lea STR, r6
+wwww:      22 r3, LIST
+  ad1wwgffffwwd r3, LIST
 inc r6
 mov *r6, L3
-sub r1, r4
 macr eee
 lea STR, r6
 lea STR, r6
