@@ -7,7 +7,7 @@
 
 void free_line(line_node *node);
 
-void read_file(file *file1, error *error) {
+void read_file(file *file1, error_array *error) {
     char word[LINE_SIZE], word_temp[LINE_SIZE];
     int i = 0, line_number = 0;
     line_node *last_line;
@@ -15,14 +15,14 @@ void read_file(file *file1, error *error) {
 
     files = fopen(file1->filename, "r");
     if (files == NULL) {
-        error->error_type = MEMORY_ALLOCATION_FAILED;
+        add_error(error, FILE_NOT_FOUND, 0, 0, 0, WARNING);
         return;
     }
 
     file1->number_of_rows = 0;
     last_line = create_line_node(NULL);
     if (last_line == NULL) {
-        error->error_type = MEMORY_ALLOCATION_FAILED;
+        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL);
         return;
     }
 
@@ -42,7 +42,7 @@ void read_file(file *file1, error *error) {
             last_line = last_line->next = create_line_node(NULL);
 
         if (last_line == NULL) {
-            error->error_type = MEMORY_ALLOCATION_FAILED;
+            add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL);
             return;
         }
 
@@ -170,12 +170,12 @@ void write_to_file_entry(symbol_table *symbol_table, char fileName[]){
     fclose(file1);
 }
 
-void add_ending_to_file_name(char **fileName, error *error){
+void add_ending_to_file_name(char **fileName, error_array *error){
     int file_name_length = strlen(*fileName);
     *fileName = realloc(*fileName, sizeof(char) * (file_name_length + 4));
+    
     if (*fileName == NULL) {
-        error->error_type = MEMORY_ALLOCATION_FAILED;
-        /*not enough memory error*/
+        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL);
         return;
     }
     strcpy(*fileName+file_name_length, ".as");

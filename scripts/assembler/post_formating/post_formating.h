@@ -1,6 +1,6 @@
 #ifndef MMN14_POST_FORMATING_H
 #define MMN14_POST_FORMATING_H
 
-void post_formating(file *file1, error *error);
+void post_formating(file *file1, error_array *error);
 
 #endif

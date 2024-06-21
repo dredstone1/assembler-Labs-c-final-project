@@ -13,10 +13,10 @@ word create_new_first_word(line_data *data);
 void handle_operands_command(line_command *command, word_list_block *block);
 void handle_operands_directive_list(line_directive *directive, word_list_block *block);
 
-word_list_block* create_new_word_list_block(error *error){
+word_list_block* create_new_word_list_block(error_array *error){
     word_list_block *block = (word_list_block*)malloc(sizeof(word_list_block));
     if (block == NULL) {
-        error->error_type = MEMORY_ALLOCATION_FAILED;
+        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL);
         return NULL;
     }
 

@@ -1,9 +1,7 @@
 #include "word.h"
-#include "../utilities/opcode.h"
-#include "../utilities/line_data.h"
 
 void set_opcode_into_word(word *word, opcode op_code){
-    (*word) |= op_code<<opcode_bit_shift;
+    *word |= op_code<<opcode_bit_shift;
 }
 
 void insert_operand_type_into_word(word *word, operand op, variable_type type){
@@ -19,5 +17,5 @@ void insert_operand_into_word(word *word, int value){
 }
 
 void insert_value_into_word(word *word, int value){
-    (*word) |= value & 0x7FFF;
+    *word |= value & 0x7FFF;
 }

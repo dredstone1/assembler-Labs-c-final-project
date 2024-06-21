@@ -14,13 +14,13 @@ typedef struct file{
     char *filename;
 } file;
 
-void read_file(file *file1, error *error);
+void read_file(file *file1, error_array *error);
 void print_pos(int line, int column);
 void free_file_lines(file *file1);
 void write_to_file_file(file file);
 void write_to_file_object(word_list_block *block, char fileName[]);
 void write_to_file_entry(symbol_table *symbol_table, char fileName[]);
 void write_to_file_external(word_list_block *block, char fileName[], symbol_table *table);
-void add_ending_to_file_name(char **fileName, error *error);
+void add_ending_to_file_name(char **fileName, error_array *error);
 
 #endif

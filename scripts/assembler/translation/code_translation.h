@@ -3,6 +3,6 @@
 
 #include "../../systems/file.h"
 
-void translate_code(file *file1, error *error);
+void translate_code(file *file1, error_array *error);
 
 #endif

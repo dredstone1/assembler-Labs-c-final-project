@@ -11,7 +11,7 @@ typedef struct word_list_block{
 } word_list_block;
 
 void line_data_to_word_list_block(word_list_block *block, line_data *data);
-word_list_block* create_new_word_list_block(error *error);
+word_list_block* create_new_word_list_block(error_array *error);
 void combine_word_list_blocks(word_list_block *block1, word_list_block *block2);
 void add_symbols_to_code_block(word_list_block *block, symbol_table *symbol_table);
 void free_word_list_block(word_list_block *block);
