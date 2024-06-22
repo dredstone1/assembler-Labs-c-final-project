@@ -1,10 +1,7 @@
 #include "error.h"
-#include "file.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-int get_error_count(error error_array);
 
 const char *error_massage[][2] = {
         {FILE_NOT_FOUND_MESSAGE, ""},
@@ -66,12 +63,6 @@ void add_error(error_array *error_array, error_type error_type, int line_number,
     error_array->errors[error_array->size-1].start_place_in_line = start_place_in_line;
     error_array->errors[error_array->size-1].end_place_in_line = end_place_in_line;
     error_array->errors[error_array->size-1].type = error_type;
-}
-
-void print_error_pos(int line, int column){
-    printf("(");
-    print_pos(line, column);
-    printf(")");
 }
 
 void initialize_error(error_array *error_array){
