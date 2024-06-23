@@ -110,7 +110,7 @@ void handle_variables_string(char line[], int *offset, int variables[], int *amo
     skip_spaces_and_tabs(offset, line);
     temp_offset = *offset;
     if (line[*offset] != '\"') {
-        add_error(error, MISSING_START_QUOTE, line_number, temp_offset, strlen(line), WARNING, line, file_name,temp_offset-1);
+        add_error(error, MISSING_START_QUOTE, line_number, temp_offset-1, strlen(line), WARNING, line, file_name,temp_offset-1);
         return;
     }
     (*offset)++;

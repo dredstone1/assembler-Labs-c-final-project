@@ -3,8 +3,8 @@
 MAIN: add r3, LIST
 jsr fn1
 LOOP: prn #48
-wwww:      23332 r3, LIST
-            Notkwakvalidkopcode r3, LIST
+wwww:      23999999999332 r3, LIST
+           Nvpcod2e r3, LIST
 inc r6
 mov *r6, L3
 macr eee

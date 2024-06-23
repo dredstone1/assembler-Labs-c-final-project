@@ -21,16 +21,21 @@
 #define EXTRA_COMMA_MESSAGE "Extra comma"
 #define MISSING_START_QUOTE_MESSAGE "Missing starting quote"
 #define MISSING_ENDING_QUOTE_MESSAGE "Missing ending quote"
-#define SYMBOL_IN_EXTERNAL_OR_ENTRY_MESSAGE "Symbol cannot be defined as both external and entry"
-#define INVALID_COMMA_MESSAGE "Invalid comma usage"
-#define MISSING_COMMA_MESSAGE "Missing comma"
-#define EXTRA_COMMA_MESSAGE "Extra comma"
-#define MISSING_START_QUOTE_MESSAGE "Missing starting quote"
-#define MISSING_ENDING_QUOTE_MESSAGE "Missing ending quote"
+#define DIRECTIVE_TYPE_MISSING_MESSAGE "Directive type missing"
+
+
+typedef enum error_message_stage {
+    PRINT_GENERAL_ERROR_TYPE,
+    PRINT_ERROR_LINE,
+    PRINT_ERROR_MARK,
+    PRINT_ERROR_MARK_ADDITION,
+    END_OF_ERROR
+}error_message_stage;
+
 
 /*editions*/
 #define NOT_A_VALID_OPCODE "Not a valid opcode"
-#define MISSING_QUOTE "\""
+#define MISSING_QUOTE ""
 #define MISSING_COMMA_A ","
 
 typedef enum error_type{
@@ -61,7 +66,7 @@ typedef struct error {
     int end_place_in_line;
     int mark_offset;
     char line[LINE_SIZE];
-    char file_name[LINE_SIZE];
+    char *file_name;
     error_type type;
 }error;
 
