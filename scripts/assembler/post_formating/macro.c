@@ -13,7 +13,7 @@ void add_macro(char macro_name[], line_node *node, macros *macros, error_array *
     macros->number_of_macros++;
     macros->macro = realloc(macros->macro, (size_t)(macros->number_of_macros * sizeof(macro)));
     if (macros->macro == NULL) {
-        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", "", 0);
+		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
         free(macros->macro);
         return;
     }

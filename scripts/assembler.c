@@ -33,10 +33,14 @@ void run_assembler(char **files_paths, int number_of_files){
         read_file(&file, &error);
         post_formating(&file, &error);
         translate_code(&file ,&error);
+		
+		free_file_lines(&file);
 
-        free_file_lines(&file);
-    }
-    
-    handel_error(error);
-    free(error.errors);
+		handel_error(error, file.filename);
+		free(error.errors);
+	}
+	while (TRUE){
+		if (error.importance == CRITICAL)
+			break;
+	}
 }

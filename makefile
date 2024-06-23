@@ -1,9 +1,9 @@
-myset: compiler.o
-	gcc -g -ansi -pedantic -Wall compiler.o -o compiler
+myset: assembler.o
+	gcc -g -ansi -pedantic -Wall assembler.o -o assembler
 
-compiler.o: scripts/compiler.c scripts/compiler.h
+assembler.o: scripts/assembler.c scripts/assembler.h
 	gcc -c -g -ansi -pedantic -Wall compiler.c -o compiler.o
 
 exec:
-	./compiler
+	./assembler
 

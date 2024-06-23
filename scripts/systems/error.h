@@ -11,25 +11,26 @@
 #define FILE_NAME_ERROR "Error in file: %s\n"
 
 /*error messages*/
-#define FILE_NOT_FOUND_MESSAGE "File not found"
+#define FILE_NOT_FOUND_MESSAGE "File not found:"
 #define MEMORY_ALLOCATION_FAILED_MESSAGE "Memory allocation failed"
-#define UNDEFINED_TAG_NAME_MESSAGE "DIRECTIVE_TYPE_MISSING"
-#define INVALID_OPCODE_MESSAGE "Invalid opcode"
-#define SYMBOL_IN_EXTERNAL_OR_ENTRY_MESSAGE "Symbol cannot be defined as both external and entry"
-#define INVALID_COMMA_MESSAGE "Invalid comma usage"
-#define MISSING_COMMA_MESSAGE "Missing comma"
-#define EXTRA_COMMA_MESSAGE "Extra comma"
-#define MISSING_START_QUOTE_MESSAGE "Missing starting quote"
-#define MISSING_ENDING_QUOTE_MESSAGE "Missing ending quote"
-#define DIRECTIVE_TYPE_MISSING_MESSAGE "Directive type missing"
+#define UNDEFINED_TAG_NAME_MESSAGE "DIRECTIVE_TYPE_MISSING:"
+#define INVALID_OPCODE_MESSAGE "Invalid opcode:"
+#define SYMBOL_IN_EXTERNAL_OR_ENTRY_MESSAGE "Symbol cannot be defined as both external and entry:"
+#define INVALID_COMMA_MESSAGE "Invalid comma usage:"
+#define MISSING_COMMA_MESSAGE "Missing comma:"
+#define EXTRA_COMMA_MESSAGE "Extra comma:"
+#define MISSING_START_QUOTE_MESSAGE "Missing starting quote:"
+#define MISSING_ENDING_QUOTE_MESSAGE "Missing ending quote:"
+#define DIRECTIVE_TYPE_MISSING_MESSAGE "Directive type missing:"
 
 
 typedef enum error_message_stage {
     PRINT_GENERAL_ERROR_TYPE,
     PRINT_ERROR_LINE,
     PRINT_ERROR_MARK,
-    PRINT_ERROR_MARK_ADDITION,
-    END_OF_ERROR
+	PRINT_ERROR_MESSAGE_CONCLUSION,
+    END_OF_ERROR,
+	FOR_EVERY_ERROR,
 }error_message_stage;
 
 
@@ -66,7 +67,6 @@ typedef struct error {
     int end_place_in_line;
     int mark_offset;
     char line[LINE_SIZE];
-    char *file_name;
     error_type type;
 }error;
 
@@ -77,8 +77,9 @@ typedef struct error_array{
 }error_array;
 
 
-void handel_error(error_array error_array);
-void add_error(error_array *error_array, error_type error_type, int line_number, int start_place_in_line, int end_place_in_line, importance importance, char line[], char file_name[], int mark_offset);
+void handel_error(error_array error_array, char *file_name);
+void add_error(error_array *error_array, error_type error_type, int line_number, int start_place_in_line,
+			   int end_place_in_line, importance importance, char line[], int mark_offset);
 void initialize_error(error_array *error_array);
 
 #endif

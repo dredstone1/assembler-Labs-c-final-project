@@ -1,5 +1,4 @@
 #include "symbol_table.h"
-#include "../../../systems/error.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -17,7 +16,7 @@ void add_symbol_to_symbol_table(symbol_table *table, symbol_node *node){
 symbol_table *create_symbol_table(error_array *error){
     symbol_table *table = (symbol_table *)malloc(sizeof(symbol_table));
     if (table == NULL) {
-        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", "", 0);
+		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
         return NULL;
     }
 

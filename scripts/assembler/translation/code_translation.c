@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void format_line(char line[LINE_SIZE], word_list_block *word_block, symbol_table *table, int IC, error_array *error, int line_number, char file_name[]);
+void format_line(char line[LINE_SIZE], word_list_block *word_block, symbol_table *table, int IC, error_array *error, int line_number);
 void first_pass(file *file1, symbol_table *table, word_list_block *file_code_block, error_array *error);
 void create_files(word_list_block *file_code_block, symbol_table *table, char file_name[], error_array *error);
 
@@ -40,7 +40,7 @@ void first_pass(file *file1, symbol_table *table, word_list_block *file_code_blo
             continue;
         }
         
-        format_line(current_line->line_text.content, current_line_word_block, table, IC, error, line_number, file1->filename);
+        format_line(current_line->line_text.content, current_line_word_block, table, IC, error, line_number);
         if (error->importance != NO_ERROR) {
             free(current_line_word_block);
             line_number++;
@@ -57,7 +57,7 @@ void first_pass(file *file1, symbol_table *table, word_list_block *file_code_blo
     }
 }
 
-void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block, symbol_table *table, int IC, error_array *error, int line_number, char file_name[]) {
+void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block, symbol_table *table, int IC, error_array *error, int line_number) {
     int offset = 0;
     symbol *symbol;
     line_data data;
@@ -65,11 +65,11 @@ void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block,
     data.command = NULL;
     symbol = get_symbol(line, &offset);
     if (symbol == NULL) {
-        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", "", 0);
+		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
         return;
     }
 
-    line_data_set(&data, offset, line, symbol, error, line_number, file_name);
+    line_data_set(&data, offset, line, symbol, error, line_number);
     if (error->importance != NO_ERROR) {
         free(symbol);
         return;
