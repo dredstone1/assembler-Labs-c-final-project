@@ -4,7 +4,11 @@
 #include "../data/boolean.h"
 #include "../data/line.h"
 
-#define start_format_line_error "  | "
+#define start_format_line_error " | "
+#define amount_of_spaces_at_start 4
+
+
+#define FILE_NAME_ERROR "Error in file: %s\n"
 
 /*error messages*/
 #define FILE_NOT_FOUND_MESSAGE "File not found"
@@ -31,16 +35,16 @@
 
 typedef enum error_type{
     FILE_NOT_FOUND,
-    UNDEFINED_TAG_NAME,
     MEMORY_ALLOCATION_FAILED,
+    UNDEFINED_TAG_NAME,
     INVALID_OPCODE,
-    DIRECTIVE_TYPE_MISSING,
     SYMBOL_IN_EXTERNAL_OR_ENTRY,
     INVALID_COMMA,
     MISSING_COMMA,
     EXTRA_COMMA,
     MISSING_START_QUOTE,
     MISSING_ENDING_QUOTE,
+    DIRECTIVE_TYPE_MISSING,
     NOTHING
 }error_type;
 
@@ -55,10 +59,10 @@ typedef struct error {
     int line_number;
     int start_place_in_line;
     int end_place_in_line;
+    int mark_offset;
     char line[LINE_SIZE];
     char file_name[LINE_SIZE];
     error_type type;
-    
 }error;
 
 typedef struct error_array{
@@ -69,7 +73,7 @@ typedef struct error_array{
 
 
 void handel_error(error_array error_array);
-void add_error(error_array *error_array, error_type error_type, int line_number, int start_place_in_line, int end_place_in_line, importance importance, char line[], char file_name[]);
+void add_error(error_array *error_array, error_type error_type, int line_number, int start_place_in_line, int end_place_in_line, importance importance, char line[], char file_name[], int mark_offset);
 void initialize_error(error_array *error_array);
 
 #endif

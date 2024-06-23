@@ -65,7 +65,7 @@ void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block,
     data.command = NULL;
     symbol = get_symbol(line, &offset);
     if (symbol == NULL) {
-        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", "");
+        add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", "", 0);
         return;
     }
 
