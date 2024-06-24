@@ -11,7 +11,7 @@ void translate_code(file *file1, error_array *error){
     symbol_table *table = create_symbol_table(error);
     first_pass(file1, table, file_code_block, error);
 
-    add_symbols_to_code_block(file_code_block, table);
+    add_symbols_to_code_block(file_code_block, table, error);
     create_files(file_code_block, table, file1->filename, error);
 
     free_symbol_table(table);
@@ -74,7 +74,7 @@ void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block,
         free(symbol);
         return;
     }
-    line_data_to_word_list_block(current_line_word_block, &data);
+    line_data_to_word_list_block(current_line_word_block, &data, error, line_number, line);
 
     
     if (symbol->label[0] != '\0') {

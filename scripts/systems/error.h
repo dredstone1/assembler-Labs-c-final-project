@@ -23,6 +23,7 @@
 #define MISSING_ENDING_QUOTE_MESSAGE "Missing ending quote:"
 #define MISSING_ENDING_QUOTE_N_START_QUOTE_MESSAGE "Missing ending quote and starting quote:"
 #define DIRECTIVE_TYPE_MISSING_MESSAGE "Directive type missing:"
+#define SYMBOL_NOT_FOUND_MESSAGE "Symbol not found:"
 
 
 typedef enum error_message_stage {
@@ -48,6 +49,7 @@ typedef enum error_message_stage {
 #define MISSING_ENDING_QUOTE_DESCRIPTION "missing a quote at the end of the string."
 #define MISSING_ENDING_QUOTE_N_START_QUOTE_DESCRIPTION "missing a quote at the end of the string and a quote at the beginning of the string."
 #define DIRECTIVE_TYPE_MISSING_DESCRIPTION "missing directive type, you should have a directive type before the variables."
+#define SYMBOL_NOT_FOUND_DESCRIPTION "not initialized, you need to initialize the symbol"
 
 
 typedef enum error_type{
@@ -63,6 +65,7 @@ typedef enum error_type{
     MISSING_ENDING_QUOTE,
     MISSING_ENDING_QUOTE_N_START_QUOTE,
     DIRECTIVE_TYPE_MISSING,
+	SYMBOL_NOT_FOUND,
     NOTHING
 }error_type;
 

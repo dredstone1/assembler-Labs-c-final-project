@@ -1,12 +1,13 @@
 #include "words_block.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
-void handle_command_type(word_list_block *block, line_data *data);
-void handle_directive_type(word_list_block *block, line_data *data);
+void handle_command_type(word_list_block *block, line_data *data, error_array *error, int line_number, char line[]);
+void handle_directive_type(word_list_block *block, line_data *data, error_array *error);
 int get_amount_of_words_from_command(line_command *command);
-void add_word_node_to_block(word_list_block *block);
-void insert_words_nodes_into_block(word_list_block *block, int amount_of_words);
+void add_word_node_to_block(word_list_block *block, error_array *error, int line_number, char line[]);
+void insert_words_nodes_into_block(word_list_block *block, int amount_of_words, error_array *error, int line_number, char line[]);
 word create_new_first_word(line_data *data);
 void handle_operands_command(line_command *command, word_list_block *block);
 void handle_operands_directive_list(line_directive *directive, word_list_block *block);
@@ -25,15 +26,15 @@ word_list_block* create_new_word_list_block(error_array *error){
 }
 
 
-void line_data_to_word_list_block(word_list_block *block, line_data *data){
+void line_data_to_word_list_block(word_list_block *block, line_data *data, error_array *error, int line_number, char line[]){
     if (data->directive == NULL)
-        handle_command_type(block, data);
+        handle_command_type(block, data, error, line_number, line);
     else
-        handle_directive_type(block, data);
+        handle_directive_type(block, data, error);
 }
 
-void handle_command_type(word_list_block *block, line_data *data){
-    insert_words_nodes_into_block(block, get_amount_of_words_from_command(data->command));
+void handle_command_type(word_list_block *block, line_data *data, error_array *error, int line_number, char line[]){
+    insert_words_nodes_into_block(block, get_amount_of_words_from_command(data->command), error, line_number, line);
     block->head->word = create_new_first_word(data);
 
     handle_operands_command(data->command, block);
@@ -48,9 +49,9 @@ word create_new_first_word(line_data *data){
     if (amount_of_operands == 2) {
         insert_operand_type_into_word(&new_word, SOURCE, data->command->variables[1].type);
         insert_operand_type_into_word(&new_word, DESTINATION, data->command->variables[0].type);
-    }else {
+    }else
         insert_operand_type_into_word(&new_word, DESTINATION, data->command->variables[0].type);
-    }
+	
     set_ARE_into_word(&new_word, A);
 
     return new_word;
@@ -90,10 +91,10 @@ int get_amount_of_words_from_command(line_command *command){
     return amount;
 }
 
-void handle_directive_type(word_list_block *block, line_data *data){
+void handle_directive_type(word_list_block *block, line_data *data, error_array *error){
     if (data->directive->type == ENTRY_ || data->directive->type == EXTERNAL)
         return;
-    insert_words_nodes_into_block(block, data->directive->amount_of_variables);
+    insert_words_nodes_into_block(block, data->directive->amount_of_variables, error, 0, "");
     handle_operands_directive_list(data->directive, block);
 }
 
@@ -107,15 +108,15 @@ void handle_operands_directive_list(line_directive *directive, word_list_block *
     }
 }
 
-void insert_words_nodes_into_block(word_list_block *block, int amount_of_words){
+void insert_words_nodes_into_block(word_list_block *block, int amount_of_words, error_array *error, int line_number, char line[]){
     for (int i=0; i<amount_of_words; i++)
-        add_word_node_to_block(block);
+        add_word_node_to_block(block, error, line_number, line);
 }
 
-void add_word_node_to_block(word_list_block *block){
-    word_node *node = create_new_word_node(0);
+void add_word_node_to_block(word_list_block *block, error_array *error, int line_number, char line[]){
+    word_node *node = create_new_word_node(0, line_number, line, error);
     if (node == NULL) {
-        /*error, memory allocation failed*/
+		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
         return;
     }
 
@@ -126,6 +127,7 @@ void add_word_node_to_block(word_list_block *block){
         block->tail->next = node;
         block->tail = block->tail->next;
     }
+	
     block->size++;
 }
 
@@ -142,7 +144,7 @@ void combine_word_list_blocks(word_list_block *block1, word_list_block *block2){
     block1->size += block2->size;
 }
 
-void add_symbols_to_code_block(word_list_block *block, symbol_table *symbol_table) {
+void add_symbols_to_code_block(word_list_block *block, symbol_table *symbol_table, error_array *error){
     word_node *current_node = block->head;
     symbol *symbol;
 
@@ -150,14 +152,14 @@ void add_symbols_to_code_block(word_list_block *block, symbol_table *symbol_tabl
         if (current_node->symbol[0] != '\0') {
             symbol = get_symbol_address_from_symbol_name(symbol_table, current_node->symbol);
             if (symbol == NULL) {
-                // error symbol not found
+				add_error(error, SYMBOL_NOT_FOUND, current_node->line_number, 0, strlen(current_node->symbol), WARNING, current_node->line, 0);
                 return;
             }
 
             insert_operand_into_word(&current_node->word, symbol->address);
-            if (symbol->type == EXTERNAL) {
+            if (symbol->type == EXTERNAL)
                 set_ARE_into_word(&current_node->word, E);
-            } else
+            else
                 set_ARE_into_word(&current_node->word, R);
         }
 
