@@ -180,8 +180,11 @@ void handle_variables_command(int offset, char line[], line_command *command){
 variable get_next_variable(int *offset, char line[]){
     variable variable;
     char word[LINE_SIZE];
-    get_next_word_n_skip(word, offset, line, " ,\t\0", 4);
-
+	skip_spaces_and_tabs(offset, line);
+	variable.var_offset = *offset;
+	get_next_word_n_skip(word, offset, line, " ,\t\0", 4);
+	
+	
     if (word[0] == '#') {
         variable.value = get_number(word+1);
         variable.type = IMMEDIATE;

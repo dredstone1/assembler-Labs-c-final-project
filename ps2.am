@@ -1,6 +1,6 @@
 .entry LIST
 .extern fn1
-MAIN: add r3, LIwST
+MAIN: add r3, LIqST
 jsr fn1
 LOOP: prn #48
 lea STR, r6

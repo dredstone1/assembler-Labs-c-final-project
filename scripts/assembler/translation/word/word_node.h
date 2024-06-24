@@ -12,6 +12,6 @@ typedef struct word_node{
     struct word_node *next;
 } word_node;
 
-word_node* create_new_word_node(word word, int line_number, char *line, error_array *error);
+word_node* create_new_word_node(word word, int line_number, char *line, error_array *error, int var_offset);
 
 #endif
