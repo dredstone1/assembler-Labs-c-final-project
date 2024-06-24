@@ -23,7 +23,7 @@ sub L3, L3
 jmp LOOP
 END: stop
 STR: .string "abcd
-STR: .string "abcd
+STR: .string abcd
 STR: .string abcd"
 : .data 6,,, -9
 .data -100

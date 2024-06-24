@@ -12,7 +12,7 @@ int count_error_type(error_array error_array, int current_error, error_type erro
 int get_next_error_by_type(error_array error_array, int current_error, error_type error_type);
 void print_in_error_message(char file_name[]);
 void print_start_error_message(error error, int *offset, bool single_error);
-void print_error_lines(error error, int *offset, bool ignore_mark);
+void print_error_lines(error error, int *offset, bool ignore_mark, bool single_error);
 
 /*Set text color to red*/
 #define RED "\x1b[38;2;247;84;100m"
@@ -25,7 +25,7 @@ void print_error_message_conclusion(error error, bool single_error);
 const error_message_stage error_massage_stage[][END_OF_ERROR+3] = {
 /*FILE_NOT_FOUND_MESSAGE: */ {FOR_EVERY_ERROR, PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, END_OF_ERROR},
 /*MEMORY_ALLOCATION_FAILED_MESSAGE*/ {FOR_EVERY_ERROR, PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, END_OF_ERROR},
-/*UNDEFINED_TAG_NAME_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
+/*UNDEFINED_TAG_NAME_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, END_OF_ERROR},
 /*INVALID_OPCODE_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
 /*SYMBOL_IN_EXTERNAL_OR_ENTRY_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
 /*INVALID_COMMA_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
@@ -33,21 +33,23 @@ const error_message_stage error_massage_stage[][END_OF_ERROR+3] = {
 /*EXTRA_COMMA_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
 /*MISSING_START_QUOTE_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
 /*MISSING_ENDING_QUOTE_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
+/*MISSING_ENDING_QUOTE_N_START_QUOTE_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
 /*DIRECTIVE_TYPE_MISSING_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
 };
 
 const char *error_massage[][2] = {
-        {FILE_NOT_FOUND_MESSAGE, " "},
-        {MEMORY_ALLOCATION_FAILED_MESSAGE, " "},
-        {UNDEFINED_TAG_NAME_MESSAGE, " "},
-        {INVALID_OPCODE_MESSAGE, NOT_A_VALID_OPCODE},
-        {SYMBOL_IN_EXTERNAL_OR_ENTRY_MESSAGE, " "},
-        {INVALID_COMMA_MESSAGE, MISSING_COMMA_A},
-        {MISSING_COMMA_MESSAGE, MISSING_COMMA_A},
-        {EXTRA_COMMA_MESSAGE, MISSING_COMMA_A},
-        {MISSING_START_QUOTE_MESSAGE, " "},
-        {MISSING_ENDING_QUOTE_MESSAGE, " "},
-        {DIRECTIVE_TYPE_MISSING_MESSAGE, " "},
+        {FILE_NOT_FOUND_MESSAGE},
+        {MEMORY_ALLOCATION_FAILED_MESSAGE},
+        {UNDEFINED_TAG_NAME_MESSAGE},
+        {INVALID_OPCODE_MESSAGE, INVALID_OPCODE_DESCRIPTION},
+        {SYMBOL_IN_EXTERNAL_OR_ENTRY_MESSAGE, SYMBOL_IN_EXTERNAL_OR_ENTRY_DESCRIPTION},
+        {INVALID_COMMA_MESSAGE, INVALID_COMMA_DESCRIPTION},
+        {MISSING_COMMA_MESSAGE, MISSING_COMMA_DESCRIPTION},
+        {EXTRA_COMMA_MESSAGE, EXTRA_COMMA_DESCRIPTION},
+        {MISSING_START_QUOTE_MESSAGE, MISSING_START_QUOTE_DESCRIPTION},
+        {MISSING_ENDING_QUOTE_MESSAGE, MISSING_ENDING_QUOTE_DESCRIPTION},
+        {MISSING_ENDING_QUOTE_N_START_QUOTE_MESSAGE, MISSING_ENDING_QUOTE_N_START_QUOTE_DESCRIPTION},
+        {DIRECTIVE_TYPE_MISSING_MESSAGE, DIRECTIVE_TYPE_MISSING_DESCRIPTION},
 };
 
 void (*error_handling_functions[])(error, bool) = {
@@ -87,7 +89,7 @@ void print_error(error error, error_array error_array, int current_error){
 	for (j = 0; j < count; ++j) {
 		i = temp;
 		
-		print_error_lines(error, &i, (count == 2  && j==1) || (count != 2 ));
+		print_error_lines(error, &i, (count == 2  && j==1) || (count != 2 ), count == 2);
 		error_array.errors[current_error].type = NOTHING;
 		
 		current_error = get_next_error_by_type(error_array, current_error, error.type);
@@ -98,7 +100,7 @@ void print_error(error error, error_array error_array, int current_error){
 	}
 }
 
-void print_error_lines(error error, int *offset, bool ignore_mark){
+void print_error_lines(error error, int *offset, bool ignore_mark, bool single_error){
 	for (; error_massage_stage[error.type][*offset] != END_OF_ERROR; ++(*offset)) {
 		if (error_massage_stage[error.type][*offset] == FOR_EVERY_ERROR){
 			if (ignore_mark == TRUE)
@@ -106,7 +108,7 @@ void print_error_lines(error error, int *offset, bool ignore_mark){
 			return;
 		}
 			
-		error_handling_functions[error_massage_stage[error.type][*offset]](error, FALSE);
+		error_handling_functions[error_massage_stage[error.type][*offset]](error, single_error);
 	}
 }
 
@@ -149,7 +151,18 @@ void print_general_error_type(error error, bool single_error){
 
 void print_error_message_conclusion(error error, bool single_error){
     print_start_line_error();
-    printf("error ezplanationwerdsaczx\n");
+	if (single_error == FALSE) {
+		printf("%.*s", error.end_place_in_line - error.start_place_in_line, &error.line[error.start_place_in_line]);
+		printf(ERROR_DESCRIPTION_MESSAGE_START_PATTERN_SINGLE);
+		printf("%s", error_massage[error.type][1]);
+	} else{
+		printf("%.*s", error.end_place_in_line - error.start_place_in_line, &error.line[error.start_place_in_line]);
+		printf(ERROR_DESCRIPTION_MESSAGE_START_PATTERN_DOUBLE);
+		printf("%.*s", error.end_place_in_line - error.start_place_in_line, &error.line[error.start_place_in_line]);
+		printf("%s", error_massage[error.type][1]);
+	}
+	printf("\n");
+		
 }
 
 void print_error_line(error error, bool single_error){
@@ -167,38 +180,31 @@ void print_error_mark(error error, bool single_error){
 		print_char_n_times('~', error.end_place_in_line - error.mark_offset - 1);
 	}else
 		print_char_n_times('~', error.end_place_in_line - error.start_place_in_line);
+	
+	if (error.type == MISSING_ENDING_QUOTE_N_START_QUOTE)
+		printf("^");
+
     printf("\n");
 }
 
 int count_error_type(error_array error_array, int current_error, error_type error_type){
 	int i, count = 0;
-	for (i = current_error; i < error_array.size; i++) {
+	for (i = current_error; i < error_array.size; i++)
 		if (error_array.errors[i].type == error_type)
 			count++;
-	}
+
 	return count;
 
 }
 
-int get_next_error_by_type(error_array error_array, int current_error, error_type error_type){
+int get_next_error_by_type(error_array error_array, int current_error, error_type error_type) {
 	int i;
-	for (i = current_error+1; i < error_array.size; i++) {
+	for (i = current_error + 1; i < error_array.size; i++) {
 		if (error_array.errors[i].type == error_type)
 			return i;
 	}
 	return -1;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 void add_error(error_array *error_array, error_type error_type, int line_number, int start_place_in_line, int end_place_in_line, importance importance, char line[], int mark_offset) {
     error *error_array_temp;
@@ -224,7 +230,10 @@ void initialize_error(error_array *error_array){
     error_array->errors->line_number = 0;
     error_array->errors->start_place_in_line = 0;
     error_array->errors->end_place_in_line = 0;
+	error_array->errors->mark_offset = 0;
+	error_array->errors->line[0] = '\0';
     error_array->errors->type = NOTHING;
+	error_array->importance = NO_ERROR;
     
     error_array->size = 1;
     if (error_array->errors == 

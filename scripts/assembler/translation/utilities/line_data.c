@@ -106,20 +106,31 @@ void handle_variables_data(char line[], int *offset, int variables[], int *amoun
 
 void handle_variables_string(char line[], int *offset, int variables[], int *amount_of_variables, error_array *error, int line_number){
     char word[LINE_SIZE], temp_offset;
+	bool missing_start_quote = FALSE, missing_end_quote = FALSE;
 
     skip_spaces_and_tabs(offset, line);
     temp_offset = *offset;
-    if (line[*offset] != '\"') {
-		add_error(error, MISSING_START_QUOTE, line_number, temp_offset - 1, strlen(line), WARNING, line,
-				  temp_offset - 1);
-        return;
-    }
+    if (line[*offset] != '\"')
+		missing_start_quote = TRUE;
+
     (*offset)++;
     get_next_word(word, offset, line, "\"\0", 2);
-    if (line[*offset] != '\"') {
+    if (line[*offset] != '\"')
+		missing_end_quote = TRUE;
+	
+	if (missing_start_quote == TRUE && missing_end_quote == TRUE) {
+		add_error(error, MISSING_ENDING_QUOTE_N_START_QUOTE, line_number, temp_offset - 1, strlen(line), WARNING, line, temp_offset - 1);
+		return;
+	}
+	if (missing_start_quote == TRUE){
+		add_error(error, MISSING_START_QUOTE, line_number, temp_offset - 1, strlen(line), WARNING, line, temp_offset - 1);
+		return;
+	}
+	if (missing_end_quote == TRUE){
 		add_error(error, MISSING_ENDING_QUOTE, line_number, temp_offset, strlen(line), WARNING, line, (*offset));
-        return;
-    }
+		return;
+	}
+	
     cast_string_to_int_array(word, variables, amount_of_variables);
 }
 
@@ -143,7 +154,6 @@ line_command* line_command_set(int offset, char line[], char first_word[], error
     command->opcode = get_opcode_from_string(word);
     if (command->opcode == -1) {
 		add_error(error, INVALID_OPCODE, line_number, offset - strlen(word) - 1, offset - 1, WARNING, line, 0);
-        /*error, command not found*/
         return NULL;
     }
 
