@@ -57,12 +57,18 @@ void first_pass(file *file1, symbol_table *table, word_list_block *file_code_blo
     }
 }
 
+void second_stage(){
+	int IC = 0, DC = 
+	
+}
+
 void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block, symbol_table *table, int IC, error_array *error, int line_number) {
     int offset = 0;
     symbol *symbol;
     line_data data;
     data.directive = NULL;
     data.command = NULL;
+	
     symbol = get_symbol(line, &offset);
     if (symbol == NULL) {
 		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);

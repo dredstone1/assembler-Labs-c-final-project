@@ -39,8 +39,8 @@ void run_assembler(char **files_paths, int number_of_files){
 		handel_error(error, file.filename);
 		free(error.errors);
 	}
-	while (TRUE){
+/*	while (TRUE){
 		if (error.importance == CRITICAL)
 			break;
-	}
+	}*/
 }

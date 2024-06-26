@@ -1,14 +1,23 @@
 #ifndef MMN14_SYMBOL_TABLE_H
 #define MMN14_SYMBOL_TABLE_H
 
-#include "symbol_node.h"
+#include "symbol.h"
 #include "../../../data/boolean.h"
 
 
 typedef struct symbol_table{
-    symbol_node *head;
-    symbol_node *tail;
+	symbol *symbols;
+	int size;
 } symbol_table;
+
+#define MAX_SYMBOL_SIZE 31
+
+typedef struct symbol{
+	bool external;
+	bool entry;
+	char label[MAX_SYMBOL_SIZE];
+	int address;
+} symbol;
 
 void add_symbol_to_symbol_table(symbol_table *table, symbol_node *node);
 symbol_table *create_symbol_table(error_array *error);
