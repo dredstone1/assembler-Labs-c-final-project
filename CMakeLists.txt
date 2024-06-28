@@ -22,6 +22,8 @@ add_executable(mmn14
         scripts/data/line_node.h
         scripts/assembler/translation/symbol/symbol_table.c
         scripts/assembler/translation/symbol/symbol_table.h
+        scripts/assembler/translation/symbol/symbol_node.c
+        scripts/assembler/translation/symbol/symbol_node.h
         scripts/assembler/translation/code_translation.c
         scripts/assembler/translation/code_translation.h
         scripts/assembler.c
@@ -34,8 +36,8 @@ add_executable(mmn14
         scripts/assembler/translation/word/word.h
         scripts/assembler/translation/utilities/line_data.c
         scripts/assembler/translation/utilities/line_data.h
-        scripts/assembler/translation/utilities/opcode.c
-        scripts/assembler/translation/utilities/opcode.h
+        scripts/assembler/translation/symbol/symbol.c
+        scripts/assembler/translation/symbol/symbol.h
         scripts/assembler/translation/utilities/directive.c
         scripts/assembler/translation/utilities/directive.h
 )

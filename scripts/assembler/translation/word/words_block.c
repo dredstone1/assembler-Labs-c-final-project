@@ -159,7 +159,7 @@ void add_symbols_to_code_block(word_list_block *block, symbol_table *symbol_tabl
         if (current_node->symbol[0] != '\0') {
             symbol = get_symbol_address_from_symbol_name(symbol_table, current_node->symbol);
             if (symbol == NULL) {
-				add_error(error, SYMBOL_NOT_FOUND, current_node->line_number, 0, strlen(current_node->symbol), WARNING, current_node->line, 0);
+				add_error(error, SYMBOL_NOT_FOUND, current_node->line_number, strstr(current_node->line, current_node->symbol) - current_node->line, strlen(current_node->symbol), WARNING, current_node->line, 0);
                 return;
             }
 

@@ -5,7 +5,7 @@
 
 line_command* line_command_set(int offset, char line[], char first_word[], error_array *error, int line_number);
 line_directive* line_directive_set(int offset, char line[], char first_word[], symbol symbol[], error_array *error, int line_number);
-void handle_variables_command(int offset, char line[], line_command *command);
+void handle_variables_command(int offset, char line[], line_command *command, error_array *error, int line_number);
 variable get_next_variable(int *offset, char line[]);
 bool is_number(char word[]);
 int get_number(char word[]);
@@ -15,6 +15,7 @@ void handle_variables_string(char line[], int *offset, int variables[], int *amo
 void handle_variables_data(char line[], int *offset, int variables[], int *amount_of_variables, error_array *error, int line_number);
 void set_variables_list(int offset, char line[], line_directive *directive, error_array *error, int line_number);
 void cast_string_to_int_array(char string[], int int_array[], int *length);
+
 
 void line_data_set(line_data *data, int offset, char line[], symbol symbol[], error_array *error, int line_number){
     char word[LINE_SIZE];
@@ -157,24 +158,40 @@ line_command* line_command_set(int offset, char line[], char first_word[], error
         return NULL;
     }
 
-    handle_variables_command(offset, line, command);
+	handle_variables_command(offset, line, command, error, line_number);
 
     return command;
 }
 
-void handle_variables_command(int offset, char line[], line_command *command){
-    int amount_of_variable;
+void handle_variables_command(int offset, char line[], line_command *command, error_array *error, int line_number) {
+    int amount_of_variable, temp_offset;
     command->variables[0].type = command->variables[1].type = NONE;
 
     amount_of_variable=amount_of_variables_from_opcode(command->opcode);
 
     if (amount_of_variable == 2) {
         count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
+		temp_offset = offset;
         command->variables[1] = get_next_variable(&offset, line);
+		if (is_valid_var(command->opcode, command->variables[1].type) == FALSE){
+			add_error(error, INVALID_VARIABLE_TYPE, line_number, temp_offset, offset, WARNING, line, 0);
+			return;
+		}
         count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
+		temp_offset = offset;
         command->variables[0] = get_next_variable(&offset, line);
-    }else if (amount_of_variable == 1)
-        command->variables[0] = get_next_variable(&offset, line);
+		if (is_valid_var(command->opcode, command->variables[0].type) == FALSE){
+			add_error(error, INVALID_VARIABLE_TYPE, line_number, temp_offset, offset, WARNING, line, 0);
+			return;
+		}
+    }else if (amount_of_variable == 1) {
+		temp_offset = offset;
+		command->variables[0] = get_next_variable(&offset, line);
+		if (is_valid_var(command->opcode, command->variables[0].type) == FALSE) {
+			add_error(error, INVALID_VARIABLE_TYPE, line_number, temp_offset, offset, WARNING, line, 0);
+			return;
+		}
+	}
 }
 
 variable get_next_variable(int *offset, char line[]){
@@ -235,4 +252,49 @@ bool is_number(char word[]){
     }
 
     return TRUE;
+}
+
+
+const char *opcode_names[16][3][1] = {
+		{{"mov"}, {"_123"}, {"0123"}},
+		{{"cmp"}, {"0123"}, {"0123"}},
+		{{"add"}, {"_123"}, {"0123"}},
+		{{"sub"}, {"_123"}, {"0123"}},
+		{{"lea"}, {"_123"}, {"_1__"}},
+		{{"clr"}, {"_123"}, {"____"}},
+		{{"not"}, {"_123"}, {"____"}},
+		{{"inc"}, {"_123"}, {"____"}},
+		{{"dec"}, {"_123"}, {"____"}},
+		{{"jmp"}, {"_12_"}, {"____"}},
+		{{"bne"}, {"_12_"}, {"____"}},
+		{{"red"}, {"_123"}, {"____"}},
+		{{"prn"}, {"0123"}, {"____"}},
+		{{"jsr"}, {"_12_"}, {"____"}},
+		{{"rts"}, {"____"}, {"____"}},
+		{{"stop"}, {"____"}, {"____"}}
+};
+
+
+
+opcode get_opcode_from_string(const char *str) {
+	opcode code;
+	for (code = MOV; code <= STOP; code++)
+		if (strcmp(str, opcode_names[code][0][0]) == 0)
+			return code;
+
+	return -1;
+}
+
+bool is_valid_var(opcode code, variable_type var) {
+	return opcode_names[code][1][0][var] != '_';
+}
+
+int amount_of_variables_from_opcode(opcode code) {
+	if (code < FIRST_GROUP_OPCODE)
+		return 2;
+	else if (code < SECOND_GROUP_OPCODE+FIRST_GROUP_OPCODE)
+		return 1;
+	else if (code < THIRD_GROUP_OPCODE+SECOND_GROUP_OPCODE+FIRST_GROUP_OPCODE)
+		return 0;
+	return -1;
 }

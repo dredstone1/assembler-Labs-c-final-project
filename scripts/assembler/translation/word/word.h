@@ -1,7 +1,6 @@
 #ifndef MMN14_WORD_H
 #define MMN14_WORD_H
 
-#include "../utilities/opcode.h"
 #include "../utilities/line_data.h"
 
 #define opcode_bit_shift 11

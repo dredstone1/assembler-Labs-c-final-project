@@ -6,6 +6,9 @@
 typedef struct word_node{
     word word;
     char symbol[MAX_SYMBOL_SIZE];
+	int line_number;
+	char *line;
+	int var_offset;
     struct word_node *next;
 } word_node;
 

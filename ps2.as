@@ -1,6 +1,6 @@
 .entry LIST
 .extern fn1
-MAIN: add r3, LIST
+MAIN: add #3, LIST
 ;rewsda
 jsr fn1
 LOOP: prn #48

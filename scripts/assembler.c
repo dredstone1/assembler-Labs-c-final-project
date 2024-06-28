@@ -22,7 +22,7 @@ int main(int argc, char **argv){
 void run_assembler(char **files_paths, int number_of_files){
     file file;
     error_array error;
-    int i;
+    int i, error_count = 0;
 
     initialize_error(&error);
 
@@ -37,10 +37,13 @@ void run_assembler(char **files_paths, int number_of_files){
 		free_file_lines(&file);
 
 		handel_error(error, file.filename);
+		error_count += error.size-1;
 		free(error.errors);
 	}
-/*	while (TRUE){
+	printf(BLACK);
+	printf("total errors: %d\n", error_count);
+	while (TRUE){
 		if (error.importance == CRITICAL)
 			break;
-	}*/
+	}
 }
