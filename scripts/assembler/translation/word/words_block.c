@@ -112,10 +112,8 @@ void insert_words_nodes_into_block(word_list_block *block, int amount_of_words, 
     for (int i=0; i<amount_of_words; i++) {
 		if (i==0)
 			add_word_node_to_block(block, error, line_number, line);
-		else {
-			printf("i: %d\n", i);
+		else
 			add_word_node_to_block(block, error, line_number, line);
-		}
 	}
 		
 }
