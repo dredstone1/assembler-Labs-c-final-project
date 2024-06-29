@@ -1,6 +1,7 @@
 #include "../header/macro.h"
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 
 bool is_ending_macro(const char line[]);
 
@@ -13,7 +14,6 @@ void add_macro(char macro_name[], line_node *node, macros *macros, error_array *
     macros->macro = realloc(macros->macro, (size_t)(macros->number_of_macros * sizeof(macro)));
     if (macros->macro == NULL) {
 		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
-        free(macros->macro);
         return;
     }
 
@@ -60,22 +60,20 @@ bool is_ending_macro(const char line[]){
     return TRUE;
 }
 
-macro* get_macro_from_name(macros *macros, line_node *node){
-    int i,k=0;
-    char word[LINE_SIZE];
+macro* get_macro_from_name(macros *macros, line_node *node) {
+	int i, offset = 0;
+	char macro_name[LINE_SIZE];
 
-    skip_spaces_and_tabs(&k, node->line_text.content);
-    get_next_word(word, &k, node->line_text.content, " \t\0", 3);
+	get_next_word_n_skip(macro_name, &offset, node->line_text.content, " \t\0", 3);
 
-    if (extra_char_at_end(node->line_text.content, k)==TRUE)
-        return NULL;
+	if (extra_char_at_end(node->line_text.content, offset))
+		return NULL;
 
-    for (i = 0; i < macros->number_of_macros; i++) {
-        if (strcmp(word, macros->macro[i].macro_name)==FALSE)
-            return &macros->macro[i];
-    }
+	for (i = 0; i < macros->number_of_macros; i++)
+		if (strcmp(macro_name, macros->macro[i].macro_name) == 0)
+			return &macros->macro[i];
 
-    return NULL;
+	return NULL;
 }
 
 
@@ -98,7 +96,7 @@ void handle_macros(line_node **first_file_node,int *number_of_rows, macros *macr
     macros->number_of_macros = 0;
     macros->macro = NULL;
 
-    while (*node != NULL) {
+    while (*node != NULL && error->importance != WARNING) {
         offset=0;
         get_next_word_n_skip(word, &offset, (*node)->line_text.content, " \t\0", 3);
 
@@ -107,7 +105,6 @@ void handle_macros(line_node **first_file_node,int *number_of_rows, macros *macr
             add_macro(word, read_macro_lines(node), macros, error);
             number_of_rows -= macros->macro[macros->number_of_macros - 1].number_of_macro_lines + 2;
             offset_line_node_by(*node, -(macros->macro[macros->number_of_macros - 1].number_of_macro_lines+2));
-        
         }
         if (macros->number_of_macros>0) {
             temp = get_macro_from_name(macros, *node);
