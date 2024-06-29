@@ -1,9 +1,8 @@
-#include "macro.h"
+#include "../header/macro.h"
 #include <string.h>
 #include <stdlib.h>
 
 bool is_ending_macro(const char line[]);
-bool extra_char_at_end(const char line[], int loc);
 
 bool is_line_macro(const char line[]){
     return strcmp(line, MACRO)==FALSE;
@@ -79,15 +78,6 @@ macro* get_macro_from_name(macros *macros, line_node *node){
     return NULL;
 }
 
-bool extra_char_at_end(const char line[], int loc){
-    while (line[loc] == ' ' || line[loc] == '\t')
-        loc++;
-
-    if (line[loc] == '\0')
-        return FALSE;
-
-    return TRUE;
-}
 
 void replace_line_to_macro(macro macro, line_node **node){
     line_node *temp = duplicate_lines_node(macro.macro_lines);

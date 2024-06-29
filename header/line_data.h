@@ -1,15 +1,20 @@
 #ifndef MMN14_LINE_DATA_H
 #define MMN14_LINE_DATA_H
 
-#include "../../../data/line.h"
-#include "directive.h"
-#include "../symbol/symbol.h"
+#include "symbol_table.h"
 
 #define MAX_LIST_SIZE 77 /*80 - 3 = MAX_LINE_SIZE - MIN_DIRECTIVE_TYPE_NAME*/
 
 #define FIRST_GROUP_OPCODE 5
 #define SECOND_GROUP_OPCODE 9
 #define THIRD_GROUP_OPCODE 2
+
+typedef enum directive_type{
+	DATA,
+	STRING,
+	ENTRY,
+	EXTERN
+} directive_type;
 
 typedef enum opcode{
     MOV,
@@ -41,7 +46,6 @@ typedef enum variable_type{
 typedef struct variable{
     int value;
     variable_type type;
-	int var_offset;
     char symbol[MAX_SYMBOL_SIZE];
 } variable;
 
@@ -63,7 +67,7 @@ typedef struct line_data{
 
 int amount_of_variables_from_opcode(opcode code);
 opcode get_opcode_from_string(const char* str);
-bool is_valid_var(opcode code, variable_type var);
+bool is_valid_var(opcode code, variable_type variable);
 void line_data_set(line_data *data, int offset, char line[], symbol symbol[], error_array *error, int line_number);
 
 #endif

@@ -1,4 +1,4 @@
-#include "line_node.h"
+#include "../header/line_node.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

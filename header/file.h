@@ -1,11 +1,11 @@
 #ifndef MMN14_FILE_H
 #define MMN14_FILE_H
 
-#include "../data/boolean.h"
+#include "utilitis.h"
 #include "error.h"
-#include "../data/line.h"
-#include "../assembler/translation/word/words_block.h"
-#include "../assembler/translation/symbol/symbol_table.h"
+#include "words_block.h"
+#include "symbol_table.h"
+#include "line_node.h"
 
 
 typedef struct file{

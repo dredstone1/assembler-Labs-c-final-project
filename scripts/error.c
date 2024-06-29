@@ -1,4 +1,4 @@
-#include "error.h"
+#include "../header/error.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,8 +14,7 @@ void print_in_error_message(char file_name[]);
 void print_start_error_message(error error, int *offset, bool single_error);
 void print_error_lines(error error, int *offset, bool ignore_mark, bool single_error);
 
-/*Set text color to red*/
-#define RED "\x1b[38;2;247;84;100m"
+
 
 void print_general_error_type(error error, bool single_error);
 void print_error_line(error error, bool single_error);
@@ -35,7 +34,7 @@ const error_message_stage error_massage_stage[][END_OF_ERROR+3] = {
 /*MISSING_ENDING_QUOTE_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
 /*MISSING_ENDING_QUOTE_N_START_QUOTE_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
 /*DIRECTIVE_TYPE_MISSING_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-/*SIMBOL_NOT_FOUND_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
+/*SYMBOL_NOT_FOUND_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
 
 /*INVALID_VARIABLE_TYPE_MESSAGE*/{PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR}
 };
@@ -69,7 +68,7 @@ void (*error_handling_functions[])(error, bool) = {
 void handel_error(error_array error, char file_name[]) {
     int i, error_printed = 0;
 
-    printf(RED);
+    printf(RED_COLOR);
     for (i = 0; i < error.size; ++i) {
         if (error.errors[i].type == NOTHING)
             continue;
@@ -81,6 +80,8 @@ void handel_error(error_array error, char file_name[]) {
 		
 		print_error(error.errors[i], error, i);
 		
+		if (error.errors[i].type == FILE_NOT_FOUND)
+			printf(" \"%s\"\n", file_name);
         error_printed++;
     }
 }
@@ -96,7 +97,8 @@ void print_error(error error, error_array error_array, int current_error){
 		i = temp;
 		
 		print_error_lines(error, &i, (count == 2  && j==1) || (count != 2 ), count == 2);
-		error_array.errors[current_error].type = NOTHING;
+		if (error.type!=FILE_NOT_FOUND)
+			error_array.errors[current_error].type = NOTHING;
 		
 		current_error = get_next_error_by_type(error_array, current_error, error.type);
 		if (current_error == -1)
@@ -152,7 +154,9 @@ void print_in_error_message(char file_name[]){
 
 void print_general_error_type(error error, bool single_error){
     print_start_line_error();
-    printf("%s\n", error_massage[error.type][0]);
+	printf("%s", error_massage[error.type][0]);
+	if (error.type != FILE_NOT_FOUND)
+		printf("\n");
 }
 
 void print_error_message_conclusion(error error, bool single_error){
@@ -224,7 +228,7 @@ void add_error(error_array *error_array, error_type error_type, int line_number,
     
     error_array->importance = importance;
     error_array->errors[error_array->size-1].line_number = line_number;
-    memcpy(error_array->errors[error_array->size-1].line,line, strlen(line));
+    strcpy(error_array->errors[error_array->size-1].line,line);
     error_array->errors[error_array->size-1].start_place_in_line = start_place_in_line;
     error_array->errors[error_array->size-1].mark_offset = mark_offset;
     error_array->errors[error_array->size-1].end_place_in_line = end_place_in_line;

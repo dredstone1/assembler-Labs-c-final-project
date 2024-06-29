@@ -1,5 +1,4 @@
-#include "line_data.h"
-#include "directive.h"
+#include "../header/line_data.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -15,7 +14,7 @@ void handle_variables_string(char line[], int *offset, int variables[], int *amo
 void handle_variables_data(char line[], int *offset, int variables[], int *amount_of_variables, error_array *error, int line_number);
 void set_variables_list(int offset, char line[], line_directive *directive, error_array *error, int line_number);
 void cast_string_to_int_array(char string[], int int_array[], int *length);
-
+directive_type get_directive_from_string(const char *str);
 
 void line_data_set(line_data *data, int offset, char line[], symbol symbol[], error_array *error, int line_number){
     char word[LINE_SIZE];
@@ -55,9 +54,11 @@ void handle_variables_directive(int offset, char line[], line_directive *directi
 					  line, 0);
             return;
         }
+		
+		
         variable_temp = get_next_variable(&offset, line);
-        strcpy(symbol->label, variable_temp.symbol);
-        symbol->type = (symbol_type)directive->type;
+		strcpy(symbol->label, variable_temp.symbol);
+		symbol->type = (symbol_type)directive->type;
     }
     else
         set_variables_list(offset, line, directive, error, line_number);
@@ -78,29 +79,23 @@ void handle_variables_data(char line[], int *offset, int variables[], int *amoun
     for (i=0; i<MAX_LIST_SIZE; i++){
         temp_offset = *offset;
         coma_count = count_char_until_not_separator(line, ',', offset, " ,\t\0", 4);
-
-        if (i==0){
-            if (coma_count != 0) {
+		
+        if (i==0) {
+			if (coma_count != 0)
 				add_error(error, INVALID_COMMA, line_number, temp_offset, *offset, WARNING, line, 0);
-                return;
-            }
-        }
-        else{
+		}else{
             if (coma_count == 0) {
+				if (*offset >= strlen(line))
+					break;
 				add_error(error, MISSING_COMMA, line_number, temp_offset, *offset, WARNING, line, 0);
-                return;
-            } else if (coma_count > 1) {
+			}else if (coma_count > 1)
 				add_error(error, EXTRA_COMMA, line_number, temp_offset, *offset, WARNING, line, 0);
-                return;
-            }
         }
-        if (error->importance != NONE)
+        if (error->importance != NO_ERROR)
             return;
 
         get_next_word_n_skip(word, offset, line, " ,\t\0", 4);
         variables[i] = get_number(word);
-        if (variables[i] == 0)
-            break;
         (*amount_of_variables)++;
     }
 }
@@ -119,18 +114,15 @@ void handle_variables_string(char line[], int *offset, int variables[], int *amo
     if (line[*offset] != '\"')
 		missing_end_quote = TRUE;
 	
-	if (missing_start_quote == TRUE && missing_end_quote == TRUE) {
+	if (missing_start_quote == TRUE && missing_end_quote == TRUE)
 		add_error(error, MISSING_ENDING_QUOTE_N_START_QUOTE, line_number, temp_offset - 1, strlen(line), WARNING, line, temp_offset - 1);
-		return;
-	}
-	if (missing_start_quote == TRUE){
+	else if (missing_start_quote == TRUE)
 		add_error(error, MISSING_START_QUOTE, line_number, temp_offset - 1, strlen(line), WARNING, line, temp_offset - 1);
-		return;
-	}
-	if (missing_end_quote == TRUE){
+	else if (missing_end_quote == TRUE)
 		add_error(error, MISSING_ENDING_QUOTE, line_number, temp_offset, strlen(line), WARNING, line, (*offset));
+	
+	if (error->importance != NO_ERROR)
 		return;
-	}
 	
     cast_string_to_int_array(word, variables, amount_of_variables);
 }
@@ -198,7 +190,6 @@ variable get_next_variable(int *offset, char line[]){
     variable variable;
     char word[LINE_SIZE];
 	skip_spaces_and_tabs(offset, line);
-	variable.var_offset = *offset;
 	get_next_word_n_skip(word, offset, line, " ,\t\0", 4);
 	
 	
@@ -285,8 +276,8 @@ opcode get_opcode_from_string(const char *str) {
 	return -1;
 }
 
-bool is_valid_var(opcode code, variable_type var) {
-	return opcode_names[code][1][0][var] != '_';
+bool is_valid_var(opcode code, variable_type variable) {
+	return opcode_names[code][1][0][variable] != '_';
 }
 
 int amount_of_variables_from_opcode(opcode code) {
@@ -296,5 +287,21 @@ int amount_of_variables_from_opcode(opcode code) {
 		return 1;
 	else if (code < THIRD_GROUP_OPCODE+SECOND_GROUP_OPCODE+FIRST_GROUP_OPCODE)
 		return 0;
+	return -1;
+}
+
+const char *directive_types_names[] = {
+		".data",
+		".string",
+		".entry",
+		".extern"
+};
+
+directive_type get_directive_from_string(const char *str) {
+	directive_type code;
+	for (code = DATA; code <= EXTERN; code++) {
+		if (strcmp(str, directive_types_names[code]) == 0)
+			return code;
+	}
 	return -1;
 }

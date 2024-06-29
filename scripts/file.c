@@ -1,9 +1,7 @@
-#include "file.h"
+#include "../header/file.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "../assembler/translation/utilities/octal_translator.h"
 #include <string.h>
-#include "error.h"
 
 void free_line(line_node *node);
 
@@ -136,32 +134,27 @@ void write_to_file_external(word_list_block *block, char fileName[], symbol_tabl
 }
 
 void write_to_file_entry(symbol_table *symbol_table, char fileName[]){
-    symbol_node *node = symbol_table->head;
     char *file_name, *dot;
     symbol *symbol;
     FILE *file1 = NULL;
 
-    while (node!=NULL){
-        if (node->symbol.type == ENTRY_) {
-            symbol = get_symbol_address_from_symbol_name(symbol_table, node->symbol.label);
-            if (symbol != NULL) {
-                if (file1 == NULL){
-                    file_name = strdup(fileName);
-                    dot = strrchr(file_name, '.');
-                    if (dot != NULL)
-                        strncpy(dot, ".ent", 4);
+	for (int i = 0; i < symbol_table->size; i++) {
+		if (symbol_table->symbols[i].type == ENTRY_) {
+			symbol = get_symbol_address_from_symbol_name(symbol_table, symbol_table->symbols[i].label);
+			if (symbol != NULL) {
+				if (file1 == NULL){
+					file_name = strdup(fileName);
+					dot = strrchr(file_name, '.');
+					if (dot != NULL)
+						strncpy(dot, ".ent", 4);
 
-                    file1 = fopen(file_name, "w");
-                }
+					file1 = fopen(file_name, "w");
+				}
 
-                fprintf(file1, "%s  %d", symbol->label, symbol->address);
-                if (node->next != NULL)
-                    fprintf(file1, "\n");
-            }
-        }
-
-        node = node->next;
-    }
+				fprintf(file1, "%s  %d\n", symbol->label, symbol->address);
+			}
+		}
+	}
 
     fclose(file1);
 }

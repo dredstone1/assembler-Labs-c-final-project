@@ -1,8 +1,9 @@
 #ifndef MMN14_ERROR_H
 #define MMN14_ERROR_H
 
-#include "../data/boolean.h"
-#include "../data/line.h"
+#include "utilitis.h"
+#include "line_node.h"
+
 
 #define start_format_line_error " | "
 #define amount_of_spaces_at_start 4

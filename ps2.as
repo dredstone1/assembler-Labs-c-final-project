@@ -1,7 +1,6 @@
 .entry LIST
 .extern fn1
-MAIN: add #3, LIST
-;rewsda
+MAIN: add r3, LIST
 jsr fn1
 LOOP: prn #48
 lea STR, r6
@@ -16,7 +15,8 @@ sub L3, L3
 .entry MAIN
 jmp LOOP
 END: stop
-STR: .string "abcd"
+STR: .string "abcd
+STR1: .string abcd
 LIST: .data 6, -9
 .data -100
 K: .data 31

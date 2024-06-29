@@ -1,10 +1,10 @@
-#include "assembler.h"
-#include "assembler/post_formating/post_formating.h"
-#include "assembler/translation/code_translation.h"
+#include "../header/post_formating.h"
+#include "../header/first_pass.h"
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-#define BLACK "\033[0m"
+
+void create_files(word_list_block *file_code_block, symbol_table *table, char file_name[], error_array *error);
 
 void run_assembler(char **files_paths, int number_of_files);
 
@@ -13,9 +13,10 @@ int main(int argc, char **argv){
     
     run_assembler(argv, argc);
     
-    printf(BLACK" \n");
+    printf(BLACK_COLOR);
     clock_t toc = clock();
-    printf("took: %f seconds", (double)(toc - tic) / CLOCKS_PER_SEC);
+    printf("time: %f seconds", (double)(toc - tic) / CLOCKS_PER_SEC);
+	getchar();
     return 0;
 }
 
@@ -31,19 +32,32 @@ void run_assembler(char **files_paths, int number_of_files){
         file.filename = files_paths[i];
         add_ending_to_file_name(&file.filename, &error);
         read_file(&file, &error);
-        post_formating(&file, &error);
-        translate_code(&file ,&error);
-		
-		free_file_lines(&file);
+		if (error.importance == NO_ERROR) {
+			post_formating(&file, &error);
+			word_list_block *file_code_block = create_new_word_list_block(&error);
+			symbol_table table;
+			initialize_symbol_table(&table);
+			first_pass(&file, &table, file_code_block, &error);
 
+			add_symbols_to_code_block(file_code_block, &table, &error);
+			create_files(file_code_block, &table, file.filename, &error);
+
+			free_word_list_block(file_code_block);
+
+			free_file_lines(&file);
+		}
 		handel_error(error, file.filename);
 		error_count += error.size-1;
 		free(error.errors);
 	}
-	printf(BLACK);
+	printf(BLACK_COLOR);
 	printf("total errors: %d\n", error_count);
-	while (TRUE){
-		if (error.importance == CRITICAL)
-			break;
-	}
+}
+
+void create_files(word_list_block *file_code_block, symbol_table *table, char file_name[], error_array *error){
+	if (error->size > 1)
+		return;
+	write_to_file_object(file_code_block, file_name);
+	write_to_file_entry(table, file_name);
+	write_to_file_external(file_code_block, file_name, table);
 }

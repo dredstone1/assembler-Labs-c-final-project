@@ -1,5 +1,5 @@
-#include "../../systems/file.h"
-#include "macro.h"
+#include "../header/file.h"
+#include "../header/macro.h"
 
 void post_formating(file *file, error_array *error){
     macros macros;
