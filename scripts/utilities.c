@@ -1,4 +1,4 @@
-#include "../header/utilitis.h"
+#include "../header/utilities.h"
 
 bool is_char_separator(char c, char separators[], int separators_amount);
 

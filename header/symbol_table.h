@@ -1,7 +1,7 @@
 #ifndef MMN14_SYMBOL_TABLE_H
 #define MMN14_SYMBOL_TABLE_H
 
-#include "utilitis.h"
+#include "utilities.h"
 #include "error.h"
 
 #define MAX_SYMBOL_SIZE 31

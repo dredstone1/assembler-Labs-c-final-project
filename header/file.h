@@ -1,7 +1,7 @@
 #ifndef MMN14_FILE_H
 #define MMN14_FILE_H
 
-#include "utilitis.h"
+#include "utilities.h"
 #include "error.h"
 #include "words_block.h"
 #include "symbol_table.h"

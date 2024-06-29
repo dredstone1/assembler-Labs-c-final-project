@@ -23,6 +23,6 @@ add_executable(mmn14
         header/line_data.h
         scripts/first_pass.c
         header/first_pass.h
-        scripts/utilitis.c
-        header/utilitis.h
+        scripts/utilities.c
+        header/utilities.h
 )
