@@ -10,7 +10,7 @@
 
 typedef struct file{
     line_node *first_line;
-    int *number_of_rows;
+    int number_of_rows;
     char *filename;
 } file;
 
@@ -20,6 +20,6 @@ void write_to_file_file(file file);
 void write_to_file_object(word_list_block *block, char fileName[]);
 void write_to_file_entry(symbol_table *symbol_table, char fileName[]);
 void write_to_file_external(word_list_block *block, char fileName[], symbol_table *table);
-void add_ending_to_file_name(char **fileName, error_array *error);
+void initialize_new_file_name(file *file_, error_array *error, char name[]);
 
 #endif

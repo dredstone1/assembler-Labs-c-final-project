@@ -56,7 +56,7 @@ void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block,
 
 
 	if (symbol->label[0] != '\0') {
-		if (data.directive != NULL && data.directive->type == EXTERNAL)
+		if (data.directive != NULL && data.directive->type == EXTERN)
 			add_symbol(table, symbol->label, error, 0, EXTERNAL);
 		else
 			add_symbol(table, symbol->label, error, IC, symbol->type);

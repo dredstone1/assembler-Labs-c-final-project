@@ -22,4 +22,4 @@ void set_offset_line_node(line_node *node, int offset);
 void offset_line_node_by_i(line_node *node);
 void free_line(line_node *node);
 
-#endif //MMN14_LINE_NODE_H
+#endif

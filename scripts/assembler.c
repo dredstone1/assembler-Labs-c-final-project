@@ -1,7 +1,6 @@
 #include "../header/post_formating.h"
 #include "../header/first_pass.h"
 #include <stdlib.h>
-#include <time.h>
 #include <stdio.h>
 
 void create_files(word_list_block *file_code_block, symbol_table *table, char file_name[], error_array *error);
@@ -9,33 +8,40 @@ void create_files(word_list_block *file_code_block, symbol_table *table, char fi
 void run_assembler(char **files_paths, int number_of_files);
 
 int main(int argc, char **argv){
-    clock_t tic = clock();
+/*
+    clock_t tic, toc;
+	tic = clock();
+*/
     
     run_assembler(argv, argc);
     
     printf(BLACK_COLOR);
-    clock_t toc = clock();
+/*
+    toc = clock();
+*/
+/*
     printf("time: %f seconds", (double)(toc - tic) / CLOCKS_PER_SEC);
+*/
 	getchar();
     return 0;
 }
 
 void run_assembler(char **files_paths, int number_of_files){
-    file file;
-    error_array error;
-    int i, error_count = 0;
+	file file;
+	error_array error;
+	int i, error_count = 0;
+	word_list_block *file_code_block;
+	symbol_table table;
+	
 
-    initialize_error(&error);
-
-    for (i = 1; i < number_of_files; ++i) {
-        error.importance = NO_ERROR;
-        file.filename = files_paths[i];
-        add_ending_to_file_name(&file.filename, &error);
-        read_file(&file, &error);
+	for (i = 1; i < number_of_files; ++i) {
+		initialize_error(&error);
+		error.importance = NO_ERROR;
+		initialize_new_file_name(&file, &error, files_paths[i]);
+		read_file(&file, &error);
 		if (error.importance == NO_ERROR) {
 			post_formating(&file, &error);
-			word_list_block *file_code_block = create_new_word_list_block(&error);
-			symbol_table table;
+			file_code_block = create_new_word_list_block(&error);
 			initialize_symbol_table(&table);
 			first_pass(&file, &table, file_code_block, &error);
 

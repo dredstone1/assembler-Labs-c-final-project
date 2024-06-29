@@ -26,4 +26,4 @@ void replace_line_to_macro(macro macro, line_node **node);
 void free_macros(macros *macros);
 void handle_macros(line_node **first_file_node,int *number_of_rows, macros *macros, error_array *error);
 
-#endif //MMN14_MACRO_H
+#endif

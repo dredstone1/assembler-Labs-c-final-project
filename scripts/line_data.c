@@ -28,13 +28,14 @@ void line_data_set(line_data *data, int offset, char line[], symbol symbol[], er
 
 line_directive* line_directive_set(int offset, char line[], char first_word[], symbol symbol[], error_array *error, int line_number){
     char word[LINE_SIZE];
-    strcpy(word, first_word);
-
-    line_directive *directive = (line_directive*)malloc(sizeof(line_directive));
-    if (directive == NULL) {
+	line_directive *directive;
+	directive = (line_directive*)malloc(sizeof(line_directive));
+	if (directive == NULL) {
 		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
-        return NULL;
-    }
+		return NULL;
+	}
+
+	strcpy(word, first_word);
 
     directive->type = get_directive_from_string(word);
     if (directive->type == -1) {
@@ -48,7 +49,7 @@ line_directive* line_directive_set(int offset, char line[], char first_word[], s
 
 void handle_variables_directive(int offset, char line[], line_directive *directive, symbol *symbol, error_array *error, int line_number) {
     variable variable_temp;
-    if (directive->type == ENTRY_ || directive->type == EXTERNAL) {
+    if (directive->type == ENTRY || directive->type == EXTERN) {
         if (symbol->label[0] != '\0') {
 			add_error(error, SYMBOL_IN_EXTERNAL_OR_ENTRY, line_number, 0, strlen(symbol->label), WARNING,
 					  line, 0);

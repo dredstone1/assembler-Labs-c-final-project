@@ -90,7 +90,7 @@ int get_amount_of_words_from_command(line_command *command){
 }
 
 void handle_directive_type(word_list_block *block, line_data *data, error_array *error){
-    if (data->directive->type == ENTRY_ || data->directive->type == EXTERNAL)
+    if (data->directive->type == ENTRY || data->directive->type == EXTERN)
         return;
 	
     insert_words_nodes_into_block(block, data->directive->amount_of_variables, error, 0, "");
@@ -108,7 +108,8 @@ void handle_operands_directive_list(line_directive *directive, word_list_block *
 }
 
 void insert_words_nodes_into_block(word_list_block *block, int amount_of_words, error_array *error, int line_number, char line[]){
-    for (int i=0; i<amount_of_words; i++) {
+    int i;
+	for (i=0; i<amount_of_words; i++) {
 		if (i==0)
 			add_word_node_to_block(block, error, line_number, line);
 		else

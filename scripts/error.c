@@ -77,7 +77,7 @@ void handel_error(error_array error, char file_name[]) {
 			print_separator();
 		else
 			print_in_error_message(file_name);
-		
+
 		print_error(error.errors[i], error, i);
 		
 		if (error.errors[i].type == FILE_NOT_FOUND)
@@ -89,7 +89,6 @@ void handel_error(error_array error, char file_name[]) {
 
 void print_error(error error, error_array error_array, int current_error){
 	int count = count_error_type(error_array, current_error, error.type), i=0, j, temp;
-
 	print_start_error_message(error, &i, FALSE);
 	i++;
 	temp = i;
@@ -121,8 +120,12 @@ void print_error_lines(error error, int *offset, bool ignore_mark, bool single_e
 }
 
 void print_start_error_message(error error, int *offset, bool single_error){
-	for (; error_massage_stage[error.type][*offset] < END_OF_ERROR; (*offset)++)
+	printf("www1: %d\n", error.type);
+	for (; error_massage_stage[error.type][*offset] < END_OF_ERROR; (*offset)++) {
+		printf("www2\n");
+		
 		error_handling_functions[error_massage_stage[error.type][*offset]](error, single_error);
+	}
 }
 
 

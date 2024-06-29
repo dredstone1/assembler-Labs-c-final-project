@@ -5,19 +5,17 @@
 
 void add_symbol(symbol_table *table, char label[], error_array *error, int address, symbol_type type){
 	table->size++;
-	symbol *new_symbols = (symbol *)realloc(table->symbols, sizeof(symbol) * (table->size));
-	if (new_symbols == NULL) {
+	table->symbols = (symbol *)realloc(table->symbols, sizeof(symbol) * (table->size));
+	if (table->symbols == NULL) {
 		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
 		return;
 	}
 
-	new_symbols[table->size-1].type = type;
+	table->symbols[table->size-1].type = type;
 
-	strcpy(new_symbols[table->size-1].label, label);
-	
-	new_symbols[table->size-1].address = address;
+	strcpy(table->symbols[table->size-1].label, label);
 
-	table->symbols = new_symbols;
+	table->symbols[table->size-1].address = address;
 }
 
 void initialize_symbol_table(symbol_table *symbol_table_){

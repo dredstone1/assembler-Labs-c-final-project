@@ -4,27 +4,28 @@
 #include <string.h>
 
 void free_line(line_node *node);
+void set_ending_to_file_name(char *fileName, char ending[]);
 
-void read_file(file *file1, error_array *error) {
+void read_file(file *file_, error_array *error) {
     char word[LINE_SIZE], word_temp[LINE_SIZE];
     int i = 0, line_number = 0;
     line_node *last_line;
     FILE *files;
-
-    files = fopen(file1->filename, "r");
+	set_ending_to_file_name(file_->filename, "as");
+    files = fopen(file_->filename, "r");
     if (files == NULL) {
 		add_error(error, FILE_NOT_FOUND, 0, 0, 0, WARNING, "", 0);
         return;
     }
 
-    file1->number_of_rows = 0;
+	file_->number_of_rows = 0;
     last_line = create_line_node(NULL);
     if (last_line == NULL) {
 		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
         return;
     }
 
-    file1->first_line = last_line;
+	file_->first_line = last_line;
 
     while (fgets(word, sizeof(char)*LINE_SIZE, files) != NULL) {
         i=0;
@@ -35,8 +36,8 @@ void read_file(file *file1, error_array *error) {
 
         i=0;
         get_next_word(word_temp, &i, word, "\r\n", 2);
-        word_temp[i]= '\0';
-        if (file1->number_of_rows>0)
+        word_temp[i] = '\0';
+        if ((file_->number_of_rows)>0)
             last_line = last_line->next = create_line_node(NULL);
 
         if (last_line == NULL) {
@@ -45,7 +46,7 @@ void read_file(file *file1, error_array *error) {
         }
 
         strcpy(last_line->line_text.content,word_temp);
-        file1->number_of_rows++;
+		file_->number_of_rows++;
         last_line->line_number = line_number;
     }
 
@@ -57,14 +58,12 @@ void free_file_lines(file *file1){
 }
 
 void write_to_file_file(file file){
-    char *file_name = strdup(file.filename), *dot = strrchr(file_name, '.');
     line_node *node = file.first_line;
     FILE *new_file;
 
-    if (dot != NULL)
-        strncpy(dot, ".am", 3);
+	set_ending_to_file_name(file.filename, "am");
 
-    new_file = fopen(file_name, "w");
+    new_file = fopen(file.filename, "w");
 
     while (node!=NULL){
         fprintf(new_file, "%s", node->line_text.content);
@@ -73,20 +72,21 @@ void write_to_file_file(file file){
 
         node = node->next;
     }
-
+	
+	set_ending_to_file_name(file.filename, "as");
     fclose(new_file);
 }
 
 void write_to_file_object(word_list_block *block, char fileName[]){
     word_node *node = block->head;
-    char *file_name = strdup(fileName), *dot = strrchr(file_name, '.');
     int DC = 100;
     FILE *file;
 
-    if (dot != NULL)
-        strncpy(dot, ".ob", 3);
 
-    file = fopen(file_name, "w");
+
+	set_ending_to_file_name(fileName, "ob");
+
+    file = fopen(fileName, "w");
 
     while (node!=NULL){
         fprintf(file, "%04d %05d", DC, int_to_octal(node->word));
@@ -96,16 +96,18 @@ void write_to_file_object(word_list_block *block, char fileName[]){
         node = node->next;
         DC++;
     }
-
+	
+	set_ending_to_file_name(fileName, "as");
     fclose(file);
 }
 
 void write_to_file_external(word_list_block *block, char fileName[], symbol_table *table){
     word_node *node = block->head;
-    char *file_name, *dot;
     FILE *file = NULL;
     int DC = 100;
     symbol *symbol;
+
+	set_ending_to_file_name(fileName, "ext");
 
     while (node!=NULL){
         if (node->symbol[0]!='\0') {
@@ -113,12 +115,7 @@ void write_to_file_external(word_list_block *block, char fileName[], symbol_tabl
 
             if (symbol != NULL && symbol->type == EXTERNAL) {
                 if (file==NULL){
-                    file_name = strdup(fileName);
-                    dot = strrchr(file_name, '.');
-                    if (dot != NULL)
-                        strncpy(dot, ".ext", 4);
-
-                    file = fopen(file_name, "w");
+                    file = fopen(fileName, "w");
                 }
                 fprintf(file, "%s  %d", node->symbol, DC);
                 if (node->next != NULL)
@@ -129,43 +126,46 @@ void write_to_file_external(word_list_block *block, char fileName[], symbol_tabl
         node = node->next;
         DC++;
     }
-
+	
+	set_ending_to_file_name(fileName, "as");
     fclose(file);
 }
 
 void write_to_file_entry(symbol_table *symbol_table, char fileName[]){
-    char *file_name, *dot;
+	int i;
     symbol *symbol;
     FILE *file1 = NULL;
 
-	for (int i = 0; i < symbol_table->size; i++) {
+	set_ending_to_file_name(fileName, "ent");
+	
+	for (i = 0; i < symbol_table->size; i++) {
 		if (symbol_table->symbols[i].type == ENTRY_) {
 			symbol = get_symbol_address_from_symbol_name(symbol_table, symbol_table->symbols[i].label);
 			if (symbol != NULL) {
 				if (file1 == NULL){
-					file_name = strdup(fileName);
-					dot = strrchr(file_name, '.');
-					if (dot != NULL)
-						strncpy(dot, ".ent", 4);
-
-					file1 = fopen(file_name, "w");
+					file1 = fopen(fileName, "w");
 				}
 
 				fprintf(file1, "%s  %d\n", symbol->label, symbol->address);
 			}
 		}
 	}
-
+	
+	set_ending_to_file_name(fileName, "as");
     fclose(file1);
 }
 
-void add_ending_to_file_name(char **fileName, error_array *error){
-    int file_name_length = strlen(*fileName);
-    *fileName = realloc(*fileName, sizeof(char) * (file_name_length + 4));
-    
-    if (*fileName == NULL) {
+void initialize_new_file_name(file *file_, error_array *error, char name[]) {
+	file_->filename = (char*)malloc(sizeof(char) * (strlen(name) + 4));
+    if (file_->filename == NULL) {
 		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
         return;
     }
-    strcpy(*fileName+file_name_length, ".as");
+	
+    strcpy(file_->filename, name);
+	file_->filename[strlen(name)] = '.';
+}
+
+void set_ending_to_file_name(char *fileName, char ending[]){
+	strcpy(strchr(fileName, '.') + 1, ending);
 }

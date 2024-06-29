@@ -20,7 +20,7 @@ error.o: scripts/error.c header/error.h header/utilitis.h header/line_node.h
 file.o: scripts/file.c header/file.h header/utilitis.h header/error.h header/words_block.h header/symbol_table.h header/line_node.h
 	$(CC) -c scripts/file.c $(CFLAGS) -o $@
 
-first_pass.c: scripts/first_pass.c header/first_pass.h header/file.h header/error.h header/words_block.h header/symbol_table.h header/line_data.h header/line_node.h
+first_pass.o: scripts/first_pass.c header/first_pass.h header/file.h header/error.h header/words_block.h header/symbol_table.h header/line_data.h header/line_node.h
 	$(CC) -c scripts/first_pass.c $(CFLAGS) -o $@
 
 line_data.o: scripts/line_data.c header/line_data.h header/symbol_table.h header/error.h
@@ -46,4 +46,4 @@ words_block.o: scripts/words_block.c header/words_block.h header/symbol_table.h 
 
 # Clean rule
 clean:
-	rm -rf *.o *.am *.ob *.ent *.ext assembler
+	rm -rf *.o *.am *.ob *.ent *.ext

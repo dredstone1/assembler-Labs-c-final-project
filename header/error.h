@@ -34,7 +34,7 @@ typedef enum error_message_stage {
     PRINT_ERROR_MARK,
 	PRINT_ERROR_MESSAGE_CONCLUSION,
     END_OF_ERROR,
-	FOR_EVERY_ERROR,
+	FOR_EVERY_ERROR
 }error_message_stage;
 
 
