@@ -35,7 +35,6 @@ const error_message_stage error_massage_stage[][END_OF_ERROR+3] = {
 /*MISSING_ENDING_QUOTE_N_START_QUOTE_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
 /*DIRECTIVE_TYPE_MISSING_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
 /*SYMBOL_NOT_FOUND_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-
 /*INVALID_VARIABLE_TYPE_MESSAGE*/{PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR}
 };
 
@@ -128,8 +127,6 @@ void print_start_error_message(error error, int *offset, bool single_error){
 	}
 }
 
-
-
 void print_start_line_error(){
     print_char_n_times(' ', amount_of_spaces_at_start);
     printf("%s", start_format_line_error);
@@ -212,10 +209,10 @@ int count_error_type(error_array error_array, int current_error, error_type erro
 
 int get_next_error_by_type(error_array error_array, int current_error, error_type error_type) {
 	int i;
-	for (i = current_error + 1; i < error_array.size; i++) {
+	for (i = current_error + 1; i < error_array.size; i++)
 		if (error_array.errors[i].type == error_type)
 			return i;
-	}
+
 	return -1;
 }
 
@@ -249,8 +246,7 @@ void initialize_error(error_array *error_array){
 	error_array->importance = NO_ERROR;
     
     error_array->size = 1;
-    if (error_array->errors == 
-	NULL) {
+    if (error_array->errors == NULL) {
         printf("Memory allocation failed");
         return;
     }

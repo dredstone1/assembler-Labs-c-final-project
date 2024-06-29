@@ -42,7 +42,7 @@ word create_new_first_word(line_data *data){
     word new_word;
     int amount_of_operands = amount_of_variables_from_opcode(data->command->opcode);
 
-    (new_word) = 0;
+    new_word = 0;
     set_opcode_into_word(&new_word, data->command->opcode);
     if (amount_of_operands == 2) {
         insert_operand_type_into_word(&new_word, SOURCE, data->command->variables[1].type);
@@ -91,9 +91,12 @@ int get_amount_of_words_from_command(line_command *command){
 
 void handle_directive_type(word_list_block *block, line_data *data, error_array *error){
     if (data->directive->type == ENTRY || data->directive->type == EXTERN)
-        return;
+		return;
 	
     insert_words_nodes_into_block(block, data->directive->amount_of_variables, error, 0, "");
+	if (error->importance == CRITICAL)
+		return;
+	
 	handle_operands_directive_list(data->directive, block);
 }
 
@@ -109,13 +112,12 @@ void handle_operands_directive_list(line_directive *directive, word_list_block *
 
 void insert_words_nodes_into_block(word_list_block *block, int amount_of_words, error_array *error, int line_number, char line[]){
     int i;
-	for (i=0; i<amount_of_words; i++) {
+	for (i=0; i<amount_of_words && error->importance!=CRITICAL; i++) {
 		if (i==0)
 			add_word_node_to_block(block, error, line_number, line);
 		else
 			add_word_node_to_block(block, error, line_number, line);
 	}
-		
 }
 
 void add_word_node_to_block(word_list_block *block, error_array *error, int line_number, char line[]){
@@ -190,6 +192,7 @@ word_node* create_new_word_node(word word, int line_number, char *line, error_ar
 		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
 		return NULL;
 	}
+	
 	node->symbol[0] = '\0';
 	node->line_number = line_number;
 	node->line = line;
