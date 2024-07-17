@@ -1,40 +1,149 @@
 #include "../header/first_pass.h"
+#include "../header/consts.h"
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
-void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block, symbol_table *table, int IC, error_array *error, int line_number);
 
-void first_pass(file *file1, symbol_table *table, word_list_block *file_code_block, error_array *error){
-	line_node *current_line = file1->first_line;
-	word_list_block *current_line_word_block;
-	int IC = 100, line_number = 0;
+void first_pass(char *file_name, error_array *error) {
+	int IC = 0, DC = 0, label_amount = 0, extern_amount = 0, entry_amount = 0;
 
-	while (current_line != NULL && error->importance != CRITICAL) {
+	/* Declare pointers to different data types */
+	word_data *commands = NULL, *instructions = NULL;
+
+	symbol_address *entries = NULL, *symbol_table = NULL, **externals = NULL;
+
+	command_data command;
+	instruction_data instruction;
+
+	char line[MAX_LINE_LENGTH];
+	char *workable_line;
+	char symbol[MAX_SYMBOL_SIZE];
+	workable_line = use_malloc(sizeof(char) * MAX_LINE_LENGTH, error);
+	FILE *file;
+	int line_number = 0;
+	int offset;
+
+	int symbol_defined = 0;
+
+	set_ending_to_file_name(file_name, "am");
+	file = fopen(file_name, "r");
+
+	while (fgets(line, MAX_LINE_LENGTH, file) != NULL && error->importance != CRITICAL){
 		error->importance = NO_ERROR;
-		current_line_word_block = create_new_word_list_block(error);
-		if (error->importance != NO_ERROR) {
-			line_number++;
-			current_line = current_line->next;
-			continue;
-		}
-
-		format_line(current_line->line_text.content, current_line_word_block, table, IC, error, line_number);
-		if (error->importance != NO_ERROR) {
-			free(current_line_word_block);
-			line_number++;
-			current_line = current_line->next;
-			continue;
-		}
-
-		if (current_line_word_block->head != NULL) {
-			IC += current_line_word_block->size;
-			combine_word_list_blocks(file_code_block, current_line_word_block);
-		}
 		line_number++;
-		current_line = current_line->next;
+		offset = 0;
+
+		if (is_empty_line(line) || is_comment_line(line))
+			continue;
+
+		strcpy(workable_line, line);
+
+		workable_line = strtok(workable_line, " \t");
+		symbol_defined = is_valid_symbol(workable_line);
+		if (symbol_defined == 2) {
+			add_error(error, INVALID_SYMBOL_NAME, line_number, workable_line - line,
+					  workable_line - line + strlen(workable_line), WARNING, workable_line, 0);
+			continue;
+		}
+		if (symbol_defined == 1) {
+			workable_line[strlen(workable_line) - 1] = '\0';
+			strcpy(symbol, workable_line);
+/*
+			workable_line = strtok(NULL, " \t");
+*/
+			label_amount++;
+		}
+		
+		if (is_directive(workable_line)) {
+
+			if (strcmp(workable_line, ".string")==0 || strcmp(workable_line, ".data")==0) {
+				if (workable_line[1] == 's') {
+					workable_line = strtok(NULL, " \t\n");
+					read_string(&workable_line, line, &instruction, error, line_number);
+				} else
+					read_data(&workable_line, line, &instruction, error, line_number);
+
+				if (symbol_defined == 1) {
+					instruction.label = (char *) use_malloc(sizeof(char) * strlen(symbol), error);
+					if (add_symbol(&symbol_table, label_amount, DC, line_number, instruction.args, 1, error) == 0)
+						continue;
+				}
+
+				if (error->importance != NO_ERROR)
+					continue;
+				add_instruction_to_words(&instructions, instruction, line_number, error, &DC);
+				DC += instruction.size;
+			} else if (strcmp(workable_line, ".extern")==0 || strcmp(workable_line, ".entry")==0) {
+				if (symbol_defined == 1) {
+					add_error(error, SYMBOL_IN_EXTERNAL_OR_ENTRY, line_number, workable_line - line,
+							  workable_line - line + strlen(workable_line), CRITICAL, line, 0);
+					continue;
+				}
+
+				instruction.is_extern = workable_line[2] == 'x';
+
+				if (read_extern_or_entry_symbol(&workable_line, line, &instruction, error, line_number) == 0)
+					continue;
+
+				if (instruction.is_extern) {
+					extern_amount++;
+					label_amount++;
+
+					if (add_symbol(&symbol_table, label_amount, 1, line_number, instruction.args, 0, error) == 0)
+						continue;
+
+					externals = realloc(externals, sizeof(symbol_address *) * extern_amount);
+					if (externals == NULL) {
+						add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, 0, 0);
+						return;
+					}
+
+					externals[extern_amount - 1] = (symbol_table + label_amount - 1);
+				} else {
+					entry_amount++;
+					if (add_symbol(&entries, entry_amount, 0, line_number, instruction.args, 0, error) == 0) {
+						printf("entry:1 \n");
+						continue;
+						printf("extern: \n");
+					}
+					printf("entry:2 \n");
+				}
+				printf("entry:3 \n");
+				
+			} else {
+				add_error(error, INVALID_DIRECTIVE_TYPE, line_number, workable_line - line, workable_line - line + strlen(workable_line), CRITICAL, line, 0);
+				continue;
+			}
+		} else {
+			if (symbol_defined == 1) {
+				if (add_symbol(&symbol_table, label_amount, IC, line_number, instruction.args, 0, error) == 0)
+					continue;
+				workable_line = strtok(NULL, " \t\n");
+			}
+			
+			command.opcode = get_opcode_from_string(workable_line);
+
+			
+			if (command.opcode < 0) {
+				add_error(error, INVALID_OPCODE, line_number, workable_line - line, workable_line - line + strlen(workable_line), CRITICAL, line, 0);
+				continue;
+			}
+			if (read_command_variables(&workable_line, line, &command, error, line_number) == 0)
+				continue;
+			add_command_to_words(&commands, &command, line_number, error, &IC);
+			IC += get_amount_of_words_from_command(&command);
+			printf("IC: %d\n", IC);
+		}
 	}
+	write_to_file_external(commands, file_name, IC, DC);
+	write_to_file_external(instructions, file_name, IC, DC);
+	free(externals);
+	fclose(file);
 }
 
-void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block, symbol_table *table, int IC, error_array *error, int line_number) {
+/*
+void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block, symbol_table *table, int *IC, int *DC, error_array *error, int line_number) {
 	int offset = 0;
 	symbol *symbol;
 	line_data data;
@@ -52,14 +161,14 @@ void format_line(char line[LINE_SIZE], word_list_block *current_line_word_block,
 		free(symbol);
 		return;
 	}
-	line_data_to_word_list_block(current_line_word_block, &data, error, line_number, line);
+	line_data_to_word_list_block(current_line_word_block, &data, error, line_number, line, DC, IC);
 
 
 	if (symbol->label[0] != '\0') {
 		if (data.directive != NULL && data.directive->type == EXTERN)
 			add_symbol(table, symbol->label, error, 0, EXTERNAL);
 		else
-			add_symbol(table, symbol->label, error, IC, symbol->type);
+			add_symbol(table, symbol->label, error, (*IC) + (*DC), symbol->type);
 	}
 	free(symbol);
-}
+}*/

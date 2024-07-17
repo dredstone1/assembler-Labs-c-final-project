@@ -1,22 +1,27 @@
 #include "../header/line_data.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
-line_command* line_command_set(int offset, char line[], char first_word[], error_array *error, int line_number);
+/*line_command* line_command_set(int offset, char line[], char first_word[], error_array *error, int line_number);
 line_directive* line_directive_set(int offset, char line[], char first_word[], symbol symbol[], error_array *error, int line_number);
 void handle_variables_command(int offset, char line[], line_command *command, error_array *error, int line_number);
-variable get_next_variable(int *offset, char line[]);
-bool is_number(char word[]);
+variable get_next_variable(int *offset, char line[]);*/
+int is_number(char word[]);
 int get_number(char word[]);
-bool is_register(char word[]);
+int is_register(char word[]);
+/*
 void handle_variables_directive(int offset, char line[], line_directive *directive, symbol *symbol, error_array *error, int line_number);
+*/
 void handle_variables_string(char line[], int *offset, int variables[], int *amount_of_variables, error_array *error, int line_number);
 void handle_variables_data(char line[], int *offset, int variables[], int *amount_of_variables, error_array *error, int line_number);
+/*
 void set_variables_list(int offset, char line[], line_directive *directive, error_array *error, int line_number);
-void cast_string_to_int_array(char string[], int int_array[], int *length);
+*/
+int cast_string_to_words_array(char *string, short **word_array, int length);
 directive_type get_directive_from_string(const char *str);
 
-void line_data_set(line_data *data, int offset, char line[], symbol symbol[], error_array *error, int line_number){
+/*void line_data_set(line_data *data, int offset, char line[], symbol symbol[], error_array *error, int line_number){
     char word[LINE_SIZE];
     get_next_word_n_skip(word, &offset, line, " \t\0", 3);
 
@@ -103,23 +108,23 @@ void handle_variables_data(char line[], int *offset, int variables[], int *amoun
 
 void handle_variables_string(char line[], int *offset, int variables[], int *amount_of_variables, error_array *error, int line_number){
     char word[LINE_SIZE], temp_offset;
-	bool missing_start_quote = FALSE, missing_end_quote = FALSE;
+	int missing_start_quote = 0, missing_end_quote = 0;
 
     skip_spaces_and_tabs(offset, line);
     temp_offset = *offset;
     if (line[*offset] != '\"')
-		missing_start_quote = TRUE;
+		missing_start_quote = 1;
 
     (*offset)++;
     get_next_word(word, offset, line, "\"\0", 2);
     if (line[*offset] != '\"')
-		missing_end_quote = TRUE;
+		missing_end_quote = 1;
 	
-	if (missing_start_quote == TRUE && missing_end_quote == TRUE)
+	if (missing_start_quote == 1 && missing_end_quote == 1)
 		add_error(error, MISSING_ENDING_QUOTE_N_START_QUOTE, line_number, temp_offset - 1, strlen(line), WARNING, line, temp_offset - 1);
-	else if (missing_start_quote == TRUE)
+	else if (missing_start_quote == 1)
 		add_error(error, MISSING_START_QUOTE, line_number, temp_offset - 1, strlen(line), WARNING, line, temp_offset - 1);
-	else if (missing_end_quote == TRUE)
+	else if (missing_end_quote == 1)
 		add_error(error, MISSING_ENDING_QUOTE, line_number, temp_offset, strlen(line), WARNING, line, (*offset));
 	
 	if (error->importance != NO_ERROR)
@@ -128,11 +133,7 @@ void handle_variables_string(char line[], int *offset, int variables[], int *amo
     cast_string_to_int_array(word, variables, amount_of_variables);
 }
 
-void cast_string_to_int_array(char string[], int int_array[], int *length){
-    do
-        int_array[*length] = string[*length];
-    while (string[(*length)++] != '\0');
-}
+
 
 
 line_command* line_command_set(int offset, char line[], char first_word[], error_array *error, int line_number) {
@@ -166,21 +167,21 @@ void handle_variables_command(int offset, char line[], line_command *command, er
         count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
 		temp_offset = offset;
         command->variables[1] = get_next_variable(&offset, line);
-		if (is_valid_var(command->opcode, command->variables[1].type) == FALSE){
+		if (is_valid_var(command->opcode, command->variables[1].type) == 0){
 			add_error(error, INVALID_VARIABLE_TYPE, line_number, temp_offset, offset, WARNING, line, 0);
 			return;
 		}
         count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
 		temp_offset = offset;
         command->variables[0] = get_next_variable(&offset, line);
-		if (is_valid_var(command->opcode, command->variables[0].type) == FALSE){
+		if (is_valid_var(command->opcode, command->variables[0].type) == 0){
 			add_error(error, INVALID_VARIABLE_TYPE, line_number, temp_offset, offset, WARNING, line, 0);
 			return;
 		}
     }else if (amount_of_variable == 1) {
 		temp_offset = offset;
 		command->variables[0] = get_next_variable(&offset, line);
-		if (is_valid_var(command->opcode, command->variables[0].type) == FALSE) {
+		if (is_valid_var(command->opcode, command->variables[0].type) == 0) {
 			add_error(error, INVALID_VARIABLE_TYPE, line_number, temp_offset, offset, WARNING, line, 0);
 			return;
 		}
@@ -190,7 +191,7 @@ void handle_variables_command(int offset, char line[], line_command *command, er
 variable get_next_variable(int *offset, char line[]){
     variable variable;
     char word[LINE_SIZE];
-	skip_spaces_and_tabs(offset, line);
+	skip_spaces_and_tabs_with_offset(offset, line);
 	get_next_word_n_skip(word, offset, line, " ,\t\0", 4);
 	
 	
@@ -214,36 +215,39 @@ variable get_next_variable(int *offset, char line[]){
         strcpy(variable.symbol, word);
     }
     return variable;
-}
+}*/
 
-bool is_register(char word[]) {
+
+
+
+int is_register(char word[]) {
     int offset = 0;
     if (word[0] == '*')
         offset = 1;
 
     if (word[offset] == 'r' && word[offset+1] >= '0' && word[offset+1] <= '7' && word[offset+2] == '\0')
-        return TRUE;
+        return 1;
 
-    return FALSE;
+    return 0;
 }
 
 int get_number(char word[]){
-    if (is_number(word)==FALSE)
+    if (is_number(word)==0)
         return 0;
 
     return atoi(word);
 }
 
 
-bool is_number(char word[]){
+int is_number(char word[]){
     int i;
     for (i=0; word[i] != '\0'; i++){
         if ((word[i] >= '0' && word[i] <= '9') || word[i] == '-'|| word[i] == '+')
             continue;
-        return FALSE;
+        return 0;
     }
 
-    return TRUE;
+    return 1;
 }
 
 
@@ -270,6 +274,7 @@ const char *opcode_names[16][3][1] = {
 
 opcode get_opcode_from_string(const char *str) {
 	opcode code;
+	printf("str: %s\n", str);
 	for (code = MOV; code <= STOP; code++)
 		if (strcmp(str, opcode_names[code][0][0]) == 0)
 			return code;
@@ -277,7 +282,7 @@ opcode get_opcode_from_string(const char *str) {
 	return -1;
 }
 
-bool is_valid_var(opcode code, variable_type variable) {
+int is_valid_var(opcode code, variable_type variable) {
 	return opcode_names[code][1][0][variable] != '_';
 }
 
@@ -306,3 +311,213 @@ directive_type get_directive_from_string(const char *str) {
 	}
 	return -1;
 }
+
+int is_directive(char *str) {
+	return *str == '.';
+}
+
+int read_string(char **workable_line, char *line, instruction_data *instruction, error_array *error, int line_number) {
+	char *temp_offset;
+	int missing_start_quote = 0, missing_end_quote = 0;
+
+	temp_offset = *workable_line;
+	if (**workable_line != '\"')
+		missing_start_quote = 1;
+
+	(*workable_line)++;
+	(*workable_line) = strchr(*workable_line, '\"');
+	if (*workable_line == NULL)
+		missing_end_quote = 1;
+	if (missing_start_quote && missing_end_quote)
+		add_error(error, MISSING_ENDING_QUOTE_N_START_QUOTE, line_number, temp_offset - line - 1, strlen(line), WARNING, line, 0);
+	else if (missing_start_quote)
+		add_error(error, MISSING_START_QUOTE, line_number, temp_offset - line - 1, strlen(line), WARNING, line, temp_offset - line - 1);
+	else if (missing_end_quote)
+		add_error(error, MISSING_ENDING_QUOTE, line_number, temp_offset - line, strlen(line), WARNING, line, 0);
+
+	if (error->importance != NO_ERROR)
+		return 0;
+	
+	if (cast_string_to_words_array(temp_offset+1, &(instruction->numbers), *workable_line - temp_offset) == 0) {
+		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
+		return 0;
+	}
+	instruction->size = strlen((char*)instruction->numbers);
+	(*workable_line)++;
+	return 1;
+}
+
+int read_data(char **workable_line, char *line, instruction_data *instruction, error_array *error, int line_number) {
+	int i, coma_count, number;
+	char word1[80];
+
+	for (i = 0; i < 76; i++) {
+		coma_count = count_commas_until_text(workable_line);
+		if (i == 0) {
+			if (coma_count != 0) {
+				add_error(error, INVALID_COMMA, line_number, *workable_line - line,
+						  *workable_line - line + strlen(*workable_line), WARNING, line, 0);
+				return 0;
+			}
+		} else {
+			if (coma_count == 0) {
+				if (*workable_line - line >= strlen(line))
+					break;
+				add_error(error, MISSING_COMMA, line_number, *workable_line - line, *workable_line - line + strlen(*workable_line), WARNING, line, 0);
+				return 0;
+			} else if (coma_count > 1) {
+				add_error(error, EXTRA_COMMA, line_number, *workable_line - line,
+						  *workable_line - line + strlen(*workable_line), WARNING, line, 0);
+				return 0;
+			}
+		}
+
+		skip_spaces_and_tabs(workable_line);
+		get_next_word(workable_line, word1, " ,\t\0");
+		skip_spaces_and_tabs(workable_line);
+		
+		if ((number = get_number(word1)) == 0) {
+			add_error(error, INVALID_NUMBER, line_number, *workable_line - line,
+					  *workable_line - line + strlen(*workable_line), WARNING, line, 0);
+			return 0;
+		}
+		instruction->numbers = (short *)realloc(instruction->numbers, sizeof(short) * (i + 1));
+		if (instruction->numbers == NULL) {
+			add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
+			return 0;
+		}
+		instruction->size = i;
+		instruction->numbers[i] = number;
+	}
+	return 1;
+}
+
+int cast_string_to_words_array(char *string, short **word_array, int length) {
+	*word_array = (short *)malloc(sizeof(short ) * length);
+	int i;
+	
+	if (*word_array == NULL)
+		return 0;
+
+	for (i = 0; i < length; i++)
+		(*word_array)[i] = string[i];
+
+	return 1;
+}
+
+int read_extern_or_entry_symbol(char **workable_line, char *line, instruction_data *instruction, error_array *error, int line_number){
+	char *temp_offset = *workable_line;
+	*workable_line = strtok(*workable_line, " \t\n");
+	
+	if (!is_valid_symbol_name(*workable_line)){
+		add_error(error, INVALID_SYMBOL_NAME, line_number, line - temp_offset,line-*workable_line, WARNING, line, 0);
+		return 0;
+	}
+
+	instruction->args = *workable_line;
+	return 1;
+}
+
+/*void handle_variables_command(int offset, char line[], line_command *command, error_array *error, int line_number) {
+	int amount_of_variable, temp_offset;
+	command->variables[0].type = command->variables[1].type = NONE;
+
+	amount_of_variable=amount_of_variables_from_opcode(command->opcode);
+
+	if (amount_of_variable == 2) {
+		count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
+		temp_offset = offset;
+		command->variables[1] = get_next_variable(&offset, line);
+		if (is_valid_var(command->opcode, command->variables[1].type) == 0){
+			add_error(error, INVALID_VARIABLE_TYPE, line_number, temp_offset, offset, WARNING, line, 0);
+			return;
+		}
+		count_char_until_not_separator(line, ',', &offset, " ,\t\0", 4);
+		temp_offset = offset;
+		command->variables[0] = get_next_variable(&offset, line);
+		if (is_valid_var(command->opcode, command->variables[0].type) == 0){
+			add_error(error, INVALID_VARIABLE_TYPE, line_number, temp_offset, offset, WARNING, line, 0);
+			return;
+		}
+	}else if (amount_of_variable == 1) {
+		temp_offset = offset;
+		command->variables[0] = get_next_variable(&offset, line);
+		if (is_valid_var(command->opcode, command->variables[0].type) == 0) {
+			add_error(error, INVALID_VARIABLE_TYPE, line_number, temp_offset, offset, WARNING, line, 0);
+			return;
+		}
+	}
+}*/
+
+int get_next_variable(var *variable, char **workable_line, int comma_needed, error_array *error, int line_number, char* line){
+	int comma_count;
+	char word[80];
+	skip_spaces_and_tabs(workable_line);
+	comma_count = count_commas_until_text(workable_line);
+	printf("comma_count: %d\n", comma_count);
+	if (comma_needed){
+		if (comma_count == 0)
+			add_error(error, MISSING_COMMA, line_number, *workable_line - line, *workable_line - line + strlen(*workable_line), WARNING, line, 0);
+		else if (comma_count > 1)
+			add_error(error, EXTRA_COMMA, line_number, *workable_line - line, *workable_line - line + strlen(*workable_line), WARNING, line, 0);
+	} else {
+		if (comma_count != 0)
+			add_error(error, EXTRA_COMMA, line_number, *workable_line - line,
+					  *workable_line - line + strlen(*workable_line), WARNING, line, 0);
+	}
+	if (error->importance != NO_ERROR)
+		return 0;
+	
+	
+	skip_spaces_and_tabs(workable_line);
+	get_next_word(workable_line, word, " ,\t\0");
+	if (word[0] == '#') {
+		variable->value = get_number(word+1);
+		variable->type = IMMEDIATE;
+	}
+	else if (is_register(word)) {
+		if (word[0]=='*') {
+			variable->type = REGISTER_INDIRECT;
+			word[1] = '0';
+		}
+		else
+			variable->type = REGISTER_DIRECT;
+
+		word[0] = '0';
+		variable->value = atoi(word);
+	}
+	else {
+		variable->type = DIRECT;
+		variable->var = strdup(word);
+	}
+	return 1;
+}
+
+
+int read_command_variables(char **workable_line, char *line, command_data *command, error_array *error, int line_number){
+	int amount_of_variable;
+	
+	amount_of_variable = amount_of_variables_from_opcode(command->opcode);
+	
+	command->source.type = -1;
+	command->destination.type = -1;
+	
+	if (amount_of_variable == 2) {
+		int i = strlen(*workable_line);
+		*workable_line += strlen(*workable_line)+1;
+		
+
+		if (get_next_variable(&command->source, workable_line, 0, error, line_number, line) == 0)
+			return 0;
+		if (get_next_variable(&command->source, workable_line, 1, error, line_number, line) == 0)
+			return 0;
+	} else if (amount_of_variable == 1) {
+		*workable_line += strlen(*workable_line);
+		
+		if (get_next_variable(&command->source, workable_line, 0, error, line_number, line) == 0)
+			return 0;
+	}
+	
+	return 1;
+}
+

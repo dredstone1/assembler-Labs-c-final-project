@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../header/consts.h"
 
 void print_char_n_times(char c, int n);
 void print_error(error error, error_array error_array, int current_error);
@@ -11,15 +12,15 @@ void print_separator();
 int count_error_type(error_array error_array, int current_error, error_type error_type);
 int get_next_error_by_type(error_array error_array, int current_error, error_type error_type);
 void print_in_error_message(char file_name[]);
-void print_start_error_message(error error, int *offset, bool single_error);
-void print_error_lines(error error, int *offset, bool ignore_mark, bool single_error);
+void print_start_error_message(error error, int *offset, int single_error);
+void print_error_lines(error error, int *offset, int ignore_mark, int single_error);
 
 
 
-void print_general_error_type(error error, bool single_error);
-void print_error_line(error error, bool single_error);
-void print_error_mark(error error, bool single_error);
-void print_error_message_conclusion(error error, bool single_error);
+void print_general_error_type(error error, int single_error);
+void print_error_line(error error, int single_error);
+void print_error_mark(error error, int single_error);
+void print_error_message_conclusion(error error, int single_error);
 
 const error_message_stage error_massage_stage[][END_OF_ERROR+3] = {
 /*FILE_NOT_FOUND_MESSAGE: */ {FOR_EVERY_ERROR, PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, END_OF_ERROR},
@@ -56,7 +57,7 @@ const char *error_massage[][2] = {
 		
 };
 
-void (*error_handling_functions[])(error, bool) = {
+void (*error_handling_functions[])(error, int) = {
         print_general_error_type,
         print_error_line,
         print_error_mark,
@@ -88,7 +89,7 @@ void handel_error(error_array error, char file_name[]) {
 
 void print_error(error error, error_array error_array, int current_error){
 	int count = count_error_type(error_array, current_error, error.type), i=0, j, temp;
-	print_start_error_message(error, &i, FALSE);
+	print_start_error_message(error, &i, 0);
 	i++;
 	temp = i;
 	for (j = 0; j < count; ++j) {
@@ -106,10 +107,10 @@ void print_error(error error, error_array error_array, int current_error){
 	}
 }
 
-void print_error_lines(error error, int *offset, bool ignore_mark, bool single_error){
+void print_error_lines(error error, int *offset, int ignore_mark, int single_error){
 	for (; error_massage_stage[error.type][*offset] != END_OF_ERROR; ++(*offset)) {
 		if (error_massage_stage[error.type][*offset] == FOR_EVERY_ERROR){
-			if (ignore_mark == TRUE)
+			if (ignore_mark == 1)
 				continue;
 			return;
 		}
@@ -118,7 +119,7 @@ void print_error_lines(error error, int *offset, bool ignore_mark, bool single_e
 	}
 }
 
-void print_start_error_message(error error, int *offset, bool single_error){
+void print_start_error_message(error error, int *offset, int single_error){
 	printf("www1: %d\n", error.type);
 	for (; error_massage_stage[error.type][*offset] < END_OF_ERROR; (*offset)++) {
 		printf("www2\n");
@@ -152,16 +153,16 @@ void print_in_error_message(char file_name[]){
     printf(FILE_NAME_ERROR, file_name);
 }
 
-void print_general_error_type(error error, bool single_error){
+void print_general_error_type(error error, int single_error){
     print_start_line_error();
 	printf("%s", error_massage[error.type][0]);
 	if (error.type != FILE_NOT_FOUND)
 		printf("\n");
 }
 
-void print_error_message_conclusion(error error, bool single_error){
+void print_error_message_conclusion(error error, int single_error){
     print_start_line_error();
-	if (single_error == FALSE) {
+	if (single_error == 0) {
 		printf("%.*s", error.end_place_in_line - error.start_place_in_line, &error.line[error.start_place_in_line]);
 		printf(ERROR_DESCRIPTION_MESSAGE_START_PATTERN_SINGLE);
 		printf("%s", error_massage[error.type][1]);
@@ -175,12 +176,12 @@ void print_error_message_conclusion(error error, bool single_error){
 		
 }
 
-void print_error_line(error error, bool single_error){
+void print_error_line(error error, int single_error){
     print_start_line_number_error(error.line_number);
     printf("%s\n", error.line);
 }
 
-void print_error_mark(error error, bool single_error){
+void print_error_mark(error error, int single_error){
     print_start_line_error();
 	print_char_n_times(' ', error.start_place_in_line);
 	

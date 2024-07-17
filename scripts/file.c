@@ -4,7 +4,6 @@
 #include <string.h>
 
 void free_line(line_node *node);
-void set_ending_to_file_name(char *fileName, char ending[]);
 
 void read_file(file *file_, error_array *error) {
     char word[LINE_SIZE], word_temp[LINE_SIZE];
@@ -29,13 +28,13 @@ void read_file(file *file_, error_array *error) {
 
     while (fgets(word, sizeof(char)*LINE_SIZE, files) != NULL) {
         i=0;
-        skip_spaces_and_tabs(&i, word);
+		skip_spaces_and_tabs_with_offset(&i, word);
         line_number++;
         if (word[i] == ';' || word[i] == '\n')
             continue;
 
         i=0;
-        get_next_word(word_temp, &i, word, "\r\n", 2);
+/*        get_next_word(word_temp, &i, word, "\r\n", 2);*/
         word_temp[i] = '\0';
         if ((file_->number_of_rows)>0)
             last_line = last_line->next = create_line_node(NULL);
@@ -57,7 +56,7 @@ void free_file_lines(file *file1){
     free_line(file1->first_line);
 }
 
-void write_to_file_file(file file){
+void write_to_file(file file){
     line_node *node = file.first_line;
     FILE *new_file;
 
@@ -77,24 +76,22 @@ void write_to_file_file(file file){
     fclose(new_file);
 }
 
-void write_to_file_object(word_list_block *block, char fileName[]){
+/*void write_to_file_object( *block, char fileName[], int IC, int DC){
     word_node *node = block->head;
-    int DC = 100;
+    int current_word_line = 100;
     FILE *file;
-
-
-
+	
 	set_ending_to_file_name(fileName, "ob");
 
     file = fopen(fileName, "w");
-
+	fprintf(file, "%5d %d\n", DC, IC);
     while (node!=NULL){
         fprintf(file, "%04d %05d", DC, int_to_octal(node->word));
         if(node->next!=NULL)
             fprintf(file, "\n");
 
         node = node->next;
-        DC++;
+		current_word_line++;
     }
 	
 	set_ending_to_file_name(fileName, "as");
@@ -153,14 +150,43 @@ void write_to_file_entry(symbol_table *symbol_table, char fileName[]){
 	
 	set_ending_to_file_name(fileName, "as");
     fclose(file1);
+}*/
+
+
+void write_to_file_external(word_data *list, char fileName[], int IC, int DC){
+	int current_word_line = 100;
+	FILE *file;
+
+	set_ending_to_file_name(fileName, "ob");
+
+	file = fopen(fileName, "w");
+	fprintf(file, "%5d %d\n", DC, IC);
+	for (int i = 0; i < IC + DC; ++i) {
+		fprintf(file, "%04d %05d", DC, int_to_octal(list[i].word));
+		if (i < IC + DC - 1)
+			fprintf(file, "\n");
+		
+		
+	}
+/*
+	while (node!=NULL){
+		fprintf(file, "%04d %05d", DC, int_to_octal(node->word));
+		if(node->next!=NULL)
+			fprintf(file, "\n");
+
+		node = node->next;
+		current_word_line++;
+	}
+*/
+
+	set_ending_to_file_name(fileName, "as");
+	fclose(file);
 }
 
 void initialize_new_file_name(file *file_, error_array *error, char name[]) {
-	file_->filename = (char*)malloc(sizeof(char) * (strlen(name) + 4));
-    if (file_->filename == NULL) {
-		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
+	file_->filename = (char*)use_malloc(sizeof(char) * (strlen(name) + 4), error);
+    if (error->importance != NO_ERROR)
         return;
-    }
 	
     strcpy(file_->filename, name);
 	file_->filename[strlen(name)] = '.';

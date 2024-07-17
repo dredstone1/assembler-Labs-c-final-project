@@ -17,12 +17,15 @@ add_executable(mmn14
         scripts/symbol_table.c
         header/symbol_table.h
         scripts/assembler.c
-        scripts/words_block.c
-        header/words_block.h
+        scripts/word_conversion.c
+        header/word_conversion.h
         scripts/line_data.c
         header/line_data.h
         scripts/first_pass.c
         header/first_pass.h
         scripts/utilities.c
         header/utilities.h
+        scripts/second_pass.c
+        header/second_pass.h
+        header/consts.h
 )

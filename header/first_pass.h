@@ -3,5 +3,5 @@
 
 #include "file.h"
 
-void first_pass(file *file1, symbol_table *table, word_list_block *file_code_block, error_array *error);
+void first_pass(char *file_name, error_array *error);
 #endif

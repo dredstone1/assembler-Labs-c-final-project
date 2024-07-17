@@ -1,9 +1,10 @@
 #ifndef MMN14_ERROR_H
 #define MMN14_ERROR_H
 
+/*
 #include "utilities.h"
+*/
 #include "line_node.h"
-
 
 #define start_format_line_error " | "
 #define amount_of_spaces_at_start 4
@@ -57,7 +58,7 @@ typedef enum error_message_stage {
 typedef enum error_type{
     FILE_NOT_FOUND,
     MEMORY_ALLOCATION_FAILED,
-    UNDEFINED_TAG_NAME,
+    UNDEFINED_SYMBOL_NAME,
     INVALID_OPCODE,
     SYMBOL_IN_EXTERNAL_OR_ENTRY,
     INVALID_COMMA,
@@ -66,9 +67,12 @@ typedef enum error_type{
     MISSING_START_QUOTE,
     MISSING_ENDING_QUOTE,
     MISSING_ENDING_QUOTE_N_START_QUOTE,
-    DIRECTIVE_TYPE_MISSING,
+	INVALID_DIRECTIVE_TYPE,
 	SYMBOL_NOT_FOUND,
 	INVALID_VARIABLE_TYPE,
+	INVALID_SYMBOL_NAME,
+	INVALID_NUMBER,
+	MISSING_STRING,
     NOTHING
 }error_type;
 

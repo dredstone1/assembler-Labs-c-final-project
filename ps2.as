@@ -1,4 +1,4 @@
-.entry LIST
+.entry LIST1
 .extern fn1
 MAIN: add r3, LIST
 jsr fn1
@@ -16,7 +16,6 @@ sub L3, L3
 jmp LOOP
 END: stop
 STR: .string "abcd"
-STR1: .string "abcd"
 LIST: .data 6, -9
 .data -100
 K: .data 31

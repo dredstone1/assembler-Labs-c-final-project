@@ -18,7 +18,7 @@ typedef struct macros{
     int number_of_macros;
 } macros;
 
-bool is_line_macro(const char line[]);
+int is_line_macro(const char line[]);
 void add_macro(char macro_name[], line_node *node, macros *macros, error_array *error);
 line_node *read_macro_lines(line_node **head);
 macro* get_macro_from_name(macros *macros, line_node *node);

@@ -1,6 +1,10 @@
 #include "../header/utilities.h"
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <stdio.h>
 
-bool is_char_separator(char c, char separators[], int separators_amount);
+int is_separator(char c, char separators[]);
 
 int int_to_octal(int num) {
 	int answer = 0, y = 1;
@@ -14,58 +18,89 @@ int int_to_octal(int num) {
 	return answer;
 }
 
-void skip_spaces_and_tabs(int *offset, char line[]) {
-	while (line[*offset] == ' ' || line[*offset] == '\t')
-		(*offset)++;
-}
 
-int count_char_until_not_separator(char line[], char c, int *offset, char separators[], int separators_amount){
+
+int count_commas_until_text(char **workable_line) {
 	int count = 0;
-	int i = 0;
-
-	while (is_char_separator(line[*offset + i], separators, separators_amount)==TRUE){
-		if (line[*offset + i] == c)
+	while ( **workable_line == ' ' || **workable_line == '\t' || **workable_line == ',') {
+		if (**workable_line == ',')
 			count++;
-		(*offset)++;
+		(*workable_line)++;
 	}
-
 	return count;
 }
 
-void get_next_word(char line_text[], int *offset, char line[], char separators[], int separators_amount){
+int get_next_word(char **workable_line, char word[], char separators[]) {
 	int i = 0;
-
-	while (is_char_separator(line[i+*offset], separators, separators_amount)==FALSE) {
-		line_text[i] = line[i+*offset];
-		i++;
+	while (is_separator(**workable_line, separators) == 0 && **workable_line != '\0'){
+		word[i++] = **workable_line;
+		(*workable_line)++;
 	}
-
-	line_text[i] = '\0';
-	*offset += i;
+	word[i] = '\0';
+	return i;
 }
 
-void get_next_word_n_skip(char line_text[], int *offset, char line[], char separators[], int separators_amount){
-	skip_spaces_and_tabs(offset, line);
-	get_next_word(line_text, offset, line, separators, separators_amount);
-	skip_spaces_and_tabs(offset, line);
-}
-
-bool is_char_separator(char c, char separators[], int separators_amount) {
+int is_separator(char c, char separators[]) {
 	int i;
-	for (i = 0; i < separators_amount; i++) {
+	for (i = 0; i < strlen(separators); i++) {
 		if (c == separators[i])
-			return TRUE;
+			return 1;
 	}
-
-	return FALSE;
+	return 0;
 }
 
-bool extra_char_at_end(const char line[], int loc){
+int extra_char_at_end(const char line[], int loc){
 	while (line[loc] == ' ' || line[loc] == '\t')
 		loc++;
 
 	if (line[loc] == '\0')
-		return FALSE;
+		return 0;
 
-	return TRUE;
+	return 1;
+}
+
+
+int is_empty_line(char line[]){
+	int offset = 0;
+	skip_spaces_and_tabs_with_offset(&offset, line);
+
+	return line[offset] == '\0' || line[offset] == '\n';
+}
+
+int is_comment_line(char line[]){
+	int offset = 0;
+	skip_spaces_and_tabs_with_offset(&offset, line);
+
+	return line[offset] == ';';
+}
+
+void skip_spaces_and_tabs_with_offset(int *offset, char line[]) {
+	while (line[*offset] == ' ' || line[*offset] == '\t')
+		(*offset)++;
+}
+
+void skip_spaces_and_tabs(char **line) {
+	while (**line == ' ' || **line == '\t')
+		(*line)++;
+}
+
+
+void *use_malloc(size_t size, error_array *error) {
+	void *ptr = (void*)malloc(size);
+	if (ptr == NULL)
+		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
+
+	return ptr;
+}
+
+void *use_realloc(void *ptr, size_t size, error_array *error) {
+	if (ptr == NULL)
+		ptr = use_malloc(size, error);
+	else
+		ptr = realloc(ptr, size);
+	
+	if (ptr == NULL)
+		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
+
+	return ptr;
 }
