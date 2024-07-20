@@ -62,7 +62,7 @@ void insert_value_into_word(word *word, int value);
  * @param error
  * @return 1 if success, 0 if fail
  */
-int add_instruction_to_words(word_data **list, instruction_data instruction, int line_number, error_array *error, int *DC);
+int add_instruction_to_words(word_data *list, instruction_data instruction, int line_number, error_array *error, int *DC);
 
 
 /**
@@ -74,11 +74,11 @@ int add_instruction_to_words(word_data **list, instruction_data instruction, int
  * @param error
  * @return 1 if success, 0 if fail
  */
-int add_command_to_words(word_data **list, command_data *command, int line_number, error_array *error, int *IC);
+int add_command_to_words(word_data *list, command_data command, int line_number, error_array *error, int *IC);
 
 
 /**
  * 
  */
-int get_amount_of_words_from_command(command_data *command);
+int get_amount_of_words_from_command(command_data command);
 #endif

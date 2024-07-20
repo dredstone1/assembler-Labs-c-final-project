@@ -193,10 +193,10 @@ word_node* create_new_word_node(word word, int line_number, char *line, error_ar
 	return node;
 }*/
 
-int get_amount_of_words_from_command(command_data *command){
+int get_amount_of_words_from_command(command_data command){
 	int amount = 1;
-	amount += amount_of_variables_from_opcode(command->opcode);
-	if (command->source.type>1 && command->destination.type>1)
+	amount += amount_of_variables_from_opcode(command.opcode);
+	if (command.source.type>1 && command.destination.type>1)
 		amount--;
 	return amount;
 }
@@ -224,19 +224,25 @@ word create_new_first_word(line_data *data){
 }
 */
 
-int add_instruction_to_words(word_data **list, instruction_data instruction, int line_number, error_array *error, int *DC) {
+int add_instruction_to_words(word_data *list, instruction_data instruction, int line_number, error_array *error, int *DC) {
 	int i;
-	*list = (word_data *)use_realloc(*list, sizeof(word_data) * (instruction.size + *DC), error);
-	if (*list == NULL) {
-		add_error(error, MEMORY_ALLOCATION_FAILED, line_number, 0, 0, CRITICAL, "", 0);
-		return 0;
+
+	for (i = 0; i < instruction.size; ++i) {
+		list[i + (*DC)].word = 0;
+		insert_value_into_word(&list[i + (*DC)].word, instruction.numbers[i]);
+/*
+		list[i + (*DC)].word = instruction.numbers[i];
+*/
+/*
+		list[i + (*DC)].word = instruction.numbers[i];
+*/
+/*
+		list[i + (*DC)].word = instruction.numbers[i];
+*/
+		list[i + (*DC)].line_number = line_number;
+		list[i + (*DC)].symbol = NULL;
 	}
 	*DC += instruction.size;
-	for (i = 0; i < instruction.size; ++i) {
-		list[i - 1]->word = instruction.numbers[0];
-		list[instruction.size - 1]->line_number = line_number;
-		list[instruction.size - 1]->symbol = NULL;
-	}
 	return 1;
 }
 
@@ -259,59 +265,69 @@ int add_instruction_to_words(word_data **list, instruction_data instruction, int
 	}
 }*/
 
-int add_command_to_words(word_data **list, command_data *command, int line_number, error_array *error, int *IC) {
+int add_command_to_words(word_data *list, command_data command, int line_number, error_array *error, int *IC) {
 	int i = sizeof(word_data) * (get_amount_of_words_from_command(command) + (*IC));
 	int j = get_amount_of_words_from_command(command);
 	int k = *IC;
+/*
 	*list = (word_data *)use_realloc(*list, sizeof(word_data) * (get_amount_of_words_from_command(command) + (*IC)), error);
-	int amount_of_operands = amount_of_variables_from_opcode(command->opcode);
-	printf("list: %d\n", (*list)[(*IC) + 1].word);
-	set_opcode_into_word(&((*list)[(*IC) + 1].word), command->opcode);
+*/
+	int amount_of_operands = amount_of_variables_from_opcode(command.opcode);
+	list[*IC].word = 0;
+	if (get_amount_of_words_from_command(command)>1)
+		list[*IC+1].word = 0;
+	if (get_amount_of_words_from_command(command)>2)
+		list[*IC+2].word = 0;
+/*
+	printf("list: %d\n", list[(*IC) + 1].word);
+*/
+	set_opcode_into_word(&(list[(*IC)].word), command.opcode);
 	if (amount_of_operands == 2) {
-		insert_operand_type_into_word(&((*list)[(*IC) + 1].word), SOURCE, command->destination.type);
-		insert_operand_type_into_word(&((*list)[(*IC) + 1].word), DESTINATION, command->source.type);
+		insert_operand_type_into_word(&(list[(*IC)].word), DESTINATION, command.destination.type);
+		insert_operand_type_into_word(&(list[(*IC)].word), SOURCE, command.source.type);
 	} else if (amount_of_operands == 1)
-		insert_operand_type_into_word(&((*list)[(*IC) + 1].word), DESTINATION, command->source.type);
+		insert_operand_type_into_word(&(list[(*IC)].word), DESTINATION, command.source.type);
 
-	set_ARE_into_word(&((*list)[(*IC) + 1].word), A);
+	set_ARE_into_word(&(list[(*IC)].word), A);
 
 	if (amount_of_operands == 2) {
-		if (command->source.type == IMMEDIATE) {
-			insert_operand_into_word(&((*list)[(*IC) + 2].word), command->source.value);
-			set_ARE_into_word(&((*list)[(*IC) + 2].word), A);
-		} else if (command->source.type == DIRECT) {
-			(*list)[(*IC) + 2].symbol = command->source.var;
-		} else if (command->source.type == REGISTER_INDIRECT || command->source.type == REGISTER_DIRECT) {
-			insert_operand_into_word(&((*list)[(*IC) + 2].word), command->source.value);
+		if (command.source.type == IMMEDIATE) {
+			insert_operand_into_word(&(list[(*IC) + 1].word), command.source.value);
+			set_ARE_into_word(&(list[(*IC) + 1].word), A);
+		} else if (command.source.type == DIRECT) {
+			list[(*IC) + 1].symbol = command.source.var;
+		} else if (command.source.type == REGISTER_INDIRECT || command.source.type == REGISTER_DIRECT) {
+			insert_operand_into_word(&(list[(*IC) + 1].word), command.source.value << operand_bit_shift);
 
-			if (command->destination.type > 1)
-				insert_operand_into_word(&((*list)[(*IC) + 2].word), command->destination.value);
-
-			set_ARE_into_word(&((*list)[(*IC) + 2].word), A);
+			if (command.destination.type > 1)
+				insert_operand_into_word(&(list[(*IC) + 1].word), command.destination.value);
+			
+			set_ARE_into_word(&(list[(*IC) + 1].word), A);
 		}
-
-		if (command->destination.type == IMMEDIATE) {
-			insert_operand_into_word(&((*list)[(*IC) + 3].word), command->destination.value);
-			set_ARE_into_word(&((*list)[(*IC) + 3].word), A);
-		} else if (command->destination.type == DIRECT) {
-			(*list)[(*IC) + 3].symbol = command->source.var;
-		} else if (command->destination.type == REGISTER_INDIRECT || command->destination.type == REGISTER_DIRECT) {
-			insert_operand_into_word(&((*list)[(*IC) + 3].word), command->destination.value << operand_bit_shift);
-			insert_operand_into_word(&((*list)[(*IC) + 3].word), command->destination.value << operand_bit_shift);
-			set_ARE_into_word(&((*list)[(*IC) + 3].word), A);
+		
+		if ((command.source.type == REGISTER_INDIRECT || command.source.type == REGISTER_DIRECT) && (command.destination.type == REGISTER_INDIRECT || command.destination.type == REGISTER_DIRECT))
+			return 0;
+		if (command.destination.type == IMMEDIATE) {
+			insert_operand_into_word(&(list[(*IC) + 2].word), command.destination.value);
+			set_ARE_into_word(&(list[(*IC) + 2].word), A);
+		} else if (command.destination.type == DIRECT) {
+			list[(*IC) + 2].symbol = command.source.var;
+		} else if (command.destination.type == REGISTER_INDIRECT || command.destination.type == REGISTER_DIRECT) {
+			insert_operand_into_word(&(list[(*IC) + 2].word), command.destination.value);
+			set_ARE_into_word(&(list[(*IC) + 2].word), A);
 		}
 	} else if (amount_of_operands == 1) {
-		if (command->source.type == IMMEDIATE) {
-			insert_operand_into_word(&((*list)[(*IC) + 2].word), command->source.value);
-			set_ARE_into_word(&((*list)[(*IC) + 2].word), A);
-		} else if (command->source.type == DIRECT) {
-			(*list)[(*IC) + 2].symbol = command->source.var;
-		} else if (command->source.type == REGISTER_INDIRECT || command->source.type == REGISTER_DIRECT) {
-			insert_operand_into_word(&((*list)[(*IC) + 2].word), command->source.value);
-			set_ARE_into_word(&((*list)[(*IC) + 2].word), A);
+		if (command.source.type == IMMEDIATE) {
+			insert_operand_into_word(&(list[(*IC) + 1].word), command.source.value);
+			set_ARE_into_word(&(list[(*IC) + 1].word), A);
+		} else if (command.source.type == DIRECT) {
+			list[(*IC) + 1].symbol = command.source.var;
+		} else if (command.source.type == REGISTER_INDIRECT || command.source.type == REGISTER_DIRECT) {
+			insert_operand_into_word(&(list[(*IC) + 1].word), command.source.value);
+			set_ARE_into_word(&(list[(*IC) + 1].word), A);
 		}
 	}
-	return 0;
+	return 1;
 }
 
 

@@ -153,20 +153,24 @@ void write_to_file_entry(symbol_table *symbol_table, char fileName[]){
 }*/
 
 
-void write_to_file_external(word_data *list, char fileName[], int IC, int DC){
-	int current_word_line = 100;
+void write_to_file_external(word_data *list1, word_data *list2, char fileName[], int IC, int DC){
+	int current_word_line = 0;
 	FILE *file;
 
 	set_ending_to_file_name(fileName, "ob");
-
+	if (IC == 0)
+		return;
 	file = fopen(fileName, "w");
-	fprintf(file, "%5d %d\n", DC, IC);
-	for (int i = 0; i < IC + DC; ++i) {
-		fprintf(file, "%04d %05d", DC, int_to_octal(list[i].word));
-		if (i < IC + DC - 1)
+	if (file == NULL)
+		return;
+	fprintf(file, "%5d %d\n", IC, DC);
+	for (; current_word_line < IC; current_word_line++)
+		fprintf(file, "%04d %05d\n", current_word_line + 100, int_to_octal(list1[current_word_line].word));
+
+	for (current_word_line = 0; current_word_line < DC; current_word_line++) {
+		fprintf(file, "%04d %05d", current_word_line + 100 + IC, int_to_octal(list2[current_word_line].word));
+		if (current_word_line + 1 < DC)
 			fprintf(file, "\n");
-		
-		
 	}
 /*
 	while (node!=NULL){

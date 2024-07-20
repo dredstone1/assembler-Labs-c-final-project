@@ -114,8 +114,8 @@ void print_error_lines(error error, int *offset, int ignore_mark, int single_err
 				continue;
 			return;
 		}
-			
-		error_handling_functions[error_massage_stage[error.type][*offset]](error, single_error);
+		if (error.type<15)
+			error_handling_functions[error_massage_stage[error.type][*offset]](error, single_error);
 	}
 }
 
@@ -124,7 +124,7 @@ void print_start_error_message(error error, int *offset, int single_error){
 	for (; error_massage_stage[error.type][*offset] < END_OF_ERROR; (*offset)++) {
 		printf("www2\n");
 		
-		error_handling_functions[error_massage_stage[error.type][*offset]](error, single_error);
+			error_handling_functions[error_massage_stage[error.type][*offset]](error, single_error);
 	}
 }
 

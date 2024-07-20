@@ -274,7 +274,6 @@ const char *opcode_names[16][3][1] = {
 
 opcode get_opcode_from_string(const char *str) {
 	opcode code;
-	printf("str: %s\n", str);
 	for (code = MOV; code <= STOP; code++)
 		if (strcmp(str, opcode_names[code][0][0]) == 0)
 			return code;
@@ -331,18 +330,21 @@ int read_string(char **workable_line, char *line, instruction_data *instruction,
 	if (missing_start_quote && missing_end_quote)
 		add_error(error, MISSING_ENDING_QUOTE_N_START_QUOTE, line_number, temp_offset - line - 1, strlen(line), WARNING, line, 0);
 	else if (missing_start_quote)
-		add_error(error, MISSING_START_QUOTE, line_number, temp_offset - line - 1, strlen(line), WARNING, line, temp_offset - line - 1);
+		add_error(error, MISSING_START_QUOTE, line_number, 0, strlen(line), WARNING, line, 0);
 	else if (missing_end_quote)
-		add_error(error, MISSING_ENDING_QUOTE, line_number, temp_offset - line, strlen(line), WARNING, line, 0);
+		add_error(error, MISSING_ENDING_QUOTE, line_number, 0, strlen(line), WARNING, line, 0);
 
 	if (error->importance != NO_ERROR)
 		return 0;
 	
-	if (cast_string_to_words_array(temp_offset+1, &(instruction->numbers), *workable_line - temp_offset) == 0) {
+	if (cast_string_to_words_array(temp_offset+1, &(instruction->numbers), *workable_line - temp_offset-1) == 0) {
 		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
 		return 0;
 	}
-	instruction->size = strlen((char*)instruction->numbers);
+
+	instruction->numbers[*workable_line - temp_offset - 1] = '\0';
+	
+	instruction->size = *workable_line - temp_offset;
 	(*workable_line)++;
 	return 1;
 }
@@ -350,7 +352,7 @@ int read_string(char **workable_line, char *line, instruction_data *instruction,
 int read_data(char **workable_line, char *line, instruction_data *instruction, error_array *error, int line_number) {
 	int i, coma_count, number;
 	char word1[80];
-
+	instruction->numbers = NULL;
 	for (i = 0; i < 76; i++) {
 		coma_count = count_commas_until_text(workable_line);
 		if (i == 0) {
@@ -371,7 +373,7 @@ int read_data(char **workable_line, char *line, instruction_data *instruction, e
 				return 0;
 			}
 		}
-
+		
 		skip_spaces_and_tabs(workable_line);
 		get_next_word(workable_line, word1, " ,\t\0");
 		skip_spaces_and_tabs(workable_line);
@@ -381,12 +383,10 @@ int read_data(char **workable_line, char *line, instruction_data *instruction, e
 					  *workable_line - line + strlen(*workable_line), WARNING, line, 0);
 			return 0;
 		}
-		instruction->numbers = (short *)realloc(instruction->numbers, sizeof(short) * (i + 1));
-		if (instruction->numbers == NULL) {
-			add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
-			return 0;
-		}
-		instruction->size = i;
+		instruction->numbers = (short *)use_realloc(instruction->numbers, sizeof(short) * (i + 1), error);
+
+		
+		instruction->size = i+1;
 		instruction->numbers[i] = number;
 	}
 	return 1;
@@ -451,10 +451,10 @@ int read_extern_or_entry_symbol(char **workable_line, char *line, instruction_da
 
 int get_next_variable(var *variable, char **workable_line, int comma_needed, error_array *error, int line_number, char* line){
 	int comma_count;
-	char word[80];
+	char word[80], *test = *workable_line;
 	skip_spaces_and_tabs(workable_line);
 	comma_count = count_commas_until_text(workable_line);
-	printf("comma_count: %d\n", comma_count);
+
 	if (comma_needed){
 		if (comma_count == 0)
 			add_error(error, MISSING_COMMA, line_number, *workable_line - line, *workable_line - line + strlen(*workable_line), WARNING, line, 0);
@@ -467,8 +467,7 @@ int get_next_variable(var *variable, char **workable_line, int comma_needed, err
 	}
 	if (error->importance != NO_ERROR)
 		return 0;
-	
-	
+
 	skip_spaces_and_tabs(workable_line);
 	get_next_word(workable_line, word, " ,\t\0");
 	if (word[0] == '#') {
@@ -509,10 +508,10 @@ int read_command_variables(char **workable_line, char *line, command_data *comma
 
 		if (get_next_variable(&command->source, workable_line, 0, error, line_number, line) == 0)
 			return 0;
-		if (get_next_variable(&command->source, workable_line, 1, error, line_number, line) == 0)
+		if (get_next_variable(&command->destination, workable_line, 1, error, line_number, line) == 0)
 			return 0;
 	} else if (amount_of_variable == 1) {
-		*workable_line += strlen(*workable_line);
+		*workable_line += strlen(*workable_line)+1;
 		
 		if (get_next_variable(&command->source, workable_line, 0, error, line_number, line) == 0)
 			return 0;

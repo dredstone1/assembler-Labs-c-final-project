@@ -22,7 +22,8 @@ int is_valid_symbol(char *symbol){
 	symbol[strlen(symbol)] = '\0';
 	status = is_valid_symbol_name(symbol);
 	
-	symbol[strlen(symbol)] = ':';
+	symbol[strlen(symbol)-1] = ':';
+/*	symbol[strlen(symbol)] = ' ';*/
 
 	return status;
 }

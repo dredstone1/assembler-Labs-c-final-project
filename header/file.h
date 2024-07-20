@@ -22,7 +22,7 @@ void write_to_file_object(word_list_block *block, char fileName[], int IC, int D
 void write_to_file_entry(symbol_table *symbol_table, char fileName[]);
 void write_to_file_external(word_list_block *block, char fileName[], symbol_table *table);
 */
-void write_to_file_external(word_data *list, char fileName[], int IC, int DC);
+void write_to_file_external(word_data *list1, word_data *list2, char fileName[], int IC, int DC);
 void initialize_new_file_name(file *file_, error_array *error, char name[]);
 void set_ending_to_file_name(char fileName[], char ending[]);
 
