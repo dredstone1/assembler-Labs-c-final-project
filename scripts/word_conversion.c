@@ -274,10 +274,14 @@ int add_command_to_words(word_data *list, command_data command, int line_number,
 */
 	int amount_of_operands = amount_of_variables_from_opcode(command.opcode);
 	list[*IC].word = 0;
-	if (get_amount_of_words_from_command(command)>1)
-		list[*IC+1].word = 0;
-	if (get_amount_of_words_from_command(command)>2)
-		list[*IC+2].word = 0;
+	list[*IC].symbol = NULL;
+	if (get_amount_of_words_from_command(command)>1) {
+		list[*IC + 1].word = 0;
+		list[*IC + 1].symbol = NULL;
+	}if (get_amount_of_words_from_command(command)>2) {
+		list[*IC + 2].word = 0;
+		list[*IC + 2].symbol = NULL;
+	}
 /*
 	printf("list: %d\n", list[(*IC) + 1].word);
 */
@@ -311,7 +315,7 @@ int add_command_to_words(word_data *list, command_data command, int line_number,
 			insert_operand_into_word(&(list[(*IC) + 2].word), command.destination.value);
 			set_ARE_into_word(&(list[(*IC) + 2].word), A);
 		} else if (command.destination.type == DIRECT) {
-			list[(*IC) + 2].symbol = command.source.var;
+			list[(*IC) + 2].symbol = command.destination.var;
 		} else if (command.destination.type == REGISTER_INDIRECT || command.destination.type == REGISTER_DIRECT) {
 			insert_operand_into_word(&(list[(*IC) + 2].word), command.destination.value);
 			set_ARE_into_word(&(list[(*IC) + 2].word), A);
@@ -325,6 +329,24 @@ int add_command_to_words(word_data *list, command_data command, int line_number,
 		} else if (command.source.type == REGISTER_INDIRECT || command.source.type == REGISTER_DIRECT) {
 			insert_operand_into_word(&(list[(*IC) + 1].word), command.source.value);
 			set_ARE_into_word(&(list[(*IC) + 1].word), A);
+		}
+	}
+	return 1;
+}
+
+
+int insert_symbol_address_into_words(word_data *words, int length, symbol_address symbol){
+	int i;
+	for (i = 0; i < length; ++i) {
+		if (words[i].symbol != NULL) {
+			if (strcmp(words[i].symbol, symbol.symbol_name) == 0){
+				if (symbol.address != 1) {
+					insert_operand_into_word(&words[i].word, symbol.address);
+					set_ARE_into_word(&words[i].word, R);
+				} else {
+					set_ARE_into_word(&words[i].word, E);
+				}
+			}
 		}
 	}
 	return 1;

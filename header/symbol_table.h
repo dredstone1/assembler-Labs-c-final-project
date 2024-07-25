@@ -36,6 +36,11 @@ int is_valid_symbol_name(char *symbol);
 
 
 
-int add_symbol(symbol_address **symbols, int size, int address, int line_number, char *symbol_name, int is_data_line, error_array *error);
+int add_symbol(symbol_address **symbols, int *size, int address, int line_number, char *symbol_name, int is_data_line, error_array *error);
+
+
+
+int update_table_by(symbol_address *symbols, int by, int size, int is_data_line, error_array *error);
+
 
 #endif

@@ -9,8 +9,8 @@ typedef struct line_text{
 
 typedef struct line_node{
     struct line_node *next;
+	struct line_node *prev;
     line_text line_text;
-    int line_number;
 } line_node;
 
 line_node *create_line_node(line_node *next);

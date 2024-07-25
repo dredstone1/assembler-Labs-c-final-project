@@ -81,4 +81,8 @@ int add_command_to_words(word_data *list, command_data command, int line_number,
  * 
  */
 int get_amount_of_words_from_command(command_data command);
+
+
+
+int insert_symbol_address_into_words(word_data *words, int length, symbol_address symbol);
 #endif

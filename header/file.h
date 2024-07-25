@@ -11,7 +11,6 @@
 typedef struct file{
     line_node *first_line;
     int number_of_rows;
-    char *filename;
 } file;
 
 void read_file(file *file1, error_array *error);

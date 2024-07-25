@@ -407,7 +407,9 @@ int cast_string_to_words_array(char *string, short **word_array, int length) {
 
 int read_extern_or_entry_symbol(char **workable_line, char *line, instruction_data *instruction, error_array *error, int line_number){
 	char *temp_offset = *workable_line;
-	*workable_line = strtok(*workable_line, " \t\n");
+	*workable_line += strlen(*workable_line)+1;
+
+	skip_spaces_and_tabs(workable_line);
 	
 	if (!is_valid_symbol_name(*workable_line)){
 		add_error(error, INVALID_SYMBOL_NAME, line_number, line - temp_offset,line-*workable_line, WARNING, line, 0);

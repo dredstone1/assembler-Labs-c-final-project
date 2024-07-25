@@ -1,5 +1,6 @@
 #include "../header/first_pass.h"
 #include "../header/consts.h"
+#include "../header/second_pass.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -43,7 +44,8 @@ void first_pass(char *file_name, error_array *error) {
 		
 		if (is_empty_line(line) || is_comment_line(line))
 			continue;
-		line[strlen(line) - 1] = '\0';
+		if (line[strlen(line) - 1] == '\n')
+			line[strlen(line) - 1] = '\0';
 		strcpy(workable_line, line);
 
 		workable_line = strtok(workable_line, " \t");
@@ -56,8 +58,10 @@ void first_pass(char *file_name, error_array *error) {
 		if (symbol_defined == 1) {
 			workable_line[strlen(workable_line) - 1] = '\0';
 			strcpy(symbol, workable_line);
+/*
+			printf("symbol: %s\n", symbol);
+*/
 			workable_line = strtok(NULL, " \t");
-			label_amount++;
 		}
 		
 		if (is_directive(workable_line)) {
@@ -70,11 +74,9 @@ void first_pass(char *file_name, error_array *error) {
 					workable_line += strlen(workable_line) + 1;
 					read_data(&workable_line, line, &instruction, error, line_number);
 				}
-				if (symbol_defined == 1) {
-					instruction.label = (char *) use_malloc(sizeof(char) * strlen(symbol), error);
-					if (add_symbol(&symbol_table, label_amount, DC, line_number, instruction.args, 1, error) == 0)
+				if (symbol_defined == 1)
+					if (add_symbol(&symbol_table, &label_amount, DC+100, line_number, symbol, 1, error) == 0)
 						continue;
-				}
 
 				if (error->importance != NO_ERROR)
 					continue;
@@ -95,12 +97,11 @@ void first_pass(char *file_name, error_array *error) {
 
 				if (instruction.is_extern) {
 					extern_amount++;
-					label_amount++;
-
-					if (add_symbol(&symbol_table, label_amount, 1, line_number, instruction.args, 0, error) == 0)
+					printf("symbol extern: %s\n", instruction.args);
+					if (add_symbol(&symbol_table, &label_amount, 1, line_number, instruction.args, 0, error) == 0)
 						continue;
 
-					externals = realloc(externals, sizeof(symbol_address *) * extern_amount);
+					externals = use_realloc(externals, sizeof(symbol_address *) * extern_amount, error);
 					if (externals == NULL) {
 						add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, 0, 0);
 						return;
@@ -108,11 +109,8 @@ void first_pass(char *file_name, error_array *error) {
 
 					externals[extern_amount - 1] = (symbol_table + label_amount - 1);
 				} else {
-					entry_amount++;
-					if (add_symbol(&entries, entry_amount, 0, line_number, instruction.args, 0, error) == 0) {
+					if (add_symbol(&entries, &entry_amount, 0, line_number, instruction.args, 0, error) == 0)
 						continue;
-						printf("extern: \n");
-					}
 				}
 				
 			} else {
@@ -121,7 +119,7 @@ void first_pass(char *file_name, error_array *error) {
 			}
 		} else {
 			if (symbol_defined == 1) {
-				if (add_symbol(&symbol_table, label_amount, IC, line_number, instruction.args, 0, error) == 0)
+				if (add_symbol(&symbol_table, &label_amount, IC+100, line_number, symbol, 0, error) == 0)
 					continue;
 /*
 				workable_line = strtok(NULL, " \t\n");
@@ -147,7 +145,19 @@ void first_pass(char *file_name, error_array *error) {
 			IC += get_amount_of_words_from_command(command);
 		}
 	}
+
+	update_table_by(symbol_table, IC, label_amount, 1, error);
+	
+	for (int i = 0; i < label_amount; ++i)
+		printf("symbol: %s, address: %d, line_number: %d, is_data_line: %d\n", symbol_table[i].symbol_name, symbol_table[i].address, symbol_table[i].line_number, symbol_table[i].is_data_line);
+
+		
+	second_pass(commands, instructions, entries, symbol_table, externals, error, IC, DC, label_amount, entry_amount, extern_amount);
+	
 	write_to_file_external(commands, instructions, file_name, IC, DC);
+	
+	
+	
 	
 	
 	free(externals);

@@ -1,4 +1,5 @@
 #include "../header/macro.h"
+#include "../header/utilities.h"
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -9,20 +10,16 @@ int is_line_macro(const char line[]){
     return strcmp(line, MACRO)==0;
 }
 
-void add_macro(char macro_name[], line_node *node, macros *macros, error_array *error) {
-    macros->number_of_macros++;
-    macros->macro = realloc(macros->macro, (size_t)(macros->number_of_macros * sizeof(macro)));
-    if (macros->macro == NULL) {
-		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
-        return;
-    }
 
-    set_offset_line_node(node, 0);
-    offset_line_node_by_i(node);
-
-    strcpy(macros->macro[macros->number_of_macros - 1].macro_name, macro_name);
-    macros->macro[macros->number_of_macros - 1].number_of_macro_lines = get_line_node_length(node);
-    macros->macro[macros->number_of_macros - 1].macro_lines = node;
+void add_macro(char macro_name[], macro **macros, int *number_of_macros, error_array *error){
+    number_of_macros++;
+    *macros = (macro*)use_realloc(*macros, *number_of_macros * sizeof(macro), error);
+    if (*macros == NULL)
+		return;
+	
+    strcpy((*macros)[*number_of_macros - 1].macro_name, macro_name);
+	(*macros)[*number_of_macros - 1].number_of_macro_lines = 0;
+	(*macros)[*number_of_macros - 1].macro_lines = NULL;
 }
 
 line_node *read_macro_lines(line_node **head) {
@@ -43,14 +40,6 @@ line_node *read_macro_lines(line_node **head) {
     return macro_node;
 }
 
-void free_macros(macros *macros) {
-    int i;
-    for (i = 0; macros->number_of_macros > i; i++)
-        free_line(macros->macro[i].macro_lines);
-
-    free(macros->macro);
-}
-
 int is_ending_macro(const char line[]){
     int i;
     for (i = 0; 7 > i; i++)
@@ -59,23 +48,6 @@ int is_ending_macro(const char line[]){
 
     return 1;
 }
-
-macro* get_macro_from_name(macros *macros, line_node *node) {
-	int i, offset = 0;
-	char macro_name[LINE_SIZE];
-
-/*	get_next_word_n_skip(macro_name, &offset, node->line_text.content, " \t\0", 3);
-
-	if (extra_char_at_end(node->line_text.content, offset))
-		return NULL;*/
-
-	for (i = 0; i < macros->number_of_macros; i++)
-		if (strcmp(macro_name, macros->macro[i].macro_name) == 0)
-			return &macros->macro[i];
-
-	return NULL;
-}
-
 
 void replace_line_to_macro(macro macro, line_node **node){
     line_node *temp = duplicate_lines_node(macro.macro_lines);

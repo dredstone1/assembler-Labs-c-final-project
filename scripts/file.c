@@ -76,6 +76,7 @@ void write_to_file(file file){
     fclose(new_file);
 }
 
+
 /*void write_to_file_object( *block, char fileName[], int IC, int DC){
     word_node *node = block->head;
     int current_word_line = 100;

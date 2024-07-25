@@ -1,10 +1,11 @@
 #include "../header/line_node.h"
+#include "../header/utilities.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 line_node *create_line_node(line_node *next){
-    line_node *node = (line_node *)malloc(sizeof(line_node));
+    line_node *node = (line_node *)use_malloc(sizeof(line_node));
     if (node == NULL)
         return NULL;
 
