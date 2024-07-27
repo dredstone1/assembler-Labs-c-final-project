@@ -5,6 +5,11 @@
 #include "error.h"
 
 
+typedef struct line_text{
+	char *content;
+	int allocated;
+} line_text;
+
 /*colors*/
 
 int int_to_octal(int num);
@@ -91,4 +96,23 @@ void *use_realloc(void *ptr, size_t size, error_array *error);
 /**
  */
 int count_commas_until_text(char **workable_line);
+
+
+/**
+ * @brief Check if a line is a macro definition line
+ * 
+ * @param line The line to check
+ * @return int 1 if the line is a macro line, 0 if its not
+ */
+void free_lines(line_text *lines, int number_of_lines);
+
+
+/**
+ * @brief Check if a line is a macro definition line
+ * 
+ * @param line The line to check
+ * @return int 1 if the line is a macro line, 0 if its not
+ */
+extern const char *opcode_names[16][3][1]; // Declare without initialization
+
 #endif

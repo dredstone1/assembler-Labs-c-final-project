@@ -2,13 +2,6 @@
 .extern fn1
 MAIN: add r3, LIST
 jsr fn1
-macr test
-mov *r3, L3
-sub r1, r4
-cmp r3, #-6
-bne END
-endmacr
-
 LOOP: prn #48
 lea STR, r6
 inc r6

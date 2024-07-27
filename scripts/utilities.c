@@ -2,21 +2,42 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <stdio.h>
 
 int is_separator(char c, char separators[]);
 
-int int_to_octal(int num) {
-	int answer = 0, y = 1;
+const char *opcode_names[16][3][1] = {
+		{{"mov"}, {"_123"}, {"0123"}},
+		{{"cmp"}, {"0123"}, {"0123"}},
+		{{"add"}, {"_123"}, {"0123"}},
+		{{"sub"}, {"_123"}, {"0123"}},
+		{{"lea"}, {"_123"}, {"_1__"}},
+		{{"clr"}, {"_123"}, {"____"}},
+		{{"not"}, {"_123"}, {"____"}},
+		{{"inc"}, {"_123"}, {"____"}},
+		{{"dec"}, {"_123"}, {"____"}},
+		{{"jmp"}, {"_12_"}, {"____"}},
+		{{"bne"}, {"_12_"}, {"____"}},
+		{{"red"}, {"_123"}, {"____"}},
+		{{"prn"}, {"0123"}, {"____"}},
+		{{"jsr"}, {"_12_"}, {"____"}},
+		{{"rts"}, {"____"}, {"____"}},
+		{{"stop"}, {"____"}, {"____"}}
+};
 
-	while (num != 0) {
-		answer += (num % 8) * y;
-		num = num / 8;
-		y *= 10;
+
+int int_to_octal(int decimal_number) {
+	int octal_result = 0;
+	int place_value = 1;
+
+	while (decimal_number != 0) {
+		octal_result += (decimal_number % 8) * place_value;
+		decimal_number /= 8;
+		place_value *= 10;
 	}
 
-	return answer;
+	return octal_result;
 }
+
 
 
 
@@ -42,10 +63,10 @@ int get_next_word(char **workable_line, char word[], char separators[]) {
 
 int is_separator(char c, char separators[]) {
 	int i;
-	for (i = 0; i < strlen(separators); i++) {
+	for (i = 0; i < strlen(separators); i++)
 		if (c == separators[i])
 			return 1;
-	}
+
 	return 0;
 }
 
@@ -88,7 +109,7 @@ void skip_spaces_and_tabs(char **line) {
 void *use_malloc(size_t size, error_array *error) {
 	void *ptr = (void*)malloc(size);
 	if (ptr == NULL)
-		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
+		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0, 0);
 
 	return ptr;
 }
@@ -100,7 +121,16 @@ void *use_realloc(void *ptr, size_t size, error_array *error) {
 		ptr = realloc(ptr, size);
 	
 	if (ptr == NULL)
-		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0);
+		add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, "", 0, 0);
 
 	return ptr;
+}
+
+void free_lines(line_text *lines, int number_of_lines) {
+	int i;
+	for (i = 0; i < number_of_lines; i++)
+		if(lines[i].allocated)
+			free(lines[i].content);
+
+	free(lines);
 }

@@ -1,5 +1,4 @@
 #include "../header/first_pass.h"
-#include "../header/consts.h"
 #include "../header/second_pass.h"
 #include <stdlib.h>
 #include <string.h>
@@ -24,14 +23,13 @@ void first_pass(char *file_name, error_array *error) {
 	
 	FILE *file;
 	int line_number = 0;
-	int offset;
 
-	int symbol_defined = 0;
+	int symbol_defined;
 
 	set_ending_to_file_name(file_name, "am");
 	file = fopen(file_name, "r");
 	if (file == NULL) {
-		add_error(error, FILE_NOT_FOUND, 0, 0, 0, CRITICAL, file_name, 0);
+		add_error(error, FILE_NOT_FOUND, 0, 0, 0, CRITICAL, file_name, 0, 0);
 		return;
 	}
 	
@@ -40,27 +38,25 @@ void first_pass(char *file_name, error_array *error) {
 		workable_line = start_workable_line;
 		error->importance = NO_ERROR;
 		line_number++;
-		offset = 0;
 		
 		if (is_empty_line(line) || is_comment_line(line))
 			continue;
 		if (line[strlen(line) - 1] == '\n')
 			line[strlen(line) - 1] = '\0';
+		
 		strcpy(workable_line, line);
 
 		workable_line = strtok(workable_line, " \t");
 		symbol_defined = is_valid_symbol(workable_line);
 		if (symbol_defined == 2) {
 			add_error(error, INVALID_SYMBOL_NAME, line_number, 0,
-					  0 + strlen(workable_line), WARNING, workable_line, 0);
+					  0 + strlen(workable_line), WARNING, workable_line, 0, 0);
 			continue;
 		}
 		if (symbol_defined == 1) {
 			workable_line[strlen(workable_line) - 1] = '\0';
 			strcpy(symbol, workable_line);
-/*
-			printf("symbol: %s\n", symbol);
-*/
+
 			workable_line = strtok(NULL, " \t");
 		}
 		
@@ -83,10 +79,11 @@ void first_pass(char *file_name, error_array *error) {
 
 				instructions = (word_data *)use_realloc(instructions, sizeof(word_data) * (instruction.size + (DC)), error);
 				add_instruction_to_words(instructions, instruction, line_number, error, &DC);
+				free(instruction.numbers);
 			} else if (strcmp(workable_line, ".extern")==0 || strcmp(workable_line, ".entry")==0) {
 				if (symbol_defined == 1) {
 					add_error(error, SYMBOL_IN_EXTERNAL_OR_ENTRY, line_number, 0,
-							  strlen(workable_line), CRITICAL, line, 0);
+							  strlen(workable_line), CRITICAL, line, 0, 0);
 					continue;
 				}
 
@@ -97,13 +94,14 @@ void first_pass(char *file_name, error_array *error) {
 
 				if (instruction.is_extern) {
 					extern_amount++;
-					printf("symbol extern: %s\n", instruction.args);
+
 					if (add_symbol(&symbol_table, &label_amount, 1, line_number, instruction.args, 0, error) == 0)
 						continue;
 
 					externals = use_realloc(externals, sizeof(symbol_address *) * extern_amount, error);
 					if (externals == NULL) {
-						add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, 0, 0);
+						add_error(error, MEMORY_ALLOCATION_FAILED, 0, 0, 0, CRITICAL, 0, 0, 0);
+						fclose(file);
 						return;
 					}
 
@@ -114,22 +112,18 @@ void first_pass(char *file_name, error_array *error) {
 				}
 				
 			} else {
-				add_error(error, INVALID_DIRECTIVE_TYPE, line_number, 0, 0 + strlen(workable_line), CRITICAL, line, 0);
+				add_error(error, INVALID_DIRECTIVE_TYPE, line_number, 0, 0 + strlen(workable_line), CRITICAL, line, 0, 0);
 				continue;
 			}
 		} else {
-			if (symbol_defined == 1) {
+			if (symbol_defined == 1)
 				if (add_symbol(&symbol_table, &label_amount, IC+100, line_number, symbol, 0, error) == 0)
 					continue;
-/*
-				workable_line = strtok(NULL, " \t\n");
-*/
-			}
 			command.opcode = get_opcode_from_string(workable_line);
 
 			
 			if (command.opcode < 0) {
-				add_error(error, INVALID_OPCODE, line_number, 0, 0 + strlen(workable_line), CRITICAL, line, 0);
+				add_error(error, INVALID_OPCODE, line_number, 0, 0 + strlen(workable_line), CRITICAL, line, 0, 0);
 				continue;
 			}
 			if (read_command_variables(&workable_line, line, &command, error, line_number) == 0)
@@ -147,23 +141,20 @@ void first_pass(char *file_name, error_array *error) {
 	}
 
 	update_table_by(symbol_table, IC, label_amount, 1, error);
-	
-	for (int i = 0; i < label_amount; ++i)
-		printf("symbol: %s, address: %d, line_number: %d, is_data_line: %d\n", symbol_table[i].symbol_name, symbol_table[i].address, symbol_table[i].line_number, symbol_table[i].is_data_line);
-
 		
 	second_pass(commands, instructions, entries, symbol_table, externals, error, IC, DC, label_amount, entry_amount, extern_amount);
 	
 	write_to_file_external(commands, instructions, file_name, IC, DC);
 	
-	
-	
-	
-	
-	free(externals);
-	free(commands);
-	free(instructions);
+
 	fclose(file);
+
+	free_word_data_list(commands, IC);
+	free_word_data_list(instructions, DC);
+	free_symbol_table(symbol_table, label_amount);
+	free_symbol_table(entries, entry_amount);
+	free(externals);
+	free(start_workable_line);
 }
 
 /*

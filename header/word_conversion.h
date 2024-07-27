@@ -29,16 +29,6 @@ typedef struct word_data{
 } word_data;
 
 
-/*void line_data_to_word_list_block(word_list_block *block, line_data *data, error_array *error, int line_number, char line[],
-							 int *DC, int *IC);
-word_list_block* create_new_word_list_block(error_array *error);
-void combine_word_list_blocks(word_list_block *block1, word_list_block *block2);
-void add_symbols_to_code_block(word_list_block *block, symbol_table *symbol_table, error_array *error);
-void free_word_list_block(word_list_block *block);
-word_node* create_new_word_node(word word, int line_number, char *line, error_array *error);*/
-
-
-
 void set_ARE_into_word(word *word, ARE are);
 
 
@@ -85,4 +75,13 @@ int get_amount_of_words_from_command(command_data command);
 
 
 int insert_symbol_address_into_words(word_data *words, int length, symbol_address symbol);
+
+
+/**
+ * @brief free word data list
+ * 
+ * @param words
+ * @param length
+ */
+void free_word_data_list(word_data *words, int length);
 #endif

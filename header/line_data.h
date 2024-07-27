@@ -3,9 +3,6 @@
 
 #include "symbol_table.h"
 #include "consts.h"
-/*
-#include "word_conversion.h"
-*/
 
 
 #define MAX_LIST_SIZE 77 /*80 - 3 = MAX_LINE_SIZE - MIN_DIRECTIVE_TYPE_NAME*/

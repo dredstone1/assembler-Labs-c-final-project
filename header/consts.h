@@ -1,10 +1,7 @@
 #ifndef MMN14_CONSTS_H
 #define MMN14_CONSTS_H
 
-#define MAX_LINE_LENGTH 80
-
-#define BLACK_COLOR "\033[0m"
-#define RED_COLOR "\x1b[38;2;247;84;100m"
+#define MAX_LINE_LENGTH 81
 
 typedef enum opcode{
 	MOV,

@@ -3,9 +3,6 @@
 
 #include "utilities.h"
 #include "error.h"
-/*
-#include "line_data.h"
-*/
 
 #define MAX_SYMBOL_SIZE 31
 
@@ -42,5 +39,13 @@ int add_symbol(symbol_address **symbols, int *size, int address, int line_number
 
 int update_table_by(symbol_address *symbols, int by, int size, int is_data_line, error_array *error);
 
+
+/**
+ * @brief Free the symbol table
+ * 
+ * @param symbols The symbol table
+ * @param size The size of the symbol table
+ */
+void free_symbol_table(symbol_address *symbols, int size);
 
 #endif

@@ -4,7 +4,10 @@
 /*
 #include "utilities.h"
 */
+/*
 #include "line_node.h"
+*/
+#include "../header/consts.h"
 
 #define start_format_line_error " | "
 #define amount_of_spaces_at_start 4
@@ -27,6 +30,8 @@
 #define DIRECTIVE_TYPE_MISSING_MESSAGE "Directive type missing:"
 #define SYMBOL_NOT_FOUND_MESSAGE "Symbol not found:"
 #define INVALID_VARIABLE_TYPE_MESSAGE "Invalid variable type:"
+#define MISSING_PARAMETER_MESSAGE_ONE "Missing parameter:"
+#define MISSING_PARAMETER_MESSAGE_TWO "Missing parameter:"
 
 
 typedef enum error_message_stage {
@@ -54,11 +59,15 @@ typedef enum error_message_stage {
 #define DIRECTIVE_TYPE_MISSING_DESCRIPTION "missing directive type, you should have a directive type before the variables."
 #define SYMBOL_NOT_FOUND_DESCRIPTION "not initialized, you need to initialize the symbol"
 #define INVALID_VARIABLE_TYPE_DESCRIPTION "not a valid variable type."
+#define MISSING_PARAMETER_DESCRIPTION_ONE "missing a parameter, you need one parameters for this command."
+#define MISSING_PARAMETER_DESCRIPTION_TWO "missing a parameter, you need two parameters for this command."
+
+
+
 
 typedef enum error_type{
     FILE_NOT_FOUND,
     MEMORY_ALLOCATION_FAILED,
-    UNDEFINED_SYMBOL_NAME,
     INVALID_OPCODE,
     SYMBOL_IN_EXTERNAL_OR_ENTRY,
     INVALID_COMMA,
@@ -68,12 +77,11 @@ typedef enum error_type{
     MISSING_ENDING_QUOTE,
     MISSING_ENDING_QUOTE_N_START_QUOTE,
 	INVALID_DIRECTIVE_TYPE,
-	SYMBOL_NOT_FOUND,
-	INVALID_VARIABLE_TYPE,
 	INVALID_SYMBOL_NAME,
 	INVALID_NUMBER,
-	MISSING_STRING,
-    NOTHING
+	MISSING_PARAMETER_ONE,
+	MISSING_PARAMETER_TWO,
+	NOTHING
 }error_type;
 
 typedef enum importance{
@@ -88,8 +96,9 @@ typedef struct error {
     int start_place_in_line;
     int end_place_in_line;
     int mark_offset;
-    char line[LINE_SIZE];
+    char line[MAX_LINE_LENGTH];
     error_type type;
+    int additional_info;
 }error;
 
 typedef struct error_array{
@@ -100,8 +109,7 @@ typedef struct error_array{
 
 
 void handel_error(error_array error_array, char *file_name);
-void add_error(error_array *error_array, error_type error_type, int line_number, int start_place_in_line,
-			   int end_place_in_line, importance importance, char line[], int mark_offset);
+void add_error(error_array *error_array, error_type error_type, int line_number, int start_place_in_line, int end_place_in_line, importance importance, char line[], int mark_offset, int additional_info);
 void initialize_error(error_array *error_array);
 
 #endif
