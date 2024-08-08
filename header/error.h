@@ -104,4 +104,12 @@ void print_macro_b_label_same(char line[], int line_number, int macro_line_numbe
 void print_end_line_too_long_error();
 void print_start_line_too_long_error(int line_number, error *error);
 
+
+/**
+ * @brief Sets the ending to a file name.
+ *
+ * @param fileName The file name to set the ending for.
+ * @param ending The ending to set.
+ */
+void set_ending_to_file_name(char fileName[], char ending[]);
 #endif

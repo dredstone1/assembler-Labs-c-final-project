@@ -3,8 +3,19 @@
 
 #define MAX_LINE_LENGTH 83
 #define MAX_SYMBOL_SIZE 31
+#define FILE_NAME_ENDING_LENGTH 5
+#define IC_START_COUNT 100
 #define MACRO "macr"
 #define END_MACRO "endmacr"
+#define SOURCE_FILE_ENDING "as"
+#define SOURCE_FILE_AFTER_POST_ASSEMBLER_ENDING "am"
+#define OBJECT_FILE_ENDING "ob"
+#define ENTRY_FILE_ENDING "ent"
+#define EXTERNAL_FILE_ENDING "ext"
+#define FIRST_REGISTER_COUNT 0
+#define LAST_REGISTER_COUNT 7
+#define MAX_VARIABLE_DATA_SIZE 76
+
 
 typedef enum opcode{
 	MOV,
@@ -25,6 +36,7 @@ typedef enum opcode{
 	STOP
 } opcode;
 
+
 typedef enum directive_type{
 	DATA,
 	STRING,
@@ -40,12 +52,9 @@ typedef enum variable_type{
 	REGISTER_DIRECT
 } variable_type;
 
-typedef struct instruction_data{
-	short *numbers;
-	int size;
-	char args[MAX_SYMBOL_SIZE];
-	int is_extern;
-} instruction_data;
+
+
+
 
 extern const char *opcode_names[][3];
 extern const char *operand_names[];

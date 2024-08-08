@@ -27,7 +27,7 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 	if (error->importance != NO_ERROR)
 		return;
 
-	set_ending_to_file_name(file_name, "am");
+	set_ending_to_file_name(file_name, SOURCE_FILE_AFTER_POST_ASSEMBLER_ENDING);
 	file = fopen(file_name, "r");
 	if (file == NULL) {
 		print_system_error(FILE_NOT_FOUND_MESSAGE);
@@ -95,7 +95,7 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 					workable_line += strlen(workable_line) + 1;
 					read_data(&workable_line, line, &instruction, error, line_number, start_workable_line);
 				}
-				if (symbol_defined == 1 && add_symbol(&symbol_table, &label_amount, DC + 100, line_number, symbol, 1, error, 0) == 0)
+				if (symbol_defined == 1 && add_symbol(&symbol_table, &label_amount, DC + IC_START_COUNT, line_number, symbol, 1, error, 0) == 0)
 					continue;
 
 				if (error->importance != NO_ERROR)
@@ -139,7 +139,7 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 			workable_line += strlen(workable_line);
 			
 		} else {
-			if (symbol_defined == 1 && add_symbol(&symbol_table, &label_amount, IC + 100, line_number, symbol, 0, error, 0) == 0)
+			if (symbol_defined == 1 && add_symbol(&symbol_table, &label_amount, IC + IC_START_COUNT, line_number, symbol, 0, error, 0) == 0)
 				continue;
 			command.opcode = get_opcode_from_string(workable_line);
 

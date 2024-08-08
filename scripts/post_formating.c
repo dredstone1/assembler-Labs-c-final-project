@@ -3,44 +3,63 @@
 #include <stdio.h>
 #include <string.h>
 
-
 /**
- * @brief Check if a line is a macro definition line
+ * @brief Checks if a given line defines a macro.
  * 
- * @param line The line to check
- * @return int 1 if the line is a macro line, 0 if its not
+ * This function compares the provided line with the predefined macro string.
+ * 
+ * @param line The string to check.
+ * @return int 1 if the line is equal to MACRO, 0 otherwise.
  */
 int is_line_macro(const char line[]);
 
 
 /**
- * @brief add a macro to a macro array
+ * @brief Adds a new macro to the list of macros.
  * 
- * @param macro_name The name of the macro
- * @param macros The macros struct to add the macro to
- * @param error The error array to add errors to
-*/
+ * This function reallocates memory to accommodate a new macro, initializes its fields, and adds it to the list.
+ * 
+ * @param macro_name The name of the macro to add.
+ * @param macros A pointer to the array of macros.
+ * @param number_of_macros A pointer to the number of macros.
+ * @param error A pointer to an error structure to handle memory allocation errors.
+ * @param line_number The line number where the macro is defined.
+ * @return int 1 if the macro is successfully added, 0 if memory allocation fails.
+ */
 int add_macro(char macro_name[], macro **macros, int *number_of_macros, error *error, int line_number);
 
 
 /**
- * @brief Check if a line is an end macro line
+ * @brief Checks if a given line is the end of a macro.
  * 
- * @param line The line to check
- * @return int 1 if the line is an end macro line, 0 if its not
+ * This function compares the provided line with the predefined end macro string.
+ * 
+ * @param line The string to check.
+ * @return int 1 if the line is equal to END_MACRO, 0 otherwise.
  */
 int is_ending_macro(const char line[]);
 
 
 /**
- * @brief Free the memory allocated for the macros
+ * @brief Frees the memory allocated for the lines in each macro.
  * 
- * @param macros The macros array to free
- * @param number_of_macros The number of macros in the array
+ * This function iterates through an array of macros and frees the memory allocated for the lines in each macro.
+ * 
+ * @param macros An array of macros.
+ * @param number_of_macros The number of macros in the array.
  */
 void free_macros_lines(macro *macros, int number_of_macros);
 
 
+/**
+ * @brief Validates if a given line is a valid macro name.
+ * 
+ * This function checks if the provided line exceeds the maximum symbol size.
+ * If it does, the function returns -1. Otherwise, it checks if the line is a saved word.
+ * 
+ * @param line The string to validate.
+ * @return int -1 if the line exceeds the maximum symbol size, otherwise the result of is_a_saved_word(line).
+ */
 int is_macro_valid(const char line[]);
 
 
@@ -51,7 +70,7 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 	int macro_exist = 0, number_of_rows = 0, search_result, macro_valid, i, line_too_long = 0, line_number = 0;
 	char line[MAX_LINE_LENGTH], start_workable_line[MAX_LINE_LENGTH], *workable_line;
 
-	set_ending_to_file_name(file_name, "as");
+	set_ending_to_file_name(file_name, SOURCE_FILE_ENDING);
 	file = fopen(file_name, "r");
 	if (file == NULL) {
 		print_system_error(FILE_NOT_FOUND_MESSAGE);
@@ -60,7 +79,6 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 	}
 
 	while (fgets(line, MAX_LINE_LENGTH, file) != NULL && error->importance != CRITICAL) {
-		
 		if (is_line_too_long(line) == 0) {
 			if (line_too_long == 0)
 				print_start_line_too_long_error(line_number + 1, error);
@@ -93,21 +111,27 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 				
 				macro_valid = is_macro_valid(workable_line);
 
-				if (macro_valid < 3) {
-					if (macro_valid == -1)
-						print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE, MACRO_NAME_IS_TOO_LONG_DESCRIPTION, line, line_number + 1, workable_line - start_workable_line + 1, workable_line - start_workable_line + strlen(workable_line) + 1, 0, 0, error);
-					else if (macro_valid == 0)
-						print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE, OPCODE_NAME_AS_MARCO_NAME_DESCRIPTION, line, line_number + 1, workable_line - start_workable_line + 1, workable_line - start_workable_line + strlen(workable_line) + 1, 0, 0, error);
-					else if (macro_valid == 1)
-						print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE, INSTRUCTION_NAME_AS_MARCO_NAME_DESCRIPTION, line, line_number + 1, workable_line - start_workable_line + 1, workable_line - start_workable_line + strlen(workable_line) + 1, 0, 0, error);
-					else if (macro_valid == 2)
-						print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE, REGISTER_NAME_AS_MARCO_NAME_DESCRIPTION, line, line_number + 1, workable_line - start_workable_line + 1, workable_line - start_workable_line + strlen(workable_line) + 1, 0, 0, error);
-					else
-						print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE, MACRO_NAME_CANNOT_BE_SAVED_WORD_DESCRIPTION, line, line_number + 1, workable_line - start_workable_line + 1, workable_line - start_workable_line + strlen(workable_line) + 1, 0, 0, error);
+				if (macro_valid != NON_SAVED_WORD){
+					switch (macro_valid) {
+						case -1:
+							print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE, MACRO_NAME_IS_TOO_LONG_DESCRIPTION, line, line_number + 1, workable_line - start_workable_line + 1, workable_line - start_workable_line + strlen(workable_line) + 1, 0, 0, error);
+							break;
+						case SAVED_WORD_OPCODE:
+							print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE, OPCODE_NAME_AS_MARCO_NAME_DESCRIPTION, line, line_number + 1, workable_line - start_workable_line + 1, workable_line - start_workable_line + strlen(workable_line) + 1, 0, 0, error);
+							break;
+						case SAVED_WORD_DIRECTIVE:
+							print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE, INSTRUCTION_NAME_AS_MARCO_NAME_DESCRIPTION, line, line_number + 1, workable_line - start_workable_line + 1, workable_line - start_workable_line + strlen(workable_line) + 1, 0, 0, error);
+							break;
+						case SAVED_WORD_REGISTER:
+							print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE, REGISTER_NAME_AS_MARCO_NAME_DESCRIPTION, line, line_number + 1, workable_line - start_workable_line + 1, workable_line - start_workable_line + strlen(workable_line) + 1, 0, 0, error);
+							break;
+						case SAVED_WORD_MACRO:
+							print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE, MACRO_NAME_CANNOT_BE_SAVED_WORD_DESCRIPTION, line, line_number + 1, workable_line - start_workable_line + 1, workable_line - start_workable_line + strlen(workable_line) + 1, 0, 0, error);
+							break;
+					}
 					error->importance = WARNING;
-				}else if (error->importance == NO_ERROR)
-					if (add_macro(workable_line, macros, number_of_macros, error, number_of_rows) == 0)
-						continue;
+				} else if (error->importance == NO_ERROR && add_macro(workable_line, macros, number_of_macros, error, number_of_rows) == 0)
+					continue;
 
 				workable_line = strtok(NULL, "\n\r");
 				if (workable_line != NULL && is_empty_line(workable_line) == 0) {
@@ -166,12 +190,11 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 
 
 	fclose(file);
-	if (error->importance == NO_ERROR) 
-		write_to_file(file_name, new_file, number_of_rows);
+	if (error->importance == NO_ERROR)
+		write_to_file_am(file_name, new_file, number_of_rows);
 	if (new_file != NULL)
 		free(new_file);
 	free_macros_lines((*macros), *number_of_macros);
-
 }
 
 int search_macro_by_name(const char macro_name[], macro *macros, int number_of_macros){

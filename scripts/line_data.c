@@ -48,6 +48,7 @@ int is_directive(char *str) {
 	return *str == '.';
 }
 
+
 int read_string(char **workable_line, char *line, instruction_data *instruction, error *error, int line_number) {
 	char *temp_offset;
 	int missing_start_quote = 0, missing_end_quote = 0;
@@ -93,11 +94,12 @@ int read_string(char **workable_line, char *line, instruction_data *instruction,
 	return 1;
 }
 
+
 int read_data(char **workable_line, char *line, instruction_data *instruction, error *error, int line_number, char *start_line_pointer) {
 	int i, coma_count, number;
-	char word1[80], *temp_offset;
+	char word1[MAX_LINE_LENGTH], *temp_offset;
 	instruction->numbers = NULL;
-	for (i = 0; i < 76; i++) {
+	for (i = 0; i < MAX_VARIABLE_DATA_SIZE; i++) {
 		temp_offset = *workable_line;
 		coma_count = count_commas_until_text(workable_line);
 		
@@ -147,6 +149,7 @@ int read_data(char **workable_line, char *line, instruction_data *instruction, e
 	return 1;
 }
 
+
 int cast_string_to_words_array(char *string, instruction_data *word_array, int length, error *error) {
 	int i;
 	word_array->numbers = (short *)use_malloc(sizeof(short) * (length+1), error);
@@ -160,6 +163,7 @@ int cast_string_to_words_array(char *string, instruction_data *word_array, int l
 	return 1;
 }
 
+
 int read_extern_or_entry_symbol(char **workable_line, char *line, instruction_data *instruction, error *error, int line_number){
 	char *end_of_symbol;
 	*workable_line += strlen(*workable_line)+1;
@@ -167,7 +171,7 @@ int read_extern_or_entry_symbol(char **workable_line, char *line, instruction_da
 	skip_spaces_and_tabs(workable_line);
 	end_of_symbol = search_for_next_white_char(*workable_line);
 	if (*end_of_symbol != '\n' && *end_of_symbol != '\r' && *end_of_symbol != '\0'){
-		if (extra_char_at_end(end_of_symbol) == 1){
+		if (is_empty_line(end_of_symbol) == 0){
 			print_general_error_no_quoting(EXTRA_TEXT_MESSAGE, EXTRA_TEXT_DESCRIPTION, line, line_number, *workable_line - line + 1, *workable_line - line + strlen(*workable_line), 0, 0, error);
 			error->importance = WARNING;
 			return 0;
@@ -190,7 +194,7 @@ int read_extern_or_entry_symbol(char **workable_line, char *line, instruction_da
 
 int get_next_variable(var *variable, char **workable_line, int comma_needed, error *error, int line_number, char* line, opcode type, char *start_line_pointer, int usages){
 	int comma_count;
-	char word[80], word_temp[80], *temp_offset = *workable_line, *commas_offset;
+	char word[MAX_LINE_LENGTH], word_temp[MAX_LINE_LENGTH], *temp_offset = *workable_line, *commas_offset;
 
 	skip_spaces_and_tabs(workable_line);
 	comma_count = count_commas_until_text(workable_line);
@@ -265,7 +269,7 @@ int get_next_variable(var *variable, char **workable_line, int comma_needed, err
 		word_temp[0] = '0';
 		
 		variable->value = atoi(word_temp);
-		if (variable->value > 7){
+		if (variable->value > LAST_REGISTER_COUNT){
 			print_general_error(INVALID_REGISTER_NAME_MESSAGE, INVALID_REGISTER_NAME_DESCRIPTION, line, line_number, temp_offset - start_line_pointer + 1, *workable_line - start_line_pointer + 1, 0, 0, error);
 			error->importance = WARNING;
 			return 0;

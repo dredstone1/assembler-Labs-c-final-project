@@ -21,6 +21,14 @@ typedef struct command_data{
 } command_data;
 
 
+typedef struct instruction_data{
+	short *numbers;
+	int size;
+	char args[MAX_SYMBOL_SIZE];
+	int is_extern;
+} instruction_data;
+
+
 /**
  * @brief Check if a string is a directive
  * 

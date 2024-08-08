@@ -1,26 +1,11 @@
 #include "../header/post_formating.h"
 #include "../header/first_pass.h"
 #include <stdlib.h>
-/*
-#include <time.h>
-*/
 
 void run_assembler(char **files_paths, int number_of_files);
 
 int main(int argc, char **argv){
-/*
-    clock_t time = clock(), time2;
-*/
-	
-	
 	run_assembler(argv, argc);
-
-/*	time2 = clock();
-    printf("average time: %f seconds\n", (double)(time2 - time) / CLOCKS_PER_SEC);*/
-/*
-	getchar();
-*/
-	
     return 0;
 }
 
@@ -37,7 +22,7 @@ void run_assembler(char **files_paths, int number_of_files){
 		number_of_macros = 0;
 		macros = NULL;
 		initialize_new_file_name(&file_name, &error, files_paths[i]);
-		set_ending_to_file_name(file_name, "as");
+		set_ending_to_file_name(file_name, SOURCE_FILE_ENDING);
 		error.file_name = file_name;
 
 		if (error.importance == NO_ERROR) {
