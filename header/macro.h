@@ -4,13 +4,7 @@
 #include <stdlib.h>
 #include "error.h"
 #include "utilities.h"
-
-
-
-/*typedef struct macros{
-    macro *macro;
-    int number_of_macros;
-} macros;*/
+#include "post_formating.h"
 
 
 /**
@@ -29,7 +23,7 @@ int is_line_macro(const char line[]);
  * @param macros The macros struct to add the macro to
  * @param error The error array to add errors to
 */
-void add_macro(char macro_name[], macro **macros, int *number_of_macros, error_array *error);
+int add_macro(char macro_name[], macro **macros, int *number_of_macros, error *error, int line_number);
 
 
 
@@ -52,21 +46,12 @@ int is_ending_macro(const char line[]);
 int search_macro_by_name(const char macro_name[], macro *macros, int number_of_macros);
 
 
-
 /**
  * @brief Free the memory allocated for the macros
  * 
  * @param macros The macros array to free
  * @param number_of_macros The number of macros in the array
  */
-void free_macros(macro *macros, int number_of_macros);
-
-/*
-line_node *read_macro_lines(line_node **head);
-macro* get_macro_from_name(macro *macros, line_node *node);
-void replace_line_to_macro(macro macro, line_node **node);
-void free_macros(macro *macros);
-void handle_macros(line_node **first_file_node,int *number_of_rows, macro *macros, error_array *error);
-*/
+void free_macros_lines(macro *macros, int number_of_macros);
 
 #endif

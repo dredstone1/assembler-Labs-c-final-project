@@ -25,4 +25,5 @@ add_executable(mmn14
         header/utilities.h
         header/second_pass.h
         header/consts.h
+        scripts/consts.c
 )

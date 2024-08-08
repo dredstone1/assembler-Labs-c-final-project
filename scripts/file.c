@@ -22,13 +22,11 @@ void write_to_file(char file_name[], line_text *lines, int number_of_rows){
 }
 
 
-void write_to_file_external(word_data *list1, word_data *list2, char fileName[], int IC, int DC){
+void write_to_file_object(word_data *list1, word_data *list2, char fileName[], int IC, int DC){
 	int current_word_line = 0;
 	FILE *file;
 
 	set_ending_to_file_name(fileName, "ob");
-	if (IC == 0)
-		return;
 	file = fopen(fileName, "w");
 	if (file == NULL)
 		return;
@@ -46,8 +44,49 @@ void write_to_file_external(word_data *list1, word_data *list2, char fileName[],
 	set_ending_to_file_name(fileName, "as");
 }
 
-void initialize_new_file_name(char **file_name, error_array *error, char name[]) {
-	*file_name = (char*)use_malloc(sizeof(char) * (strlen(name) + 4), error);
+void write_to_file_entry(symbol_address *entries, int entry_amount, symbol_address *labels, int label_amount, char fileName[]){
+	int current_entry = 0, found;
+	FILE *file;
+
+	set_ending_to_file_name(fileName, "ent");
+	if (entry_amount == 0)
+		return;
+	file = fopen(fileName, "w");
+	if (file == NULL)
+		return;
+	for (; current_entry < entry_amount; current_entry++) {
+		found = search_symbol_by_name(entries[current_entry].symbol_name, labels, label_amount);
+		if (found == -1) {
+			continue;
+		}
+		fprintf(file, "%s %d", labels[found].symbol_name, labels[found].address);
+		if (current_entry + 1 < entry_amount)
+			fprintf(file, "\n");
+	}
+	
+	fclose(file);
+}
+
+void write_to_file_external(word_data *commands, int IC, char fileName[]) {
+	int i;
+	FILE *file;
+
+	set_ending_to_file_name(fileName, "ext");
+	file = fopen(fileName, "w");
+	if (file == NULL)
+		return;
+
+	for (i = 0; i < IC; i++) {
+		if (commands[i].external == 1)
+			fprintf(file, "%s %d\n", commands[i].symbol, i + 100);
+	}
+	
+	fclose(file);
+}
+
+void initialize_new_file_name(char **file_name, error *error, char name[]) {
+	
+	*file_name = (char*)use_malloc(sizeof(char) * (strlen(name) + 5), error);
 	if (error->importance != NO_ERROR)
 		return;
 
@@ -55,6 +94,8 @@ void initialize_new_file_name(char **file_name, error_array *error, char name[])
 	(*file_name)[strlen(name)] = '.';
 	(*file_name)[strlen(name)+1] = '\0';
 }
+/*
 void set_ending_to_file_name(char *fileName, char ending[]){
 	strcpy(strchr(fileName, '.') + 1, ending);
 }
+*/

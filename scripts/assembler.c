@@ -1,46 +1,55 @@
 #include "../header/post_formating.h"
 #include "../header/first_pass.h"
 #include <stdlib.h>
-#include <stdio.h>
+/*
 #include <time.h>
+*/
 
 void run_assembler(char **files_paths, int number_of_files);
 
 int main(int argc, char **argv){
-    clock_t tic, toc, total_count = 10;
-	float average_time = 0.0;
-	int i;
-	for (i = 0; i < total_count; i++) {
-		tic = clock();
-		run_assembler(argv, argc);
-		toc = clock();
-		average_time +=(double) (toc - tic) / CLOCKS_PER_SEC;
-	}
-    printf("average time: %f seconds", ((average_time) / total_count));
+/*
+    clock_t time = clock(), time2;
+*/
+	
+	
+	run_assembler(argv, argc);
+
+/*	time2 = clock();
+    printf("average time: %f seconds\n", (double)(time2 - time) / CLOCKS_PER_SEC);*/
+/*
 	getchar();
+*/
+	
     return 0;
 }
 
 void run_assembler(char **files_paths, int number_of_files){
-	error_array error;
-	int i, error_count = 0;
+	error error;
+	int i, number_of_macros;
 	char *file_name;
+	macro *macros = NULL;
+	error.error_count = 0;
 	
 	for (i = 1; i < number_of_files; ++i) {
-		initialize_error(&error);
 		error.importance = NO_ERROR;
+		error.error_single_file_count = 0;
+		number_of_macros = 0;
+		macros = NULL;
 		initialize_new_file_name(&file_name, &error, files_paths[i]);
 		set_ending_to_file_name(file_name, "as");
+		error.file_name = file_name;
 
 		if (error.importance == NO_ERROR) {
-			post_formating(&error, file_name);
-			first_pass(file_name, &error);
+			post_formating(&error, file_name, &macros, &number_of_macros);
+			
+			if (error.importance == NO_ERROR)
+				first_pass(file_name, &error, macros, number_of_macros);
 		}
-		
-		handel_error(error, file_name);
-		error_count += error.size-1;
-		free(error.errors);
+		if (macros != NULL)
+			free(macros);
 		free(file_name);
+		if (error.error_single_file_count > 0)
+			print_separator(1);
 	}
-	printf("total errors: %d\n", error_count);
 }

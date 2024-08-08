@@ -1,271 +1,239 @@
 #include "../header/error.h"
-#include "../header/utilities.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-void print_char_n_times(char c, int n);
-void print_error(error error, error_array error_array, int current_error);
 void print_start_line_error();
+void print_char_n_times(char c, int n);
 void print_start_line_number_error(int line_number);
-void print_separator();
-int count_error_type(error_array error_array, int current_error, error_type error_type);
-int get_next_error_by_type(error_array error_array, int current_error, error_type error_type);
-void print_in_error_message(char file_name[]);
-void print_start_error_message(error error, int *offset, int single_error);
-void print_error_lines(error error, int *offset, int ignore_mark, int single_error);
+void print_tilde_and_caret(int start, int end, int pos1, int pos2);
 
+void set_ending_to_file_name(char *fileName, char ending[]);
 
-
-void print_general_error_type(error error, int single_error);
-void print_error_line(error error, int single_error);
-void print_error_mark(error error, int single_error);
-void print_error_message_conclusion(error error, int single_error);
-
-const error_message_stage error_massage_stage[][END_OF_ERROR+3] = {
-/*FILE_NOT_FOUND_MESSAGE: */ {FOR_EVERY_ERROR, PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, END_OF_ERROR},
-/*MEMORY_ALLOCATION_FAILED_MESSAGE*/ {FOR_EVERY_ERROR, PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, END_OF_ERROR},
-/*INVALID_OPCODE_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-/*SYMBOL_IN_EXTERNAL_OR_ENTRY_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-/*INVALID_COMMA_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-/*MISSING_COMMA_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-/*EXTRA_COMMA_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-/*MISSING_START_QUOTE_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-/*MISSING_ENDING_QUOTE_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-/*MISSING_ENDING_QUOTE_N_START_QUOTE_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-/*DIRECTIVE_TYPE_MISSING_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-/*SYMBOL_NOT_FOUND_MESSAGE*/ {PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-/*INVALID_VARIABLE_TYPE_MESSAGE*/{PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-/*MISSING_PARAMETER_ONE*/{PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR},
-/*MISSING_PARAMETER_TWO*/{PRINT_GENERAL_ERROR_TYPE, FOR_EVERY_ERROR, PRINT_ERROR_LINE, PRINT_ERROR_MARK, FOR_EVERY_ERROR, PRINT_ERROR_MESSAGE_CONCLUSION, END_OF_ERROR}
-};
-
-const char *error_massage[][2] = {
-        {FILE_NOT_FOUND_MESSAGE},
-        {MEMORY_ALLOCATION_FAILED_MESSAGE},
-        {INVALID_OPCODE_MESSAGE, INVALID_OPCODE_DESCRIPTION},
-        {SYMBOL_IN_EXTERNAL_OR_ENTRY_MESSAGE, SYMBOL_IN_EXTERNAL_OR_ENTRY_DESCRIPTION},
-        {INVALID_COMMA_MESSAGE, INVALID_COMMA_DESCRIPTION},
-        {MISSING_COMMA_MESSAGE, MISSING_COMMA_DESCRIPTION},
-        {EXTRA_COMMA_MESSAGE, EXTRA_COMMA_DESCRIPTION},
-        {MISSING_START_QUOTE_MESSAGE, MISSING_START_QUOTE_DESCRIPTION},
-        {MISSING_ENDING_QUOTE_MESSAGE, MISSING_ENDING_QUOTE_DESCRIPTION},
-        {MISSING_ENDING_QUOTE_N_START_QUOTE_MESSAGE, MISSING_ENDING_QUOTE_N_START_QUOTE_DESCRIPTION},
-        {DIRECTIVE_TYPE_MISSING_MESSAGE, DIRECTIVE_TYPE_MISSING_DESCRIPTION},
-		{SYMBOL_NOT_FOUND_MESSAGE, SYMBOL_NOT_FOUND_DESCRIPTION},
-		{INVALID_VARIABLE_TYPE_MESSAGE, INVALID_VARIABLE_TYPE_DESCRIPTION},
-		{MISSING_PARAMETER_MESSAGE_ONE, MISSING_PARAMETER_DESCRIPTION_ONE},
-		{MISSING_PARAMETER_MESSAGE_TWO, MISSING_PARAMETER_DESCRIPTION_TWO}
-};
-
-void (*error_handling_functions[])(error, int) = {
-        print_general_error_type,
-        print_error_line,
-        print_error_mark,
-		print_error_message_conclusion
-};
-
-
-void handel_error(error_array error, char file_name[]) {
-    int i, error_printed = 0;
-
-    for (i = 0; i < error.size; ++i) {
-        if (error.errors[i].type == NOTHING)
-            continue;
-        
-        if (error_printed > 0)
-			print_separator();
-		else
-			print_in_error_message(file_name);
-
-		print_error(error.errors[i], error, i);
-		
-		if (error.errors[i].type == FILE_NOT_FOUND)
-			printf(" \"%s\"\n", file_name);
-        error_printed++;
-    }
+void print_system_error(char error_massage[]){
+	printf("%s\n", error_massage);
 }
 
+void print_general_error(char error_massage[], char error_description[], char line[], int line_number, int start_place_in_line, int end_place_in_line, int mark_offset1, int mark_offset2, error *error) {
+	if (error->error_single_file_count == 0) {
+		printf(FILE_NAME_ERROR, error->file_name);
+		print_separator(1);
+	}if (error->error_single_file_count > 0)
+		print_separator(0);
+	
+	print_start_line_error();
+	printf("%s\n", error_massage);
 
-void print_error(error error, error_array error_array, int current_error){
-	int count = count_error_type(error_array, current_error, error.type), i=0, j, temp;
-	print_start_error_message(error, &i, 0);
-	i++;
-	temp = i;
-	for (j = 0; j < count; ++j) {
-		i = temp;
-		
-		print_error_lines(error, &i, (count == 2  && j==1) || (count != 2 ), count == 2);
-		if (error.type!=FILE_NOT_FOUND)
-			error_array.errors[current_error].type = NOTHING;
-		
-		current_error = get_next_error_by_type(error_array, current_error, error.type);
-		if (current_error == -1)
-			break;
+	print_start_line_number_error(line_number);
+	printf("%s\n", line);
+	print_start_line_error();
+	print_tilde_and_caret(start_place_in_line, end_place_in_line, mark_offset1, mark_offset2);
+	
+	printf("\n");
+	print_start_line_error();
+	if (start_place_in_line == 0)
+		printf("%.*s%s%s\n", end_place_in_line - start_place_in_line, &line[start_place_in_line], ERROR_DESCRIPTION_MESSAGE_START_PATTERN_SINGLE, error_description);
+	else
+		printf("%.*s%s%s\n", end_place_in_line - start_place_in_line, &line[start_place_in_line-1], ERROR_DESCRIPTION_MESSAGE_START_PATTERN_SINGLE, error_description);
 
-		error = error_array.errors[current_error];
-	}
-}
-
-void print_error_lines(error error, int *offset, int ignore_mark, int single_error){
-	for (; error_massage_stage[error.type][*offset] != END_OF_ERROR; ++(*offset)) {
-		if (error_massage_stage[error.type][*offset] == FOR_EVERY_ERROR){
-			if (ignore_mark == 1)
-				continue;
-			return;
-		}
-		if (error.type<15)
-			error_handling_functions[error_massage_stage[error.type][*offset]](error, single_error);
-	}
-}
-
-void print_start_error_message(error error, int *offset, int single_error){
-	for (; error_massage_stage[error.type][*offset] < END_OF_ERROR; (*offset)++) {
-		
-			error_handling_functions[error_massage_stage[error.type][*offset]](error, single_error);
-	}
+	error->error_single_file_count++;
+	error->error_count++;
 }
 
 void print_start_line_error(){
-    print_char_n_times(' ', amount_of_spaces_at_start);
-    printf("%s", start_format_line_error);
+	print_char_n_times(' ', amount_of_spaces_at_start);
+	printf("%s", start_format_line_error);
 }
 
-void print_start_line_number_error(int line_number){
-    printf("%4d | ", line_number+1);
+void print_general_error_no_quoting(char error_massage[], char error_description[], char line[], int line_number, int start_place_in_line, int end_place_in_line, int mark_offset1, int mark_offset2, error *error) {
+	if (error->error_single_file_count == 0) {
+		printf(FILE_NAME_ERROR, error->file_name);
+		print_separator(1);
+	}if (error->error_single_file_count > 0)
+		print_separator(0);
+
+	print_start_line_error();
+	printf("%s\n", error_massage);
+
+	print_start_line_number_error(line_number);
+	printf("%s\n", line);
+	print_start_line_error();
+	print_tilde_and_caret(start_place_in_line, end_place_in_line, mark_offset1, mark_offset2);
+
+	printf("\n");
+	print_start_line_error();
+
+	printf("%s\n", error_description);
+
+	error->error_single_file_count++;
+	error->error_count++;
+}
+
+void print_two_line_error(char error_massage[], char error_description[], char line1[], char line2[], int line1_number, int line2_number, int start_place_in_line1, int end_place_in_line1, int start_place_in_line2, int end_place_in_line2, error *error) {
+	
+	
+	if (error->error_single_file_count == 0) {
+		printf(FILE_NAME_ERROR, error->file_name);
+		print_separator(1);
+	}if (error->error_single_file_count > 0)
+		print_separator(0);
+	
+	print_start_line_error();
+	printf("%s\n", error_massage);
+
+	print_start_line_number_error(line1_number);
+	printf("%s\n", line1);
+	print_start_line_error();
+	print_tilde_and_caret(start_place_in_line1, end_place_in_line1, 0, 0);
+	printf("\n");
+
+	print_start_line_number_error(line2_number);
+	printf("%s\n", line2);
+	print_start_line_error();
+	print_tilde_and_caret(start_place_in_line2, end_place_in_line2, 0, 0);
+
+	printf("\n");
+	print_start_line_error();
+
+	if (start_place_in_line1 == 0) {
+		printf("%.*s%s%s", end_place_in_line1 - start_place_in_line1, &line1[start_place_in_line1], ERROR_DESCRIPTION_MESSAGE_START_PATTERN_SINGLE, error_description);
+	} else {
+		printf("%.*s%s%s", end_place_in_line1 - start_place_in_line1, &line1[start_place_in_line1 - 1], ERROR_DESCRIPTION_MESSAGE_START_PATTERN_SINGLE, error_description);
+	}
+	printf(" %d\n", line1_number);
+
+	error->error_single_file_count++;
+	error->error_count++;
+}
+
+void print_macro_b_label_same(char line[], int line_number, int macro_line_number, error *error, char macro[]) {
+	if (error->error_single_file_count == 0) {
+		printf(FILE_NAME_ERROR, error->file_name);
+		print_separator(1);
+	}if (error->error_single_file_count > 0)
+		print_separator(0);
+
+	print_start_line_error();
+	printf("%s\n", SYMBOL_CAN_BE_SAME_AS_MACRO_NAME);
+
+	print_start_line_number_error(line_number);
+	printf("%s\n", line);
+
+	print_start_line_error();
+	print_tilde_and_caret(strstr(line, macro) - line + 1, strstr(line, macro) - line + strlen(macro) + 1, 0, 0);
+	
+	printf("\n");
+	print_start_line_error();
+	printf("%.*s%s%s\n", (int)strlen(macro), macro, ERROR_DESCRIPTION_MESSAGE_START_PATTERN_SINGLE, SYMBOL_CAN_BE_SAME_AS_MACRO_NAME_DESCRIPTION);
+	
+	print_start_line_error();
+	set_ending_to_file_name(error->file_name, "as");
+	printf(SYMBOL_ALREADY_EXISTS_AS_MACRO_DESCRIPTION, error->file_name, macro_line_number+1);
+	printf("\n");
+	set_ending_to_file_name(error->file_name, "am");
+	
+	error->error_single_file_count++;
+	error->error_count++;
+}
+
+
+void print_command_not_legal(char variable[], char line[], int line_number, error *error,const char variable_type_valid[], int usage, opcode code){
+	int legal_printed = 0, i;
+	
+	if (error->error_single_file_count == 0) {
+		printf(FILE_NAME_ERROR, error->file_name);
+		print_separator(1);
+	}if (error->error_single_file_count > 0)
+		print_separator(0);
+
+	print_start_line_error();
+	printf("%s\n", INVALID_VARIABLE_TYPE_MESSAGE);
+
+	print_start_line_number_error(line_number);
+	printf("%s\n", line);
+
+	print_start_line_error();
+	print_tilde_and_caret(strstr(line, variable) - line+1, strstr(line, variable) - line + strlen(variable)+1, 0, 0);
+	printf("\n");
+
+	print_start_line_error();
+	if (usage == 0) {
+		printf("%s %s", variable, INVALID_VARIABLE_TYPE_SOURCE_DESCRIPTION);
+	}
+	else {
+		printf("%s %s", variable, INVALID_VARIABLE_TYPE_DESTINATION_DESCRIPTION);
+	}
+
+	printf("%s %s", opcode_names[code][0], LEGAL_VARIABLE_TYPES_MESSAGE);
+
+	for (i = 0; i < 5; i++) {
+		if (variable_type_valid[i] != '_') {
+			if (legal_printed > 0)
+				printf(", ");
+			printf("%s", operand_names[i]);
+			legal_printed++;
+		}
+	}
+
+	printf("\n");
+}
+
+void print_start_line_too_long_error(int line_number, error *error){
+	if (error->error_single_file_count == 0) {
+		printf(FILE_NAME_ERROR, error->file_name);
+		print_separator(1);
+	}if (error->error_single_file_count > 0)
+		print_separator(0);
+
+	print_start_line_error();
+	printf("%s\n", LINE_TOO_LONG_MESSAGE);
+
+	print_start_line_number_error(line_number);
+}
+
+void print_end_line_too_long_error() {
+	print_start_line_error();
+	printf("%s\n", LINE_TOO_LONG_DESCRIPTION);
 }
 
 void print_char_n_times(char c, int n){
-    int i;
-    for (i = 0; i < n; i++)
-        printf("%c", c);
-}
-
-void print_separator(){
-    print_start_line_error();
-    print_char_n_times('-', MAX_LINE_LENGTH);
-    printf("\n");
-}
-
-void print_in_error_message(char file_name[]){
-    printf(FILE_NAME_ERROR, file_name);
-}
-
-void print_general_error_type(error error, int single_error){
-    print_start_line_error();
-	printf("%s", error_massage[error.type][0]);
-	if (error.type != FILE_NOT_FOUND)
-		printf("\n");
-}
-
-void print_error_message_conclusion(error error, int single_error){
-	char *start;
-    print_start_line_error();
-	
-	if (error.additional_info > 0) {
-		if (single_error == 0) {
-			printf("%s", opcode_names[error.additional_info][0][0]);
-			printf(ERROR_DESCRIPTION_MESSAGE_START_PATTERN_SINGLE);
-			printf("%s", error_massage[error.type][1]);
-		} else {
-			printf("%s", opcode_names[error.additional_info][0][0]);
-			printf(ERROR_DESCRIPTION_MESSAGE_START_PATTERN_DOUBLE);
-			printf("%s", opcode_names[error.additional_info][0][0]);
-			printf("%s", error_massage[error.type][1]);
-		}
-	}else {
-		if (single_error == 0) {
-			printf("%.*s", error.end_place_in_line - error.start_place_in_line, &error.line[error.start_place_in_line]);
-			printf(ERROR_DESCRIPTION_MESSAGE_START_PATTERN_SINGLE);
-			printf("%s", error_massage[error.type][1]);
-		} else {
-			printf("%.*s", error.end_place_in_line - error.start_place_in_line, &error.line[error.start_place_in_line]);
-			printf(ERROR_DESCRIPTION_MESSAGE_START_PATTERN_DOUBLE);
-			printf("%.*s", error.end_place_in_line - error.start_place_in_line, &error.line[error.start_place_in_line]);
-			printf("%s", error_massage[error.type][1]);
-		}
-	}
-	printf("\n");
-		
-}
-
-void print_error_line(error error, int single_error){
-    print_start_line_number_error(error.line_number);
-    printf("%s\n", error.line);
-}
-
-void print_error_mark(error error, int single_error){
-    print_start_line_error();
-	if (error.start_place_in_line > MAX_LINE_LENGTH || error.start_place_in_line < 0) {
-		return;
-	}
-	print_char_n_times(' ', error.start_place_in_line);
-	
-	if (error.mark_offset > 0) {
-		print_char_n_times('~', error.mark_offset - error.start_place_in_line);
-		printf("^");
-		print_char_n_times('~', error.end_place_in_line - error.mark_offset - 1);
-	}else
-		print_char_n_times('~', error.end_place_in_line - error.start_place_in_line);
-	
-	if (error.type == MISSING_ENDING_QUOTE_N_START_QUOTE)
-		printf("^");
-
-    printf("\n");
-}
-
-int count_error_type(error_array error_array, int current_error, error_type error_type){
-	int i, count = 0;
-	for (i = current_error; i < error_array.size; i++)
-		if (error_array.errors[i].type == error_type)
-			count++;
-
-	return count;
-
-}
-
-int get_next_error_by_type(error_array error_array, int current_error, error_type error_type) {
 	int i;
-	for (i = current_error + 1; i < error_array.size; i++)
-		if (error_array.errors[i].type == error_type)
-			return i;
-
-	return -1;
+	for (i = 0; i < n; i++)
+		printf("%c", c);
 }
 
-void add_error(error_array *error_array, error_type error_type, int line_number, int start_place_in_line, int end_place_in_line, importance importance, char line[], int mark_offset, int additional_info){
-    error *error_array_temp;
-    error_array_temp = (error *)realloc(error_array->errors, sizeof(error) * (error_array->size+1));
-    if (error_array_temp != NULL) {
-        error_array->errors = error_array_temp;
-        error_array->size++;
-    }
-    else
-        error_type = MEMORY_ALLOCATION_FAILED;
-    
-    error_array->importance = importance;
-    error_array->errors[error_array->size-1].line_number = line_number;
-    strcpy(error_array->errors[error_array->size-1].line,line);
-    error_array->errors[error_array->size-1].start_place_in_line = start_place_in_line;
-    error_array->errors[error_array->size-1].mark_offset = mark_offset;
-    error_array->errors[error_array->size-1].end_place_in_line = end_place_in_line;
-    error_array->errors[error_array->size-1].type = error_type;
-    error_array->errors[error_array->size-1].additional_info = additional_info;
+void print_start_line_number_error(int line_number){
+	printf("%4d | ", line_number);
 }
 
-void initialize_error(error_array *error_array){
-    error_array->errors = (error*)malloc(sizeof(error));
-    error_array->errors->line_number = 0;
-    error_array->errors->start_place_in_line = 0;
-    error_array->errors->end_place_in_line = 0;
-	error_array->errors->mark_offset = 0;
-	error_array->errors->line[0] = '\0';
-    error_array->errors->type = NOTHING;
-	error_array->importance = NO_ERROR;
-    
-    error_array->size = 1;
-    if (error_array->errors == NULL) {
-        printf("Memory allocation failed");
-        return;
-    }
+void print_tilde_and_caret(int start, int end, int pos1, int pos2) {
+	if (start > MAX_LINE_LENGTH)
+		return;
+	print_char_n_times(' ', start-1);
+	if (pos1 == 0)
+		print_char_n_times('~', (end - start));
+	else{
+		print_char_n_times('~',pos1 - start);
+		printf("^");
+		if (pos2 == 0 || pos2 == pos1)
+			print_char_n_times('~', (end - pos1));
+		else{
+			print_char_n_times('~', (pos2 - pos1)-1);
+			printf("^");
+			print_char_n_times('~', (end - pos2));
+		}
+		
+	}
+}
+
+void print_separator(int from_beginning){
+	if (from_beginning == 0) {
+		print_start_line_error();
+		print_char_n_times('-', MAX_LINE_LENGTH);
+	}else
+		print_char_n_times('-', MAX_LINE_LENGTH + SIDE_LENGTH);
+	printf("\n");
+}
+
+void set_ending_to_file_name(char *fileName, char ending[]){
+	strcpy(strchr(fileName, '.') + 1, ending);
 }

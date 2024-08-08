@@ -1,7 +1,10 @@
 #ifndef MMN14_CONSTS_H
 #define MMN14_CONSTS_H
 
-#define MAX_LINE_LENGTH 81
+#define MAX_LINE_LENGTH 83
+#define MAX_SYMBOL_SIZE 31
+#define MACRO "macr"
+#define END_MACRO "endmacr"
 
 typedef enum opcode{
 	MOV,
@@ -34,15 +37,18 @@ typedef enum variable_type{
 	IMMEDIATE,
 	DIRECT,
 	REGISTER_INDIRECT,
-	REGISTER_DIRECT,
-	NONE= -1
+	REGISTER_DIRECT
 } variable_type;
 
 typedef struct instruction_data{
-	char *label;
 	short *numbers;
 	int size;
-	char *args;
+	char args[MAX_SYMBOL_SIZE];
 	int is_extern;
 } instruction_data;
+
+extern const char *opcode_names[][3];
+extern const char *operand_names[];
+extern const char *instruction_type_names[];
+
 #endif
