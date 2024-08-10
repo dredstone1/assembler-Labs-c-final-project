@@ -8,7 +8,7 @@
 #define BASE 8
 #define PLACE_VALUE_MULTIPLIER 10
 
-typedef struct line_text{
+typedef struct line_text {
 	char content[MAX_LINE_LENGTH];
 } line_text;
 
@@ -31,9 +31,9 @@ typedef enum {
  * @param decimal_number The decimal integer to be converted to octal.
  * @return The octal representation of the input decimal integer.
  */
- int int_to_octal(int num);
+int int_to_octal(int num);
 
- 
+
 /**
  * @brief Checks if the given line is an empty line.
  * 
@@ -46,7 +46,7 @@ typedef enum {
  */
 int is_empty_line(char line[]);
 
- 
+
 /**
  * @brief Checks if a given line is a comment line.
  *
@@ -242,7 +242,7 @@ saved_word_type is_a_saved_word(const char word[]);
  * @param error A pointer to an error structure to handle memory allocation errors.
  * @return char* A pointer to the duplicated string if successful, NULL otherwise.
  */
-char* duplicate_string(const char source[], error *error);
+char *duplicate_string(const char source[], error *error);
 
 
 /**
@@ -254,7 +254,7 @@ char* duplicate_string(const char source[], error *error);
  * @param line The string to search through.
  * @return char* A pointer to the next whitespace character or the end of the string.
  */
-char* search_for_next_white_char(char *line);
+char *search_for_next_white_char(char *line);
 
 
 /**
@@ -267,4 +267,30 @@ char* search_for_next_white_char(char *line);
  * @return int 1 if the line is within the allowed length, 0 if it exceeds the limit.
  */
 int is_line_too_long(const char line[]);
+
+
+/**
+ * @brief Frees the memory pointed to by ptr if it is not NULL.
+ *
+ * This function checks if the provided pointer is not NULL. If the pointer
+ * is valid (i.e., not NULL), it frees the memory allocated to it using free().
+ *
+ * @param ptr A pointer to to be checked and freed if not NULL.
+ */
+void handle_free(void *ptr);
+
+
+/**
+ * @brief Finds the last occurrence of a character in a string.
+ *
+ * This function iterates through a given string and returns a pointer
+ * to the last occurrence of the specified character. If the character
+ * is not found or the input string is NULL or empty, it returns NULL.
+ *
+ * @param str A pointer to the input string.
+ * @param c The character to search for.
+ * @return A pointer to the last occurrence of 'c' in 'str', or NULL if 'c' is not found or 'str' is NULL or empty.
+ */
+char* str_last_char(char* str, const char c);
+
 #endif

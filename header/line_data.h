@@ -8,25 +8,25 @@
 #define SECOND_GROUP_OPCODE 9
 #define THIRD_GROUP_OPCODE 2
 
-typedef struct var{
+typedef struct var {
 	char var[MAX_SYMBOL_SIZE];
 	int value;
 	variable_type type;
 } var;
 
-typedef struct command_data{
-    int opcode;
+typedef struct command_data {
+	int opcode;
 	var source;
 	var destination;
 } command_data;
 
 
-typedef struct instruction_data{
+typedef struct directive_data {
 	short *numbers;
 	int size;
 	char args[MAX_SYMBOL_SIZE];
-	int is_extern;
-} instruction_data;
+	directive_type type;
+} directive_data;
 
 
 /**
@@ -44,7 +44,8 @@ int is_directive(char *str);
  * @param str The string to check
  * @return int 1 if its a valid string declaration, 0 if its not a valid string declaration
  */
-int read_string(char **workable_line, char *line, instruction_data *instruction, error *error, int line_number);
+int
+read_string(char **workable_line, char *line, directive_data *directive, error *error, int line_number, char *start_line_pointer);
 
 
 /**
@@ -54,10 +55,11 @@ int read_string(char **workable_line, char *line, instruction_data *instruction,
  * @param line The original line
  * @param error The error array
  * @param line_number The line number
- * @param instruction The instruction data
+ * @param directive The directive data
  * @return int 1 if success, 0 if fail
  */
-int read_data(char **workable_line, char *line, instruction_data *instruction, error *error, int line_number, char *start_line_pointer);
+int read_data(char **workable_line, char *line, directive_data *directive, error *error, int line_number,
+			  char *start_line_pointer);
 
 
 /**
@@ -65,26 +67,25 @@ int read_data(char **workable_line, char *line, instruction_data *instruction, e
  * 
  * @param workable_line The string to read from
  * @param line The original line
- * @param instruction The instruction data
+ * @param directive The directive data
  * @param error The error array
  * @param line_number The line number
  * @return int 1 if success, 0 if fail
  */
-int read_extern_or_entry_symbol(char **workable_line, char *line, instruction_data *instruction, error *error, int line_number);
+int
+read_extern_or_entry_symbol(char **workable_line, char *line, directive_data *directive, error *error, int line_number);
 
 
 /**
  * 
  */
-int read_command_variables(char **workable_line, char *line, command_data *command, error *error, int line_number, char *start_workable_line);
+int read_command_variables(char **workable_line, char *line, command_data *command, error *error, int line_number,
+						   char *start_workable_line);
 
 /**
  * 
  */
 int amount_of_variables_from_opcode(opcode code);
-
-
-
 
 
 #endif

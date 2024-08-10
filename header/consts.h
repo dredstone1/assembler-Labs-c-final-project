@@ -17,7 +17,7 @@
 #define MAX_VARIABLE_DATA_SIZE 76
 
 
-typedef enum opcode{
+typedef enum opcode {
 	MOV,
 	CMP,
 	ADD,
@@ -37,7 +37,7 @@ typedef enum opcode{
 } opcode;
 
 
-typedef enum directive_type{
+typedef enum directive_type {
 	DATA,
 	STRING,
 	ENTRY,
@@ -45,7 +45,7 @@ typedef enum directive_type{
 } directive_type;
 
 
-typedef enum variable_type{
+typedef enum variable_type {
 	IMMEDIATE,
 	DIRECT,
 	REGISTER_INDIRECT,
@@ -53,11 +53,8 @@ typedef enum variable_type{
 } variable_type;
 
 
-
-
-
 extern const char *opcode_names[][3];
 extern const char *operand_names[];
-extern const char *instruction_type_names[];
+extern const char *directive_type_names[];
 
 #endif

@@ -26,7 +26,6 @@ int is_line_macro(const char line[]);
 int add_macro(char macro_name[], macro **macros, int *number_of_macros, error *error, int line_number);
 
 
-
 /**
  * @brief Check if a line is an end macro line
  * 

@@ -4,7 +4,7 @@
 #include "file.h"
 
 
-typedef struct macro{
+typedef struct macro {
 	line_text *lines;
 	int number_of_macro_lines;
 	int line_number;
@@ -29,4 +29,5 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
  * @return int The index of the macro if found, -1 otherwise.
  */
 int search_macro_by_name(const char macro_name[], macro *macros, int number_of_macros);
+
 #endif

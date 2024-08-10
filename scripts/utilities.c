@@ -23,9 +23,15 @@ int int_to_octal(int decimal_number) {
 
 int count_commas_until_text(char **workable_line) {
 	int count = 0;
-	while ( **workable_line == ' ' || **workable_line == '\t' || **workable_line == ',') {
-		if (**workable_line == ',')
+	if (*workable_line == NULL) {
+		return 0;
+	}
+	
+	while (**workable_line == ' ' || **workable_line == '\t' || **workable_line == ',') {
+		if (**workable_line == ',') {
 			count++;
+		}
+
 		(*workable_line)++;
 	}
 	return count;
@@ -34,34 +40,41 @@ int count_commas_until_text(char **workable_line) {
 
 int get_next_word(char **workable_line, char word[], char separators[]) {
 	int i = 0;
-	while (is_separator(**workable_line, separators) == 0 && **workable_line != '\0'){
+	if (*workable_line == NULL) {
+		return 0;
+	}
+	while (is_separator(**workable_line, separators) == 0 && **workable_line != '\0') {
 		word[i++] = **workable_line;
 		(*workable_line)++;
 	}
+
 	word[i] = '\0';
 	return i;
 }
 
 
-char* search_for_next_white_char(char *line) {
-	while (*line != ' ' && *line != '\t' && *line != '\0' && *line != '\n' && *line != '\r')
+char *search_for_next_white_char(char *line) {
+	while (*line != ' ' && *line != '\t' && *line != '\0' && *line != '\n' && *line != '\r') {
 		line++;
-	
+	}
+
 	return line;
 }
 
 
 int is_separator(char c, char separators[]) {
 	int i;
-	for (i = 0; i < strlen(separators); i++)
-		if (c == separators[i])
+	for (i = 0; i < strlen(separators); i++) {
+		if (c == separators[i]) {
 			return 1;
+		}
+	}
 
 	return 0;
 }
 
 
-int is_empty_line(char line[]){
+int is_empty_line(char line[]) {
 	int offset = 0;
 	skip_spaces_and_tabs_with_offset(&offset, line);
 
@@ -69,7 +82,7 @@ int is_empty_line(char line[]){
 }
 
 
-int is_comment_line(char line[]){
+int is_comment_line(char line[]) {
 	int offset = 0;
 	skip_spaces_and_tabs_with_offset(&offset, line);
 
@@ -78,20 +91,25 @@ int is_comment_line(char line[]){
 
 
 void skip_spaces_and_tabs_with_offset(int *offset, char line[]) {
-	while (line[*offset] == ' ' || line[*offset] == '\t')
+	while (line[*offset] == ' ' || line[*offset] == '\t') {
 		(*offset)++;
+	}
 }
 
 
 void skip_spaces_and_tabs(char **line) {
-	while (**line == ' ' || **line == '\t')
+	if (*line == NULL) {
+		return;
+	}
+	while (**line == ' ' || **line == '\t') {
 		(*line)++;
+	}
 }
 
 
 void *use_malloc(size_t size, error *error) {
 	void *ptr = (void *) malloc(size);
-	if (ptr == NULL){
+	if (ptr == NULL) {
 		print_system_error(MEMORY_ALLOCATION_FAILED_MESSAGE);
 		error->importance = CRITICAL;
 	}
@@ -101,27 +119,31 @@ void *use_malloc(size_t size, error *error) {
 
 
 void *use_realloc(void *ptr, size_t size, error *error) {
-	if (ptr == NULL)
+	if (ptr == NULL) {
 		ptr = use_malloc(size, error);
-	else
+	} else {
 		ptr = realloc(ptr, size);
-	
-	if (ptr == NULL){
+	}
+
+	if (ptr == NULL) {
 		print_system_error(MEMORY_ALLOCATION_FAILED_MESSAGE);
 		error->importance = CRITICAL;
 	}
-	
+
 	return ptr;
 }
 
 
 int is_register(const char word[]) {
 	int offset = 0;
-	if (word[0] == '*')
-		offset = 1;
 
-	if (word[offset] == 'r' && word[offset+1] >= '0' && word[offset+1] <= '9' && word[offset+2] == '\0')
+	if (word[0] == '*') {
+		offset = 1;
+	}
+
+	if (word[offset] == 'r' && word[offset + 1] >= '0' && word[offset + 1] <= '9' && word[offset + 2] == '\0') {
 		return 1;
+	}
 
 	return 0;
 }
@@ -135,70 +157,83 @@ int get_line_from_file(char line[], int line_number, char file_name[], error *er
 		return 0;
 	}
 
-	while (line_number > 0 && fgets(line, MAX_LINE_LENGTH, file) != NULL)
+	while (line_number > 0 && fgets(line, MAX_LINE_LENGTH, file) != NULL) {
 		line_number--;
+	}
 
-	if (line[strlen(line) - 1] == '\n'|| line[strlen(line) - 1] == '\r')
+	if (line[strlen(line) - 1] == '\n' || line[strlen(line) - 1] == '\r') {
 		line[strlen(line) - 1] = '\0';
+	}
 
 	fclose(file);
 	return 1;
 }
 
 
-void go_to_next_line(FILE *file, char line[], int line_number, int *current_line_number){
-	for (; *current_line_number < line_number; (*current_line_number)++)
+void go_to_next_line(FILE *file, char line[], int line_number, int *current_line_number) {
+	for (; *current_line_number < line_number; (*current_line_number)++) {
 		fgets(line, MAX_LINE_LENGTH, file);
+	}
 
-	if (line[strlen(line) - 1] == '\n' || line[strlen(line) - 1] == '\r')
+	if (line[strlen(line) - 1] == '\n' || line[strlen(line) - 1] == '\r') {
 		line[strlen(line) - 1] = '\0';
+	}
 }
 
 
-saved_word_type is_a_saved_word(const char word[]){
-	if (get_opcode_from_string(word) != -1)
+saved_word_type is_a_saved_word(const char word[]) {
+	if (get_opcode_from_string(word) != -1) {
 		return SAVED_WORD_OPCODE;
+	}
 
-	if (get_directive_type_from_string(word) != -1)
+	if (get_directive_type_from_string(word) != -1) {
 		return SAVED_WORD_DIRECTIVE;
+	}
 
-	if (is_register(word) == 1)
+	if (is_register(word) == 1) {
 		return SAVED_WORD_REGISTER;
+	}
 
-	if (strcmp(word, MACRO) == 0 || strcmp(word, END_MACRO) == 0)
+	if (strcmp(word, MACRO) == 0 || strcmp(word, END_MACRO) == 0) {
 		return SAVED_WORD_MACRO;
+	}
 
 	return NON_SAVED_WORD;
 }
 
 
-directive_type get_directive_type_from_string(const char *str){
-	directive_type instruction;
-	
-	for (instruction = DATA; instruction <= EXTERN; instruction++)
-		if (strcmp(str, instruction_type_names[instruction]) == 0)
-			return instruction;
-	
+directive_type get_directive_type_from_string(const char *str) {
+	directive_type directive;
+
+	for (directive = DATA; directive <= EXTERN; directive++) {
+		if (strcmp(str, directive_type_names[directive]) == 0) {
+			return directive;
+		}
+	}
+
 	return -1;
 }
 
 
 opcode get_opcode_from_string(const char *str) {
 	opcode code;
-	
-	for (code = MOV; code <= STOP; code++)
-		if (strcmp(str, opcode_names[code][0]) == 0)
+
+	for (code = MOV; code <= STOP; code++) {
+		if (strcmp(str, opcode_names[code][0]) == 0) {
 			return code;
+		}
+	}
 
 	return -1;
 }
 
 
-char* duplicate_string(const char source[], error *error) {
-	char *destination = (char*) use_malloc((strlen(source)+1) * sizeof(char), error);
-	if (destination == NULL)
+char *duplicate_string(const char source[], error *error) {
+	char *destination = (char *) use_malloc((strlen(source) + 1) * sizeof(char), error);
+	if (destination == NULL) {
 		return NULL;
-	
+	}
+
 	strcpy(destination, source);
 	return destination;
 }
@@ -206,9 +241,33 @@ char* duplicate_string(const char source[], error *error) {
 
 int is_line_too_long(const char line[]) {
 	int i = 0;
-	
-	while (line[i] != '\0' && line[i] != '\n' && line[i] != '\r' && i < MAX_LINE_LENGTH)
+
+	while (line[i] != '\0' && line[i] != '\n' && line[i] != '\r' && i < MAX_LINE_LENGTH) {
 		i++;
-	
-	return i < (MAX_LINE_LENGTH-2);
+	}
+
+	return i < (MAX_LINE_LENGTH - 2);
+}
+
+void handle_free(void *ptr) {
+	if (ptr != NULL) {
+		free(ptr);
+	}
+}
+
+char* str_last_char(char* str, const char c) {
+	char *last = NULL;
+	if (str == NULL || *str == '\0') {
+		return NULL;
+	}
+
+	while (*str != '\0') {
+		if (*str == c) {
+			last = str;
+		}
+		
+		str++;
+	}
+
+	return last;
 }

@@ -64,7 +64,8 @@ void initialize_new_file_name(char **file_name, error *error, char name[]);
  * @param label_amount The number of labels.
  * @param fileName The name of the file to write to.
  */
-void write_to_file_entry(symbol_address *entries, int entry_amount, symbol_address *labels, int label_amount, char fileName[]);
+void write_to_file_entry(symbol_address *entries, int entry_amount, symbol_address *labels, int label_amount,
+						 char fileName[]);
 
 
 /**
@@ -78,5 +79,6 @@ void write_to_file_entry(symbol_address *entries, int entry_amount, symbol_addre
  * @param IC The instruction counter.
  * @param fileName The name of the file to write to.
  */
-void write_to_file_external(word_data *commands, int IC, char fileName[]);
+void write_to_file_external(word_data *commands, int IC, char fileName[], int extern_amount);
+
 #endif

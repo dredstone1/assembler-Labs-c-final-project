@@ -5,7 +5,6 @@
 #include "error.h"
 
 
-
 typedef struct symbol_address {
 	int address;
 	char symbol_name[MAX_SYMBOL_SIZE];
@@ -32,10 +31,8 @@ int is_valid_symbol(char *symbol);
 int is_valid_symbol_name(char *symbol);
 
 
-
 int add_symbol(symbol_address **symbols, int *size, int address, int line_number, char symbol_name[], int is_data_line,
 			   error *error, int external);
-
 
 
 int update_table_by(symbol_address *symbols, int by, int size, int is_data_line, error *error);
@@ -62,4 +59,5 @@ int search_symbol_by_name(char symbol_name[], symbol_address *symbols, int numbe
 
 
 void handle_duplication(symbol_address *symbol_table, int label_amount, error *error);
+
 #endif
