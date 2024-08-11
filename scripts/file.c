@@ -108,13 +108,14 @@ void write_to_file_external(word_data *commands, int IC, char fileName[], int ex
 }
 
 
-void initialize_new_file_name(char **file_name, error *error, char name[]) {
+int initialize_new_file_name(char **file_name, error *error, char name[]) {
 	*file_name = (char *) use_malloc(sizeof(char) * (strlen(name) + FILE_NAME_ENDING_LENGTH), error);
 	if (error->importance != NO_ERROR) {
-		return;
+		return 0;
 	}
 
 	strcpy(*file_name, name);
 	(*file_name)[strlen(name)] = '.';
 	(*file_name)[strlen(name) + 1] = '\0';
+	return 1;
 }

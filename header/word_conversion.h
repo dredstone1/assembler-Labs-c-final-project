@@ -147,6 +147,8 @@ int add_data_to_words(word_data **list, directive_data directive, int line_numbe
  * and encodes them into one to three words in the word list. It also handles symbol association for
  * direct addressing modes and updates the instruction counter (IC).
  *
+ *
+ * 
  * The function first determines the number of operands based on the opcode. It then resets the word at
  * the current IC and potentially the following two words, depending on the number of operands. 
  * 

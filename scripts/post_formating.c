@@ -73,8 +73,7 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 	set_ending_to_file_name(file_name, SOURCE_FILE_ENDING);
 	file = fopen(file_name, "r");
 	if (file == NULL) {
-		print_system_error(FILE_NOT_FOUND_MESSAGE);
-		error->importance = CRITICAL;
+		print_system_error(FILE_NOT_FOUND_MESSAGE, error, CANCELLATION);
 		return;
 	}
 
@@ -86,7 +85,6 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 
 			printf("%s", line);
 			line_too_long = 1;
-			error->importance = WARNING;
 			continue;
 		} else if (line_too_long == 1) {
 			printf("%s", line);
@@ -152,7 +150,6 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 														   1, -1, -1, error);
 							break;
 					}
-					error->importance = WARNING;
 				} else if (error->importance == NO_ERROR &&
 						   add_macro(workable_line, macros, number_of_macros, error, number_of_rows) == 0) {
 					continue;
@@ -160,7 +157,6 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 
 				workable_line = strtok(NULL, "\n\r");
 				if (workable_line != NULL && is_empty_line(workable_line) == 0) {
-					error->importance = WARNING;
 					print_general_error_no_quoting(EXTRA_TEXT_MESSAGE, EXTRA_TEXT_DESCRIPTION, line, line_number,
 												   workable_line - start_workable_line + 1,
 												   workable_line - start_workable_line + strlen(workable_line) + 1, -1,
@@ -174,7 +170,6 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 				workable_line += strlen(END_MACRO) + 1;
 				if (workable_line != NULL && is_empty_line(workable_line) == 0) {
 					skip_spaces_and_tabs(&workable_line);
-					error->importance = WARNING;
 					print_general_error_no_quoting(EXTRA_TEXT_MESSAGE, EXTRA_TEXT_DESCRIPTION, line, line_number,
 												   workable_line - start_workable_line + 1,
 												   workable_line - start_workable_line + strlen(workable_line) - 1, -1,
@@ -198,7 +193,6 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 					workable_line = strtok(NULL, "\n\r");
 					if (workable_line != NULL && is_empty_line(workable_line) == 0) {
 						skip_spaces_and_tabs(&workable_line);
-						error->importance = WARNING;
 						print_general_error_no_quoting(EXTRA_TEXT_MESSAGE, EXTRA_TEXT_DESCRIPTION, line, line_number,
 													   workable_line - start_workable_line + 1,
 													   workable_line - start_workable_line + strlen(workable_line) + 1,

@@ -38,8 +38,7 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 	file = fopen(file_name, "r");
 	if (file == NULL) {
 		/*if file not found, print error and return*/
-		print_system_error(FILE_NOT_FOUND_MESSAGE);
-		error->importance = CRITICAL;
+		print_system_error(FILE_NOT_FOUND_MESSAGE, error, CANCELLATION);
 		return;
 	}
 
@@ -95,7 +94,7 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 			}
 			/*if the symbol is empty, print error*/
 			else if (strlen(workable_line) == 0) {
-				print_general_error_no_quoting(MISSING_SYMBOL, MISSING_SYMBOL_DESCRIPTION, line, line_number,
+				print_general_error_no_quoting(MISSING_SYMBOL_MESSAGE, MISSING_SYMBOL_DESCRIPTION, line, line_number,
 											   workable_line - start_workable_line, workable_line - start_workable_line + 1,
 											   workable_line - start_workable_line, -1, error);
 			}
@@ -106,8 +105,7 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 									workable_line - start_workable_line + strlen(workable_line), -1, -1, error);
 			}
 
-			/*set the error importance to warning and continue to the next line*/
-			error->importance = WARNING;
+			/*continue to the next line*/
 			continue;
 		}
 
@@ -118,7 +116,6 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 			if (found_macro != -1) {
 				/*if the symbol is a macro, print error and continue to the next line*/
 				print_macro_b_label_same(line, line_number, macros[found_macro].line_number, error, workable_line);
-				error->importance = WARNING;
 				continue;
 			}
 
@@ -131,7 +128,6 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 		if (workable_line == NULL) {
 			print_general_error_no_quoting(UNDEFINED_OPCODE_MESSAGE, UNDEFINED_OPCODE_DESCRIPTION, line, line_number,
 										   strlen(symbol) + 2, strlen(symbol) + 2, strlen(symbol) + 2, -1, error);
-			error->importance = WARNING;
 			continue;
 		}
 		
@@ -163,8 +159,8 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 
 	/*if there is no critical error, add to every symbol address with the data flag on, IC, and continue to the second pass*/ 
 	if (error->importance != CRITICAL) {
-		update_table_by(symbol_table, IC, label_amount, 1, error);
-		second_pass(command_words, data_words, entries, symbol_table, error, IC, DC, label_amount, entry_amount, extern_amount);
+		update_table_by(symbol_table, IC, label_amount, 1);
+		second_pass(command_words, entries, symbol_table, error, IC, label_amount, entry_amount, extern_amount);
 	}
 
 	
@@ -208,7 +204,6 @@ int handle_directive_type_line(char *line, char **workable_line, char *start_wor
 								*workable_line - start_workable_line,
 								*workable_line - start_workable_line + strlen(*workable_line), -1, -1, error);
 		}
-		error->importance = WARNING;
 		return 0;
 	}
 
@@ -217,6 +212,7 @@ int handle_directive_type_line(char *line, char **workable_line, char *start_wor
 			print_general_error(SYMBOL_IN_EXTERNAL_OR_ENTRY_MESSAGE, SYMBOL_IN_EXTERNAL_OR_ENTRY_DESCRIPTION, line,
 								line_number, strstr(line, symbol) - line, strstr(line, symbol) - line + strlen(symbol),
 								-1, -1, error);
+			return 0;
 		}
 
 		if (read_extern_or_entry_symbol(workable_line, line, directive, error, line_number) == 0) {
@@ -273,7 +269,6 @@ int handle_comment_type_line(char *line, char **workable_line, char *start_worka
 		print_general_error(INVALID_OPCODE_MESSAGE, INVALID_OPCODE_DESCRIPTION, line, line_number,
 							*workable_line - start_workable_line,
 							*workable_line - start_workable_line + strlen(*workable_line), -1, -1, error);
-		error->importance = WARNING;
 		return 0;
 	}
 

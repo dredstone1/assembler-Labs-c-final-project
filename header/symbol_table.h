@@ -35,16 +35,7 @@ int add_symbol(symbol_address **symbols, int *size, int address, int line_number
 			   error *error, int external);
 
 
-int update_table_by(symbol_address *symbols, int by, int size, int is_data_line, error *error);
-
-
-/**
- * @brief Free the symbol table
- * 
- * @param symbols The symbol table
- * @param size The size of the symbol table
- */
-void free_symbol_table(symbol_address *symbols, int size);
+int update_table_by(symbol_address *symbols, int by, int size, int is_data_line);
 
 
 /**

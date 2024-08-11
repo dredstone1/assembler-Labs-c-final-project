@@ -53,15 +53,6 @@ int get_next_word(char **workable_line, char word[], char separators[]) {
 }
 
 
-char *search_for_next_white_char(char *line) {
-	while (*line != ' ' && *line != '\t' && *line != '\0' && *line != '\n' && *line != '\r') {
-		line++;
-	}
-
-	return line;
-}
-
-
 int is_separator(char c, char separators[]) {
 	int i;
 	for (i = 0; i < strlen(separators); i++) {
@@ -110,8 +101,7 @@ void skip_spaces_and_tabs(char **line) {
 void *use_malloc(size_t size, error *error) {
 	void *ptr = (void *) malloc(size);
 	if (ptr == NULL) {
-		print_system_error(MEMORY_ALLOCATION_FAILED_MESSAGE);
-		error->importance = CRITICAL;
+		print_system_error(MEMORY_ALLOCATION_FAILED_MESSAGE, error, CRITICAL);
 	}
 
 	return ptr;
@@ -123,12 +113,11 @@ void *use_realloc(void *ptr, size_t size, error *error) {
 		ptr = use_malloc(size, error);
 	} else {
 		ptr = realloc(ptr, size);
+		if (ptr == NULL) {
+			print_system_error(MEMORY_ALLOCATION_FAILED_MESSAGE, error, CRITICAL);
+		}
 	}
 
-	if (ptr == NULL) {
-		print_system_error(MEMORY_ALLOCATION_FAILED_MESSAGE);
-		error->importance = CRITICAL;
-	}
 
 	return ptr;
 }
@@ -152,8 +141,7 @@ int is_register(const char word[]) {
 int get_line_from_file(char line[], int line_number, char file_name[], error *error) {
 	FILE *file = fopen(file_name, "r");
 	if (file == NULL) {
-		print_system_error(FILE_NOT_FOUND_MESSAGE);
-		error->importance = CRITICAL;
+		print_system_error(FILE_NOT_FOUND_MESSAGE, error, CANCELLATION);
 		return 0;
 	}
 

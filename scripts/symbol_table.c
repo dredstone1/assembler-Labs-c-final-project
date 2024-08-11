@@ -35,22 +35,20 @@ int add_symbol(symbol_address **symbols, int *size, int address, int line_number
 			   error *error, int external) {
 	*symbols = (symbol_address *) use_realloc(*symbols, (*size + 1) * sizeof(symbol_address), error);
 	if (*symbols == NULL) {
-		print_system_error(MEMORY_ALLOCATION_FAILED_MESSAGE);
-		error->importance = CRITICAL;
 		return 0;
 	}
 
-	(*symbols)[(*size)].address = address;
-	strcpy((*symbols)[(*size)].symbol_name, symbol_name);
-	(*symbols)[(*size)].line_number = line_number;
-	(*symbols)[(*size)].is_data_line = is_data_line;
-	(*symbols)[(*size)].external = external;
+	(*symbols)[*size].address = address;
+	strcpy((*symbols)[*size].symbol_name, symbol_name);
+	(*symbols)[*size].line_number = line_number;
+	(*symbols)[*size].is_data_line = is_data_line;
+	(*symbols)[*size].external = external;
 	(*size)++;
 	return 1;
 }
 
 
-int update_table_by(symbol_address *symbols, int by, int size, int is_data_line, error *error) {
+int update_table_by(symbol_address *symbols, int by, int size, int is_data_line) {
 	int i;
 	for (i = 0; i < size; i++) {
 		if (symbols[i].is_data_line == is_data_line) {

@@ -4,6 +4,7 @@
 #define MAX_LINE_LENGTH 83
 #define MAX_SYMBOL_SIZE 31
 #define FILE_NAME_ENDING_LENGTH 5
+#define TAB_LENGTH 4
 #define IC_START_COUNT 100
 #define MACRO "macr"
 #define END_MACRO "endmacr"
@@ -12,7 +13,6 @@
 #define OBJECT_FILE_ENDING "ob"
 #define ENTRY_FILE_ENDING "ent"
 #define EXTERNAL_FILE_ENDING "ext"
-#define FIRST_REGISTER_COUNT 0
 #define LAST_REGISTER_COUNT 7
 #define MAX_VARIABLE_DATA_SIZE 76
 

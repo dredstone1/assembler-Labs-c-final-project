@@ -1,18 +1,17 @@
 #ifndef MMN14_ERROR_H
 #define MMN14_ERROR_H
 
-
 #include "../header/consts.h"
 
-#define start_format_line_error " | "
-#define amount_of_spaces_at_start 4
-#define SIDE_LENGTH 7
 
+#define start_VERTICAL_BAR_AT_START_OF_LINE " | "
+#define amount_of_spaces_at_start 4 /*the amount of spaces at the start of the line before every error message*/
+#define SIDE_LENGTH 7 
 
-#define FILE_NAME_ERROR "Error in file \"%s\":\n"
+#define FILE_NAME_ERROR "Error in file \"%s\":\n"/*Macro for formatting file name errors.*/
 
-/*error messages*/
-#define FILE_NOT_FOUND_MESSAGE "File not found:"
+/*error messages, used for printing a short message at the start of the error*/
+#define FILE_NOT_FOUND_MESSAGE "File not found"
 #define MEMORY_ALLOCATION_FAILED_MESSAGE "Memory allocation failed"
 #define INVALID_OPCODE_MESSAGE "Invalid opcode:"
 #define SYMBOL_IN_EXTERNAL_OR_ENTRY_MESSAGE "Symbol cannot be defined as both external and entry:"
@@ -38,12 +37,14 @@
 #define LINE_TOO_LONG_MESSAGE "Line is too long:"
 #define UNDEFINED_OPCODE_MESSAGE "Undefined opcode:"
 #define INVALID_NUMBER_MESSAGE "Invalid number:"
-#define MISSING_SYMBOL "Missing symbol:"
-#define MISSING_NUMBER "Missing number:"
+#define MISSING_SYMBOL_MESSAGE "Missing symbol:"
+#define MISSING_NUMBER_MESSAGE "Missing number:"
+#define NUMBER_OUT_OF_RANGE_MESSAGE "Number out of range:"
 
+/*Macro for formatting the start of error description messages, for quoting the error location*/
 #define ERROR_DESCRIPTION_MESSAGE_START_PATTERN_SINGLE " is "
 
-/*descriptions*/
+/*descriptions of errors*/
 #define INVALID_OPCODE_DESCRIPTION "not a valid opcode."
 #define SYMBOL_IN_EXTERNAL_OR_ENTRY_DESCRIPTION "not a valid symbol, symbol cannot be defined as both external and entry."
 #define INVALID_COMMA_DESCRIPTION "not a valid comma usage."
@@ -56,7 +57,6 @@
 #define MISSING_ENDING_QUOTE_N_START_QUOTE_DESCRIPTION "missing a quote at the end of the string and a quote at the beginning of the string."
 #define DIRECTIVE_TYPE_MISSING_DESCRIPTION "missing directive type, you should have a directive after the point"
 #define SYMBOL_NOT_FOUND_DESCRIPTION "not initialized, you need to initialize the symbol"
-#define INVALID_VARIABLE_TYPE_DESCRIPTION "not a valid variable type."
 #define MISSING_PARAMETER_DESCRIPTION_ONE "missing a parameter, you need one parameters for this command."
 #define MISSING_PARAMETER_DESCRIPTION_TWO "missing a parameter, you need two parameters for this command."
 #define INVALID_SYMBOL_NAME_DESCRIPTION "not a valid symbol name."
@@ -83,22 +83,30 @@
 #define MISSING_SYMBOL_DESCRIPTION "missing symbol."
 #define MISSING_NUMBER_DESCRIPTION "missing number after the comma."
 #define MISSING_NUMBER_AFTER_NUMBER_STARTER_DESCRIPTION "missing number after the #."
+#define NUMBER_OUT_OF_RANGE_DATA_DESCRIPTION "number is out of range, the range is 16383 to -16383"
+#define NUMBER_OUT_OF_RANGE_COMMAND_DESCRIPTION "number is out of range, the range is 2047 to -2047"
 
 
+#define LEGAL_VARIABLE_TYPES_MESSAGE "support "/*Macro to show the legal variable types the specific command type supports*/
 
-#define LEGAL_VARIABLE_TYPES_MESSAGE "support "
-
+/**
+ * @brief Enum representing the importance level of an error.
+ */
 typedef enum importance{
-    NO_ERROR,
-    WARNING,
-    CRITICAL
+    NO_ERROR, /*no error occurred and the program can continue normally*/
+    WARNING, /*a warning occurred but the program can continue to search for more errors*/
+	CANCELLATION, /*an error occurred and the program need to cancel the current file processing, and continue to the next file*/
+    CRITICAL /*a critical error occurred and the program need to cancel the current file processing, and abort the program*/
 } importance;
 
+
+/**
+ * @brief Struct representing an error.
+ */
 typedef struct error{
-	int error_single_file_count;
-	importance importance;
-	char *file_name;
-	int error_count;
+	int error_single_file_count; /*the amount of errors in the current file*/
+	importance importance; /*the current importance level*/
+	char *file_name; /*the name of the current file being processed*/
 }error;
 
 
@@ -106,10 +114,14 @@ typedef struct error{
  * @brief Prints a system error message.
  *
  * This function prints a given system error message to the standard output.
+ * It also increments the error count in the error structure.
+ * The importance level of the error is determined by the `importance` parameter.
  *
  * @param error_massage The system error message to be printed.
+ * @param error A pointer to the error structure that keeps track of error counts and file names.
+ * @param importance The importance level of the error.
  */
-void print_system_error(char error_massage[]);
+void print_system_error(char error_massage[], error *error, importance importance);
 
 
 /**
@@ -118,6 +130,9 @@ void print_system_error(char error_massage[]);
  * This function prints an error message along with the relevant line of code and its line number.
  * It highlights the specific portion of the line where the error occurred and provides a description of the error.
  * This function is used when the error location is to be quoted in to the description.
+ * 
+ * this function is set the error importance to the warning level
+ * and increment the error count in the error structure.
  *
  * @param error_massage The main error message to be printed.
  * @param error_description A detailed description of the error.
@@ -139,6 +154,9 @@ void print_general_error(char error_massage[], char error_description[], char li
  * It highlights the specific portion of the line where the error occurred and provides a description of the error.
  * This function is used when the error location is not to be quoted in to the description.
  *
+ * this function is set the error importance to the warning level
+ * and increment the error count in the error structure.
+ * 
  * @param error_massage The main error message to be printed.
  * @param error_description A detailed description of the error.
  * @param line The line of code where the error occurred.
@@ -157,7 +175,11 @@ void print_general_error_no_quoting(char error_massage[], char error_description
  *
  * This function prints an error message along with the relevant lines of code and their respective line numbers.
  * It highlights the specific portions of the lines where the error occurred and provides a description of the error.
+ * This function is used when the error spans two lines of code.
  *
+ * this function is set the error importance to the warning level
+ * and increment the error count in the error structure.
+ * 
  * @param error_massage The main error message to be printed.
  * @param error_description A detailed description of the error.
  * @param line1 The first line of code where the error occurred.
@@ -192,6 +214,9 @@ void print_separator(int from_beginning);
  * If this is the first error for the file, it prints the file name and a separator. For subsequent errors, it prints only a separator.
  * It highlights the illegal variable in the line and provides a detailed error description, including the legal variable types.
  * 
+ * this function is set the error importance to the warning level
+ * and increment the error count in the error structure.
+ * 
  * @param variable The variable that is not of a legal type.
  * @param line The line containing the illegal variable.
  * @param line_number The line number where the error occurred.
@@ -209,6 +234,9 @@ void print_command_not_legal(char variable[], char line[], int line_number, erro
  * This function prints an error message indicating that a label is conflicting with a macro name. It includes the file name and line number in the message.
  * If this is the first error for the file, it prints the file name and a separator. For subsequent errors, it prints only a separator.
  * It highlights the conflicting macro name in the line and provides a detailed error description.
+ * 
+ * this function is set the error importance to the warning level
+ * and increment the error count in the error structure.
  * 
  * @param line The line containing the conflict.
  * @param line_number The line number where the conflict occurred.
@@ -235,6 +263,8 @@ void print_end_line_too_long_error();
  * 
  * This function prints an error message indicating that a line is too long. It includes the file name and line number in the message.
  * If this is the first error for the file, it prints the file name and a separator. For subsequent errors, it prints only a separator.
+ * 
+ * This function sets the error importance to the warning level and increments the error count in the error structure.
  * 
  * This function is the first part of this error message. The second part is printed by print_end_line_too_long_error().
  * between the two parts, the line that is too long is printed.

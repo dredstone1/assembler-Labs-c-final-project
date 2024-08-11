@@ -9,8 +9,8 @@ int set_symbol_address(symbol_address *symbol_table, int label_amount, int IC, w
 void handle_external_n_entry_duplication(symbol_address *entries, symbol_address *symbol_table, int entry_amount,
 										 int extern_amount, error *error, int label_amount);
 
-void second_pass(word_data *commands, word_data *directive, symbol_address *entries, symbol_address *symbol_table,
-				 error *error, int IC, int DC, int label_amount, int entry_amount, int extern_amount) {
+void second_pass(word_data *commands, symbol_address *entries, symbol_address *symbol_table, error *error, int IC,
+				 int label_amount, int entry_amount, int extern_amount) {
 	handle_external_n_entry_duplication(entries, symbol_table, entry_amount, extern_amount, error, label_amount);
 	handle_duplication(symbol_table, label_amount, error);
 
@@ -53,8 +53,7 @@ int set_symbol_address(symbol_address *symbol_table, int label_amount, int IC, w
 				file = fopen(error->file_name, "r");
 
 				if (file == NULL) {
-					print_system_error(FILE_NOT_FOUND_MESSAGE);
-					error->importance = CRITICAL;
+					print_system_error(FILE_NOT_FOUND_MESSAGE, error, CANCELLATION);
 					return 0;
 				}
 			}
@@ -65,7 +64,6 @@ int set_symbol_address(symbol_address *symbol_table, int label_amount, int IC, w
 								strstr(line, commands[word_number].symbol) - line,
 								strstr(line, commands[word_number].symbol) - line +
 								strlen(commands[word_number].symbol), -1, -1, error);
-			error->importance = WARNING;
 			continue;
 		}
 
@@ -107,24 +105,22 @@ void handle_external_n_entry_duplication(symbol_address *entries, symbol_address
 			if (symbol_table[i].line_number > entries[found].line_number) {
 				print_two_line_error(DUPLICATE_SYMBOL_MESSAGE, SYMBOL_ALREADY_EXISTS_DESCRIPTION, line2, line,
 									 entries[found].line_number, symbol_table[i].line_number,
-									 strstr(line2, symbol_table[i].symbol_name) - line2 + 1,
+									 strstr(line2, symbol_table[i].symbol_name) - line2,
 									 strstr(line2, symbol_table[i].symbol_name) - line2 +
-									 strlen(symbol_table[i].symbol_name) + 1,
-									 strstr(line, entries[found].symbol_name) - line + 1,
+									 strlen(symbol_table[i].symbol_name),
+									 strstr(line, entries[found].symbol_name) - line,
 									 strstr(line, entries[found].symbol_name) - line +
-									 strlen(entries[found].symbol_name) + 1, error);
+									 strlen(entries[found].symbol_name), error);
 			} else {
 				print_two_line_error(DUPLICATE_SYMBOL_MESSAGE, SYMBOL_ALREADY_EXISTS_DESCRIPTION, line, line2,
 									 symbol_table[i].line_number, entries[found].line_number,
-									 strstr(line, entries[found].symbol_name) - line + 1,
+									 strstr(line, entries[found].symbol_name) - line,
 									 strstr(line, entries[found].symbol_name) - line +
-									 strlen(entries[found].symbol_name) + 1,
-									 strstr(line2, symbol_table[i].symbol_name) - line2 + 1,
+									 strlen(entries[found].symbol_name),
+									 strstr(line2, symbol_table[i].symbol_name) - line2,
 									 strstr(line2, symbol_table[i].symbol_name) - line2 +
-									 strlen(symbol_table[i].symbol_name) + 1, error);
+									 strlen(symbol_table[i].symbol_name), error);
 			}
-
-			error->importance = WARNING;
 		}
 	}
 }

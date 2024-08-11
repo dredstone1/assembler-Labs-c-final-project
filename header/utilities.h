@@ -246,18 +246,6 @@ char *duplicate_string(const char source[], error *error);
 
 
 /**
- * @brief Searches for the next whitespace character in a string.
- * 
- * This function iterates through the given string until it finds a whitespace character
- * (space, tab, newline, carriage return) or the end of the string.
- * 
- * @param line The string to search through.
- * @return char* A pointer to the next whitespace character or the end of the string.
- */
-char *search_for_next_white_char(char *line);
-
-
-/**
  * @brief Checks if a line exceeds the maximum allowed length.
  * 
  * This function iterates through the given line to determine if it exceeds the defined maximum length.

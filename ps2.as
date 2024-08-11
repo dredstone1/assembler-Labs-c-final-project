@@ -15,11 +15,10 @@ sub L3, L3
 .entry MAIN
 jmp LOOP
 END: stop
-END: stop
 STR: .string "abcd"
-: .data 6, -9
-LIST: .data 6, -9
 LIST: .data 6, -9
 .data -100
 K: .data 31
 .extern L3
+	 TEST: .string "abcd"
+ 	TEST: .data 31

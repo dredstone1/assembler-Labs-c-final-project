@@ -47,7 +47,7 @@ void write_to_file_object(word_data *list1, word_data *list2, char fileName[], i
  * @param error A pointer to an error structure to handle memory allocation errors.
  * @param name The base name of the file.
  */
-void initialize_new_file_name(char **file_name, error *error, char name[]);
+int initialize_new_file_name(char **file_name, error *error, char name[]);
 
 
 /**
