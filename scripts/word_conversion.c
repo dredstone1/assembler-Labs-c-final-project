@@ -11,6 +11,7 @@ int get_amount_of_words_from_command(command_data command) {
 		amount_of_words--;
 	}
 
+	/*Return the amount_of_words*/
 	return amount_of_words;
 }
 

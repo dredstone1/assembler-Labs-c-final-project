@@ -40,6 +40,7 @@
 #define MISSING_SYMBOL_MESSAGE "Missing symbol:"
 #define MISSING_NUMBER_MESSAGE "Missing number:"
 #define NUMBER_OUT_OF_RANGE_MESSAGE "Number out of range:"
+#define MEMORY_OVERFLOW_MESSAGE "Memory overflow:"
 
 /*Macro for formatting the start of error description messages, for quoting the error location*/
 #define ERROR_DESCRIPTION_MESSAGE_START_PATTERN_SINGLE " is "
@@ -69,6 +70,12 @@
 #define OPCODE_NAME_AS_MARCO_NAME_DESCRIPTION "macro name cannot be an opcode name"
 #define DIRECTIVE_NAME_AS_MARCO_NAME_DESCRIPTION "macro name cannot be an directive name"
 #define REGISTER_NAME_AS_MARCO_NAME_DESCRIPTION "macro name cannot be a register name"
+
+#define OPCODE_NAME_AS_SYMBOL_NAME_DESCRIPTION "not a valid symbol name, symbol cannot be an opcode name."
+#define DIRECTIVE_NAME_AS_SYMBOL_NAME_DESCRIPTION "not a valid symbol name, symbol cannot be an directive name."
+#define REGISTER_NAME_AS_SYMBOL_NAME_DESCRIPTION "not a valid symbol name, symbol cannot be a register name."
+#define SYMBOL_NAME_CANNOT_BE_SAVED_WORD_DESCRIPTION "not a valid symbol name, symbol cannot be a saved word."
+
 #define MACRO_NAME_IS_TOO_LONG_DESCRIPTION "macro name is too long, maximum length is 31 characters."
 #define SYMBOL_CAN_BE_SAME_AS_MACRO_NAME_DESCRIPTION "not a valid symbol name, symbol cannot be the same as a macro name."
 #define INVALID_REGISTER_NAME_DESCRIPTION "not a valid register name."
@@ -82,6 +89,7 @@
 #define MISSING_SYMBOL_IN_ENTRY_DESCRIPTION "missing symbol in entry directive."
 #define MISSING_SYMBOL_DESCRIPTION "missing symbol."
 #define MISSING_NUMBER_DESCRIPTION "missing number after the comma."
+#define MISSING_FIRST_NUMBER_DESCRIPTION "missing number the first number of the data."
 #define MISSING_NUMBER_AFTER_NUMBER_STARTER_DESCRIPTION "missing number after the #."
 #define NUMBER_OUT_OF_RANGE_DATA_DESCRIPTION "number is out of range, the range is 16383 to -16383"
 #define NUMBER_OUT_OF_RANGE_COMMAND_DESCRIPTION "number is out of range, the range is 2047 to -2047"

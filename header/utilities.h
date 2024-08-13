@@ -44,7 +44,7 @@ int int_to_octal(int num);
  * @param line The line of text to check.
  * @return 1 if the line is empty or contains only whitespace, 0 otherwise.
  */
-int is_empty_line(char line[]);
+int is_empty_line(char *line);
 
 
 /**

@@ -56,6 +56,8 @@ void print_start_line_number_error(int line_number);
  * This function prints a series of tildes (`~`) and carets (`^`) to highlight specific portions of a line of code.
  * It is used to visually indicate the start and end positions of an error within the line.
  * it can also be used to mark the positions of two different errors in the same line.
+ * 
+ * if the given pos1 or pos2 is -1, it will not print a caret at that position.
  *
  * @param start The starting position of the error in the line.
  * @param end The ending position of the error in the line.

@@ -4,72 +4,115 @@
 #include <ctype.h>
 #include <stdio.h>
 
+
+/**
+ * @brief Checks if a character is a separator.
+ *
+ * This function checks if a given character is present in the provided string of separators.
+ *
+ * @param c The character to check.
+ * @param separators A string containing characters considered as separators.
+ *
+ * @return 1 if the character is a separator, 0 otherwise.
+ */
 int is_separator(char c, char separators[]);
 
 
 int int_to_octal(int decimal_number) {
-	int octal_result = 0;
-	int place_value = 1;
+	/* Initialize the octal result and the place value */
+	int octal_result = 0, place_value = 1;
 
+	/* Iterate until the decimal number becomes zero */
 	while (decimal_number != 0) {
+		/* Calculate the remainder when dividing by 8 (the octal base) */
+		/* Multiply the remainder by the current place value and add it to the octal result */
 		octal_result += (decimal_number % BASE) * place_value;
+		
+		/* Divide the decimal number by 8 to move to the next place value */
 		decimal_number /= BASE;
+
+		/* Multiply the place value by 8 to move to the next position */
 		place_value *= PLACE_VALUE_MULTIPLIER;
 	}
 
+	/* Return the calculated octal result */
 	return octal_result;
 }
 
 
 int count_commas_until_text(char **workable_line) {
+	/* Initialize comma counter */
 	int count = 0;
+
+	/* Handle NULL string input and return 0 if the string is NULL */
 	if (*workable_line == NULL) {
 		return 0;
 	}
-	
+
+	/* Iterate through the string until non-whitespace and non-comma is encountered */
 	while (**workable_line == ' ' || **workable_line == '\t' || **workable_line == ',') {
+		/* Increment the counter for each comma */
 		if (**workable_line == ',') {
 			count++;
 		}
 
+		/* Move the pointer to the next character */
 		(*workable_line)++;
 	}
+
+	/* Return the total count of commas */
 	return count;
 }
 
 
 int get_next_word(char **workable_line, char word[], char separators[]) {
+	/* Initialize word index */
 	int i = 0;
+
+	/* Handle NULL string input */
 	if (*workable_line == NULL) {
 		return 0;
 	}
+
+	/* Copy characters to word until a separator or end of string is reached */
 	while (is_separator(**workable_line, separators) == 0 && **workable_line != '\0') {
+		/* Copy current character to word buffer */
 		word[i++] = **workable_line;
+
+		/* Move to the next character in the input string */
 		(*workable_line)++;
 	}
-
+	
+	/* Null-terminate the extracted word */
 	word[i] = '\0';
+	
+	/* Return the length of the extracted word */
 	return i;
 }
 
 
 int is_separator(char c, char separators[]) {
 	int i;
+
+	/* Iterate through the separators string */
 	for (i = 0; i < strlen(separators); i++) {
+
+		/* Check if the current character matches the separator */
 		if (c == separators[i]) {
+			/* Return 1 if a match is found */
 			return 1;
 		}
 	}
-
+	
+	/* Return 0 if no match is found */
 	return 0;
 }
 
 
-int is_empty_line(char line[]) {
-	int offset = 0;
-	skip_spaces_and_tabs_with_offset(&offset, line);
+int is_empty_line(char *line) {
+	skip_spaces_and_tabs(&line);
 
-	return line[offset] == '\0' || line[offset] == '\n' || line[offset] == '\r';
+	return line == NULL || *line == '\0' || *line == '\n' || *line == '\r';
 }
 
 
@@ -82,6 +125,8 @@ int is_comment_line(char line[]) {
 
 
 void skip_spaces_and_tabs_with_offset(int *offset, char line[]) {
+	
+	
 	while (line[*offset] == ' ' || line[*offset] == '\t') {
 		(*offset)++;
 	}
