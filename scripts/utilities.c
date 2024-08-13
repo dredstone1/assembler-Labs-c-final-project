@@ -116,20 +116,10 @@ int is_empty_line(char *line) {
 }
 
 
-int is_comment_line(char line[]) {
-	int offset = 0;
-	skip_spaces_and_tabs_with_offset(&offset, line);
+int is_comment_line(char *line) {
+	skip_spaces_and_tabs(&line);
 
-	return line[offset] == ';';
-}
-
-
-void skip_spaces_and_tabs_with_offset(int *offset, char line[]) {
-	
-	
-	while (line[*offset] == ' ' || line[*offset] == '\t') {
-		(*offset)++;
-	}
+	return *line == ';';
 }
 
 

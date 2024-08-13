@@ -17,7 +17,6 @@ add_executable(mmn14
         header/post_formating.h
         header/file.h
         header/error.h
-        header/macro.h
         header/symbol_table.h
         header/word_conversion.h
         header/line_data.h

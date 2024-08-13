@@ -5,19 +5,28 @@
 #include "error.h"
 #include <stdio.h>
 
-#define BASE 8
-#define PLACE_VALUE_MULTIPLIER 10
 
+#define BASE 8 /* the base of the octal number */
+#define PLACE_VALUE_MULTIPLIER 10 /* the multiplier to move to the next place value */
+
+
+/**
+ * @brief structure to store a line of text.
+ */
 typedef struct line_text {
 	char content[MAX_LINE_LENGTH];
 } line_text;
 
+
+/**
+ * @brief Enum representing the different types of saved words.
+ */
 typedef enum {
-	SAVED_WORD_OPCODE,
-	SAVED_WORD_DIRECTIVE,
-	SAVED_WORD_REGISTER,
-	SAVED_WORD_MACRO,
-	NON_SAVED_WORD
+	SAVED_WORD_OPCODE, /* The word is an opcode */
+	SAVED_WORD_DIRECTIVE, /* The word is a directive */
+	SAVED_WORD_REGISTER, /* The word is a register */
+	SAVED_WORD_MACRO, /* The word is a macro */
+	NON_SAVED_WORD /* The word is not a saved word */
 } saved_word_type;
 
 
@@ -59,21 +68,6 @@ int is_empty_line(char *line);
  * @return 1 if the line is a comment line, 0 otherwise.
  */
 int is_comment_line(char line[]);
-
-
-/**
- * @brief Skips spaces and tabs in a given line starting from a specified offset.
- *
- * This function increments the offset to skip over any spaces (' ') or tabs ('\t')
- * in the provided line. It continues to increment the offset until a non-space
- * and non-tab character is encountered.
- *
- * @param offset Pointer to an integer representing the current position in the line.
- *               This value will be updated to the position of the first non-space
- *               and non-tab character.
- * @param line   The character array (string) in which spaces and tabs are to be skipped.
- */
-void skip_spaces_and_tabs_with_offset(int *offset, char line[]);
 
 
 /**
