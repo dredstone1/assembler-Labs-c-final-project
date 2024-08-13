@@ -43,7 +43,7 @@ consts.o: $(FOLDERS)
 ## Clean
 clean:
 	rm -rf *.o
-	
+
 ## clean all
 cleanALL:
 	rm -rf *.o *.am *.ob *.ent *.ext
