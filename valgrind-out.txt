@@ -1,0 +1,95 @@
+==8685== Memcheck, a memory error detector
+==8685== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==8685== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
+==8685== Command: ./assembler ps2
+==8685== Parent PID: 10047
+==8685== 
+--8685-- 
+--8685-- Valgrind options:
+--8685--    --leak-check=full
+--8685--    --show-leak-kinds=all
+--8685--    --track-origins=yes
+--8685--    --verbose
+--8685--    --log-file=valgrind-out.txt
+--8685-- Contents of /proc/version:
+--8685--   Linux version 4.4.0-21-generic (buildd@lgw01-06) (gcc version 5.3.1 20160413 (Ubuntu 5.3.1-14ubuntu2) ) #37-Ubuntu SMP Mon Apr 18 18:34:49 UTC 2016
+--8685-- 
+--8685-- Arch and hwcaps: X86, LittleEndian, x86-mmxext-sse1-sse2-sse3-lzcnt
+--8685-- Page sizes: currently 4096, max supported 4096
+--8685-- Valgrind library directory: /usr/lib/valgrind
+--8685-- Reading syms from /lib/i386-linux-gnu/ld-2.23.so
+--8685--   Considering /lib/i386-linux-gnu/ld-2.23.so ..
+--8685--   .. CRC mismatch (computed c63914e9 wanted 16e97b4f)
+--8685--   Considering /usr/lib/debug/lib/i386-linux-gnu/ld-2.23.so ..
+--8685--   .. CRC is valid
+--8685-- Reading syms from /mnt/hgfs/shared/mmn14_files/assembler
+--8685-- Reading syms from /usr/lib/valgrind/memcheck-x86-linux
+--8685--   Considering /usr/lib/valgrind/memcheck-x86-linux ..
+--8685--   .. CRC mismatch (computed 6036da3f wanted 652e483f)
+--8685--    object doesn't have a symbol table
+--8685--    object doesn't have a dynamic symbol table
+--8685-- Scheduler: using generic scheduler lock implementation.
+--8685-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==8685== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-8685-by-user-on-???
+==8685== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-8685-by-user-on-???
+==8685== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-8685-by-user-on-???
+==8685== 
+==8685== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==8685== don't want to do, unless you know exactly what you're doing,
+==8685== or are doing some strange experiment):
+==8685==   /usr/lib/valgrind/../../bin/vgdb --pid=8685 ...command...
+==8685== 
+==8685== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==8685==   /path/to/gdb ./assembler
+==8685== and then give GDB the following command
+==8685==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=8685
+==8685== --pid is optional if only one valgrind process is running
+==8685== 
+--8685-- REDIR: 0x4018e70 (ld-linux.so.2:strlen) redirected to 0x380490f2 (???)
+--8685-- REDIR: 0x4018c30 (ld-linux.so.2:index) redirected to 0x380490cd (???)
+--8685-- Reading syms from /usr/lib/valgrind/vgpreload_core-x86-linux.so
+--8685--   Considering /usr/lib/valgrind/vgpreload_core-x86-linux.so ..
+--8685--   .. CRC mismatch (computed 5b95c0c4 wanted 39e79efa)
+--8685--    object doesn't have a symbol table
+--8685-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-x86-linux.so
+--8685--   Considering /usr/lib/valgrind/vgpreload_memcheck-x86-linux.so ..
+--8685--   .. CRC mismatch (computed 4d5a1526 wanted 33571d5b)
+--8685--    object doesn't have a symbol table
+==8685== WARNING: new redirection conflicts with existing -- ignoring it
+--8685--     old: 0x04018e70 (strlen              ) R-> (0000.0) 0x380490f2 ???
+--8685--     new: 0x04018e70 (strlen              ) R-> (2007.0) 0x04030410 strlen
+--8685-- Reading syms from /lib/i386-linux-gnu/libc-2.23.so
+--8685--   Considering /lib/i386-linux-gnu/libc-2.23.so ..
+--8685--   .. CRC mismatch (computed cdf598bf wanted efd88871)
+--8685--   Considering /usr/lib/debug/lib/i386-linux-gnu/libc-2.23.so ..
+--8685--   .. CRC is valid
+--8685-- REDIR: 0x40c74b0 (libc.so.6:strncasecmp) redirected to 0x4027560 (_vgnU_ifunc_wrapper)
+--8685-- REDIR: 0x40ce140 (libc.so.6:memrchr) redirected to 0x4027560 (_vgnU_ifunc_wrapper)
+--8685-- REDIR: 0x40e0b20 (libc.so.6:wcslen) redirected to 0x4027560 (_vgnU_ifunc_wrapper)
+--8685-- REDIR: 0x40c57e0 (libc.so.6:__GI_strrchr) redirected to 0x402fe00 (__GI_strrchr)
+--8685-- REDIR: 0x40c5580 (libc.so.6:strlen) redirected to 0x4027560 (_vgnU_ifunc_wrapper)
+--8685-- REDIR: 0x40ce440 (libc.so.6:__strlen_sse2_bsf) redirected to 0x4030370 (strlen)
+--8685-- REDIR: 0x40c0f00 (libc.so.6:malloc) redirected to 0x402d110 (malloc)
+--8685-- REDIR: 0x40c4f90 (libc.so.6:strcpy) redirected to 0x4027560 (_vgnU_ifunc_wrapper)
+--8685-- REDIR: 0x40ce570 (libc.so.6:__strcpy_ssse3) redirected to 0x4030450 (strcpy)
+--8685-- REDIR: 0x40c4ce0 (libc.so.6:index) redirected to 0x4027560 (_vgnU_ifunc_wrapper)
+--8685-- REDIR: 0x40df420 (libc.so.6:__strchr_sse2_bsf) redirected to 0x402fff0 (index)
+--8685-- REDIR: 0x40c6350 (libc.so.6:strstr) redirected to 0x4034700 (strstr)
+--8685-- REDIR: 0x40c6a30 (libc.so.6:__GI_memchr) redirected to 0x40316d0 (__GI_memchr)
+--8685-- REDIR: 0x40c7680 (libc.so.6:__GI_memcpy) redirected to 0x4031fb0 (__GI_memcpy)
+--8685-- REDIR: 0x40c4ee0 (libc.so.6:strcmp) redirected to 0x4027560 (_vgnU_ifunc_wrapper)
+--8685-- REDIR: 0x41840f0 (libc.so.6:__strcmp_ssse3) redirected to 0x4031450 (strcmp)
+--8685-- REDIR: 0x40c1520 (libc.so.6:realloc) redirected to 0x402f250 (realloc)
+--8685-- REDIR: 0x40c1470 (libc.so.6:free) redirected to 0x402e2f0 (free)
+--8685-- REDIR: 0x40c55c0 (libc.so.6:__GI_strlen) redirected to 0x4030390 (__GI_strlen)
+--8685-- REDIR: 0x40c70d0 (libc.so.6:__GI_mempcpy) redirected to 0x40342c0 (__GI_mempcpy)
+--8685-- REDIR: 0x40c9280 (libc.so.6:strchrnul) redirected to 0x40340b0 (strchrnul)
+==8685== 
+==8685== HEAP SUMMARY:
+==8685==     in use at exit: 0 bytes in 0 blocks
+==8685==   total heap usage: 78 allocs, 78 frees, 37,561 bytes allocated
+==8685== 
+==8685== All heap blocks were freed -- no leaks are possible
+==8685== 
+==8685== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==8685== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
