@@ -93,7 +93,8 @@
 #define MISSING_NUMBER_AFTER_NUMBER_STARTER_DESCRIPTION "missing number after the #."
 #define NUMBER_OUT_OF_RANGE_DATA_DESCRIPTION "number is out of range, the range is 16383 to -16383"
 #define NUMBER_OUT_OF_RANGE_COMMAND_DESCRIPTION "number is out of range, the range is 2047 to -2047"
-
+#define MACRO_NAME_ALREADY_EXISTS_DESCRIPTION "already declared as a macro in line:"
+#define TOO_MANY_PARAMETERS_DESCRIPTION "too many parameters, you should not have parameters for this command."
 
 #define LEGAL_VARIABLE_TYPES_MESSAGE "support "/*Macro to show the legal variable types the specific command type supports*/
 
@@ -116,6 +117,9 @@ typedef struct error{
 	importance importance; /*the current importance level*/
 	char *file_name; /*the name of the current file being processed*/
 }error;
+
+
+void print_macro_already_exists(const char macro[], char line[], int line_number, error *error, int line_number_exist);
 
 
 /**

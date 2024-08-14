@@ -230,6 +230,25 @@ void print_command_not_legal(char variable[], char line[], int line_number, erro
 }
 
 
+void print_macro_already_exists(const char macro[], char line[], int line_number, error *error, int line_number_exist) {
+	start_printing_error_message_process(error, WARNING, ILLEGAL_MACRO_NAME_MESSAGE);
+
+	/*print the line number and the line*/
+	print_start_line_number_error(line_number);
+	printf("%s\n", line);
+
+	/*print the marker and the caret to indicate the error position*/
+	print_start_line_error();
+	print_marker_and_caret(strstr(line, macro) - line, strstr(line, macro) - line + strlen(macro), -1, -1, line);
+
+	/*print the error description with a quot of the name of the macro at the beginning of the description*/
+	printf("\n");
+	print_start_line_error();
+	printf("%.*s%s%s %d\n", (int)strlen(macro), macro, ERROR_DESCRIPTION_MESSAGE_START_PATTERN_SINGLE,
+		   MACRO_NAME_ALREADY_EXISTS_DESCRIPTION, line_number_exist);
+}
+
+
 void print_start_line_too_long_error(int line_number, error *error) {
 	start_printing_error_message_process(error, WARNING, LINE_TOO_LONG_MESSAGE);
 	/*print the line number*/

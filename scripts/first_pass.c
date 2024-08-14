@@ -94,10 +94,10 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 
 	/*declaration of line and symbol and temp line, and pointer*/
 	char line[MAX_LINE_LENGTH], symbol[MAX_SYMBOL_SIZE], start_workable_line[MAX_LINE_LENGTH], *workable_line = start_workable_line;
-
+	
 	/*declaration of file*/
 	FILE *file;
-
+	directive.numbers = NULL;
 	/*set file name to be the source file name
 	 * open file, if file not found, print error and return*/
 	set_ending_to_file_name(file_name, SOURCE_FILE_AFTER_POST_ASSEMBLER_ENDING);
@@ -251,9 +251,8 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 										   workable_line - start_workable_line + strlen(workable_line), -1, -1, error);
 		}
 
-		if (IC + DC > MAXIMUM_NUMBER_OF_TOTAL_WORDS - OS_SAVED_MEMORY_CELL) {
-			print_system_error(MEMORY_OVERFLOW_MESSAGE, error, CANCELLATION);
-			continue;
+		if (error->importance != CRITICAL && error->importance != CANCELLATION && IC + DC > MAXIMUM_NUMBER_OF_TOTAL_WORDS - OS_SAVED_MEMORY_CELL) {
+			print_system_error(MEMORY_OVERFLOW_MESSAGE, error, WARNING);
 		}
 	}
 
@@ -325,7 +324,7 @@ int handle_directive_type_line(char *line, char **workable_line, char *start_wor
 		}
 
 		/*if the symbol is not defined, read the extern or entry symbol*/
-		if (read_extern_or_entry_symbol(workable_line, line, directive, error, line_number) == 0) {
+		if (read_extern_or_entry_symbol(workable_line, line, directive, error, line_number, start_workable_line) == 0) {
 			return 0;
 		}
 
@@ -392,7 +391,6 @@ int handle_directive_type_line(char *line, char **workable_line, char *start_wor
 		/*if the directive type is string, read the string, if there is an error, return 0*/
 		if (directive->type == STRING) {
 			if (read_string(workable_line, line, directive, error, line_number, start_workable_line) == 0) {
-				handle_free(directive->numbers);
 				return 0;
 			}
 		}
@@ -462,6 +460,14 @@ int handle_commend_type_line(char *line, char **workable_line, char *start_worka
 	/*if the command is stop or rts, move the workable line pointer to the next word(from the end of the current word to the end of the line)*/
 	if (command->opcode == STOP || command->opcode == RTS) {
 		*workable_line = strtok(NULL, "\r\n");
+
+		if (is_empty_line(*workable_line) == 0) {
+			print_general_error_no_quoting(EXTRA_PARAMETER_MESSAGE, TOO_MANY_PARAMETERS_DESCRIPTION, line, line_number,
+										   *workable_line - start_workable_line,
+										   *workable_line - start_workable_line + strlen(*workable_line), -1, -1, error);
+			return 0;
+		}
+			
 	}
 
 	/*return 1*/

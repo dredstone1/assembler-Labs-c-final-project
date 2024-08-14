@@ -95,9 +95,12 @@ void write_to_file_entry(symbol_address *entries, int entry_amount, symbol_addre
 	
 	/*find the longest symbol name*/
 	for (current_entry = 0; current_entry < entry_amount; current_entry++) {
-		if (search_symbol_by_name(entries[current_entry].symbol_name, labels, label_amount) != -1 && strlen(entries[current_entry].symbol_name) > max_symbol_name_length) {
-			max_symbol_name_length = strlen(entries[current_entry].symbol_name);
+		if (search_symbol_by_name(entries[current_entry].symbol_name, labels, label_amount) != -1) {
+			max_symbol_name_length = max(strlen(entries[current_entry].symbol_name), max_symbol_name_length);
 		}
+/*		if (search_symbol_by_name(entries[current_entry].symbol_name, labels, label_amount) != -1 && strlen(entries[current_entry].symbol_name) > max_symbol_name_length) {
+			max_symbol_name_length = strlen(entries[current_entry].symbol_name);
+		}*/
 	}
 	
 	/*write the entries to the file*/
@@ -146,9 +149,7 @@ void write_to_file_external(word_data *commands, int IC, char fileName[], int ex
 		/*if the command is external, check if the symbol name is longer than the current longest symbol name
 		 * if it is, set the longest symbol name to the length of the current symbol name*/
 		if (commands[i].external == 1) {
-			if (strlen(commands[i].symbol) > longest_symbol_name) {
-				longest_symbol_name = strlen(commands[i].symbol);
-			}
+			longest_symbol_name = max(strlen(commands[i].symbol), longest_symbol_name);
 			
 			/*increment the amount of external symbols*/
 			extern_amount++;

@@ -59,10 +59,11 @@ void free_macros_lines(macro *macros, int number_of_macros);
  * - Checking if the line is a saved word.
  * the function returns -1 if the line exceeds the maximum symbol size, otherwise the result of is_a_saved_word(line).
  * 
- * @param line The string to check.
+ * @param segment The string to check.
  * @return int -1 if the line exceeds the maximum symbol size, otherwise the result of is_a_saved_word(line).
  */
-int is_macro_valid(const char line[]);
+int
+is_macro_valid(char segment[], macro *macros, int amount_of_macros, char line[], int line_number, error *error);
 
 
 void post_formating(error *error, char file_name[], macro **macros, int *number_of_macros) {
@@ -135,9 +136,7 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 			/*check if the line is a macro definition(macr)*/
 			if (is_line_macro(workable_line) == 1) {
 				/*remove the '\n' or '\r' from the end of the line*/
-				if (line[strlen(line) - 1] == '\n' || line[strlen(line) - 1] == '\r') {
-					line[strlen(line) - 1] = '\0';
-				}
+				remove_end_of_line(line);
 
 				/*set the macro_exist flag to 1*/
 				macro_exist = 1;
@@ -145,7 +144,7 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 				workable_line = strtok(NULL, " \t\n\r");
 
 				/*check if the macro name is valid(macro name is not a saved word and/or not too long)*/
-				macro_valid = is_macro_valid(workable_line);
+				macro_valid = is_macro_valid(workable_line, *macros, *number_of_macros, line, line_number, error);
 
 				/*if the macro name is a saved word, switch to the appropriate error message and print it*/
 				if (macro_valid != NON_SAVED_WORD) {
@@ -154,44 +153,41 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 						case -1:
 							print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE,
 														   MACRO_NAME_IS_TOO_LONG_DESCRIPTION, line, line_number + 1,
-														   workable_line - start_workable_line + 1,
-														   workable_line - start_workable_line + strlen(workable_line) +
-														   1, -1, -1, error);
+														   workable_line - start_workable_line,
+														   workable_line - start_workable_line + strlen(workable_line), -1, -1, error);
 							break;
 							/*print the error message for a macro name that is a saved word opcode.*/
 						case SAVED_WORD_OPCODE:
 							print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE,
 														   OPCODE_NAME_AS_MARCO_NAME_DESCRIPTION, line, line_number + 1,
-														   workable_line - start_workable_line + 1,
-														   workable_line - start_workable_line + strlen(workable_line) +
-														   1, -1, -1, error);
+														   workable_line - start_workable_line,
+														   workable_line - start_workable_line + strlen(workable_line), -1, -1, error);
 							break;
 							/*print the error message for a macro name that is a saved word directive.*/
 						case SAVED_WORD_DIRECTIVE:
 							print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE,
 														   DIRECTIVE_NAME_AS_MARCO_NAME_DESCRIPTION, line,
-														   line_number + 1, workable_line - start_workable_line + 1,
-														   workable_line - start_workable_line + strlen(workable_line) +
-														   1, -1, -1, error);
+														   line_number + 1, workable_line - start_workable_line,
+														   workable_line - start_workable_line + strlen(workable_line), -1, -1, error);
 							break;
 							/*print the error message for a macro name that is a saved word register.*/
 						case SAVED_WORD_REGISTER:
 							print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE,
 														   REGISTER_NAME_AS_MARCO_NAME_DESCRIPTION, line,
-														   line_number + 1, workable_line - start_workable_line + 1,
-														   workable_line - start_workable_line + strlen(workable_line) +
-														   1, -1, -1, error);
+														   line_number + 1, workable_line - start_workable_line,
+														   workable_line - start_workable_line + strlen(workable_line), -1, -1, error);
 							break;
 							/*print the error message for a macro name that is a saved word macro.*/
 						case SAVED_WORD_MACRO:
 							print_general_error_no_quoting(ILLEGAL_MACRO_NAME_MESSAGE,
 														   MACRO_NAME_CANNOT_BE_SAVED_WORD_DESCRIPTION, line,
-														   line_number + 1, workable_line - start_workable_line + 1,
-														   workable_line - start_workable_line + strlen(workable_line) +
-														   1, -1, -1, error);
+														   line_number + 1, workable_line - start_workable_line,
+														   workable_line - start_workable_line + strlen(workable_line), -1, -1, error);
 							break;
 					}
 				}
+				
+				
 					/*else if there isn't any error, try to add the macro to the list of macros, if it fails, print an error and continue to the next line*/
 				else if (error->importance == NO_ERROR &&
 						 add_macro(workable_line, macros, number_of_macros, error, number_of_rows) == 0) {
@@ -220,9 +216,7 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 				workable_line = strtok(NULL, "\r\n");
 				if (workable_line != NULL && is_empty_line(workable_line) == 0) {
 					/*remove the '\n' or '\r' from the end of the line*/
-					if (line[strlen(line) - 1] == '\n' || line[strlen(line) - 1] == '\r') {
-						line[strlen(line) - 1] = '\0';
-					}
+					remove_end_of_line(line);
 
 					skip_spaces_and_tabs(&workable_line);
 					print_general_error_no_quoting(EXTRA_TEXT_MESSAGE, EXTRA_TEXT_DESCRIPTION, line, line_number,
@@ -260,9 +254,7 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 				workable_line = strtok(NULL, "\n\r");
 				if (workable_line != NULL && is_empty_line(workable_line) == 0) {
 					/*remove the '\n' or '\r' from the end of the line*/
-					if (line[strlen(line) - 1] == '\n' || line[strlen(line) - 1] == '\r') {
-						line[strlen(line) - 1] = '\0';
-					}
+					remove_end_of_line(line);
 					skip_spaces_and_tabs(&workable_line);
 					print_general_error_no_quoting(EXTRA_TEXT_MESSAGE, EXTRA_TEXT_DESCRIPTION, line, line_number,
 												   workable_line - start_workable_line,
@@ -368,12 +360,27 @@ int is_line_macro(const char line[]) {
 	return strcmp(line, MACRO) == 0;
 }
 
-int is_macro_valid(const char line[]) {
+int
+is_macro_valid(char segment[], macro *macros, int amount_of_macros, char line[], int line_number, error *error) {
+	int i, found;
 	/*check if the line exceeds the maximum symbol size, if it does, return -1*/
-	if (strlen(line) > MAX_SYMBOL_SIZE) {
+	if (strlen(segment) > MAX_SYMBOL_SIZE) {
 		return -1;
 	}
+	
+	for (i = 0; i < amount_of_macros; i++) {
+		found = search_macro_by_name(segment, macros + i, amount_of_macros - i);
+		if (found != -1) {
+/*
+			print_general_error(ILLEGAL_MACRO_NAME_MESSAGE, MACRO_NAME_ALREADY_EXISTS_DESCRIPTION, line, line_number, segment - line, segment - line + strlen(segment), -1, -1, error);
+*/
+			print_macro_already_exists(segment, line, line_number, error, macros[found].line_number+1);
+		}
+		
+		
+	}
+
 
 	/*check if the line is a saved word, if it is, return the result of is_a_saved_word(line)*/
-	return is_a_saved_word(line);
+	return is_a_saved_word(segment);
 }

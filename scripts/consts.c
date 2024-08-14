@@ -20,10 +20,10 @@ const char *opcode_names[][3] = {
 };
 
 const char *directive_type_names[] = {
-		".data",
-		".string",
-		".entry",
-		".extern"
+		"data",
+		"string",
+		"entry",
+		"extern"
 };
 
 const char *operand_names[] = {

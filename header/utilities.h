@@ -9,6 +9,10 @@
 #define BASE 8 /* the base of the octal number */
 #define PLACE_VALUE_MULTIPLIER 10 /* the multiplier to move to the next place value */
 
+#define COMMENT_CHAR ';' /* the character that represents a start of a comment */
+
+#define AMOUNT_DIRECTIVES_TYPES 4 /* the amount of directive types */
+#define AMOUNT_OPCODES 16 /* the amount of opcodes */
 
 /**
  * @brief structure to store a line of text.
@@ -160,7 +164,7 @@ int get_line_from_file(char line[], int line_number, char file_name[], error *er
 /**
  * @brief Advances the file pointer to a specified line number.
  *
- * This function reads lines from the file until the specified line number is reached.
+ * This function reads lines from the file until the specified line number is reached, or the end of the file is encountered.
  * It updates the current line number accordingly. If the last character of the line is a newline
  * or carriage return, it is removed.
  *
@@ -186,14 +190,17 @@ opcode get_opcode_from_string(const char *str);
 
 /**
  * @brief Retrieves the directive type corresponding to a given string.
- *
+ * 
  * This function iterates through the list of directive types and compares each one with the provided string.
  * If a match is found, the corresponding directive type is returned. If no match is found, the function returns -1.
  *
- * @param str The string representing the directive type name to be matched.
+ * This function is used to determine the type of a directive based on its name,
+ * even if the starting period (.) is not included in the string.
+ * 
+ * @param str The string representing the directive name to be matched.
  * @return The corresponding directive type if a match is found, otherwise -1.
  */
-directive_type get_directive_type_from_string(const char *str);
+directive_type get_directive_type_from_string(char *str);
 
 
 /**
@@ -204,11 +211,12 @@ directive_type get_directive_type_from_string(const char *str);
  *  - May start with an asterisk (*).
  *  - Must start with the letter 'r' (after the optional asterisk).
  *  - Must be followed by a single digit (0-9).
+ *  - Must not contain any other characters.
  * 
  * @param word The string to validate.
  * @return int 1 if the string is a valid register, 0 otherwise.
  */
-int is_register(const char word[]);
+int is_register(char *word);
 
 
 /**
@@ -219,18 +227,19 @@ int is_register(const char word[]);
  * - An opcode
  * - A directive
  * - A register
- * - The string "macr" or "endmacr"
+ * - A macro command, such as "macr" and "endmacr"
  * 
  * @param word The string to check.
  * @return saved_word_type The type of the saved word, or NON_SAVED_WORD if it is not a saved word.
  */
-saved_word_type is_a_saved_word(const char word[]);
+saved_word_type is_a_saved_word(char word[]);
 
 
 /**
  * @brief Duplicates a given string.
  * 
  * This function allocates memory and copies the provided source string to the new memory block.
+ * If the memory allocation fails, the function returns NULL.
  * 
  * @param source The string to duplicate.
  * @param error A pointer to an error structure to handle memory allocation errors.
@@ -243,7 +252,8 @@ char *duplicate_string(const char source[], error *error);
  * @brief Checks if a line exceeds the maximum allowed length.
  * 
  * This function iterates through the given line to determine if it exceeds the defined maximum length.
- * It stops checking if it encounters a null character, newline, or carriage return before reaching the limit.
+ * If the length to the first ending character ('\0', '\n', or '\r') is greater than the maximum allowed length,
+ * the function returns 0. Otherwise, it returns 1.
  * 
  * @param line The string to check.
  * @return int 1 if the line is within the allowed length, 0 if it exceeds the limit.
@@ -254,10 +264,10 @@ int is_line_too_long(const char line[]);
 /**
  * @brief Frees the memory pointed to by ptr if it is not NULL.
  *
- * This function checks if the provided pointer is not NULL. If the pointer
- * is valid (i.e., not NULL), it frees the memory allocated to it using free().
+ * This function checks if the provided pointer is not NULL.
+ * If the pointer is not NULL, it frees the memory block it points to.
  *
- * @param ptr A pointer to to be checked and freed if not NULL.
+ * @param ptr A pointer to the memory block to be freed.
  */
 void handle_free(void *ptr);
 
@@ -271,8 +281,32 @@ void handle_free(void *ptr);
  *
  * @param str A pointer to the input string.
  * @param c The character to search for.
- * @return A pointer to the last occurrence of 'c' in 'str', or NULL if 'c' is not found or 'str' is NULL or empty.
+ * @return A pointer to the last occurrence of 'c' in 'str', or NULL if 'c' is not found or 'str' is NULL or
+ * has no characters.
  */
 char* str_last_char(char* str, const char c);
+
+
+/**
+ * @brief Removes the end of line characters from a string.
+ *
+ * This function removes the newline ('\n') or carriage return ('\r') characters, whatever comes first,
+ * from the end of the given string. If the string is NULL or empty, it does nothing.
+ *
+ * @param line The string to remove the end of line characters from.
+ */
+void remove_end_of_line(char line[]);
+
+
+/**
+ * @brief Compares two integers and returns the bigger number.
+ * 
+ * This function compares two integers and returns the bigger of the two.
+ *
+ * @param a The first integer to compare.
+ * @param b The second integer to compare.
+ * @return int The bigger of the two integers.
+ */
+int max(const int a, const int b);
 
 #endif

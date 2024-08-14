@@ -321,11 +321,9 @@ int cast_string_to_words_array(char *string, directive_data *word_array, int len
 }
 
 
-int read_extern_or_entry_symbol(char **workable_line, char *line, directive_data *directive, error *error,
-								int line_number) {
-	/*temporally pointer to the offset of the word*/
-	char *temp_offset = *workable_line;
-	
+int
+read_extern_or_entry_symbol(char **workable_line, char *line, directive_data *directive, error *error, int line_number,
+							char *start_workable_line) {
 	/*get the next word from the line*/
 	*workable_line = strtok(NULL, " \t");
 	
@@ -358,7 +356,7 @@ int read_extern_or_entry_symbol(char **workable_line, char *line, directive_data
 	*workable_line += strlen(*workable_line);
 	
 	/*replace the first character of the workable_line with the appropriate character in the original line*/
-	*workable_line[0] = line[*workable_line - temp_offset];
+	*workable_line[0] = line[*workable_line - start_workable_line];
 	
 	return 1;
 }
@@ -510,11 +508,12 @@ int get_next_variable(var *variable, char **workable_line, int comma_needed, err
 		variable->type = DIRECT;
 		strcpy(variable->var, word);
 	}
+
 	
 	/*check if the variable is a valid variable for the given opcode and usage, if it is not, it will print the appropriate error and return 0*/
-	if (is_valid_var(type, variable->type, usages) == 0) {
+	if ((is_valid_var(type, variable->type, usages) == 0)) {
 		print_command_not_legal(word, line, line_number, error, opcode_names[type][usages + 1],
-								usages + (amount_of_variables_from_opcode(type) == 1), type);
+								!usages, type);
 		return 0;
 	}
 	
