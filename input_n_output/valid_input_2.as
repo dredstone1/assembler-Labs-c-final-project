@@ -1,7 +1,7 @@
 ; file ps.as
 .entry LIST
 .extern fn1
-MAIN1: add r3, LIST
+MAIN: add r3, LIST
 jsr fn1
 LOOP: prn #48
  lea STR, r6
@@ -13,7 +13,7 @@ LOOP: prn #48
  add r7, *r6
  clr K
  sub L3, L3
-.entry MAIN1
+.entry MAIN
  jmp LOOP
 END: stop
 STR: .string "abcd"

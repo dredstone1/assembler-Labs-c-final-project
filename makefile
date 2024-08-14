@@ -40,6 +40,7 @@ line_data.o: $(FOLDERS)
 consts.o: $(FOLDERS)
 	gcc -c scripts/consts.c $(CFLAGS) -o $@
 
+
 ## Clean
 clean:
 	rm -rf *.o

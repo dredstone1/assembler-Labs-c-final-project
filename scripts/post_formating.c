@@ -255,6 +255,7 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 								 i] = (*macros)[search_result].lines[i];
 					}
 				}
+				
 				/*check if there is any text after macro usage, if there is, print an error and continue to the next line*/
 				workable_line = strtok(NULL, "\n\r");
 				if (workable_line != NULL && is_empty_line(workable_line) == 0) {
@@ -325,6 +326,7 @@ int search_macro_by_name(const char macro_name[], macro *macros, int number_of_m
 	return -1;
 }
 
+
 void free_macros_lines(macro *macros, int number_of_macros) {
 	int i;
 
@@ -334,6 +336,7 @@ void free_macros_lines(macro *macros, int number_of_macros) {
 		handle_free(macros[i].lines);
 	}
 }
+
 
 int add_macro(char macro_name[], macro **macros, int *number_of_macros, error *error, int line_number) {
 	/*add 1 to the number of macros*/
@@ -353,6 +356,7 @@ int add_macro(char macro_name[], macro **macros, int *number_of_macros, error *e
 
 	return 1;
 }
+
 
 int is_ending_macro(const char line[]) {
 	/*compare the line with the predefined end macro string*/
