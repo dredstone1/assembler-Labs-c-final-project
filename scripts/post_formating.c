@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+
 /**
  * @brief Checks if a given line defines a macro.
  * 
@@ -57,10 +58,13 @@ void free_macros_lines(macro *macros, int number_of_macros);
  * This function checks if the provided line is a valid macro name by:
  * - Checking if the line exceeds the maximum symbol size.
  * - Checking if the line is a saved word.
- * the function returns -1 if the line exceeds the maximum symbol size, otherwise the result of is_a_saved_word(line).
+ * the function returns -1 if the line exceeds the maximum symbol size, -2 if the macro name is already defined,
+ * otherwise, it returns the saved word type.
  * 
  * @param segment The string to check.
- * @return int -1 if the line exceeds the maximum symbol size, otherwise the result of is_a_saved_word(line).
+ * @return int - -1 if the line exceeds the maximum symbol size,
+ * 			   - -2 if the macro name is already defined,
+ * 			   - saved word type if the line is a saved word.
  */
 int is_macro_valid(char segment[], macro *macros, int amount_of_macros, char line[], int line_number, error *error);
 
@@ -159,22 +163,27 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 
 			/*check if the line is a macro definition(macr)*/
 			if (is_line_macro(workable_line) == 1) {
+				/*set the current line macro flag to 1, to indicate that the line currently being processed is does macro related line*/
+				current_line_macro_flag = 1;
+				
 				/*if the first word is a macro definition(macr), handle the macro definition line, 
 				 * to validate the macro name and add the macro to the list of macros*/
-				current_line_macro_flag = 1;
 				if (handle_macro_definition_line(line, &macro_exist, start_workable_line, &workable_line, macros,
 												 number_of_macros, number_of_rows, error, line_number)) {
 					continue;
 				}
 			}
-
 				/* else if the first word is an ending macro definition(.endmacr)*/
 			else if (is_ending_macro(workable_line) == 1) {
 				/*set the macro_exist flag to 0*/
-				current_line_macro_flag = 1;
 				macro_exist = 0;
-			} else {
+				
+				/* set the current line macro flag to 0, to indicate that the line currently being processed is does macro related line*/
 				current_line_macro_flag = 1;
+			} else {
+				/* set the current line macro flag to 0, to indicate that the line currently being processed is does macro related line*/
+				current_line_macro_flag = 1;
+				
 				/*search for the first word in the macros list*/
 				search_result = search_macro_by_name(workable_line, *macros, *number_of_macros);
 
@@ -195,15 +204,16 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 									 i] = (*macros)[search_result].lines[i];
 						}
 					}
-				}else{
+				} else {
+					/* set the current line macro flag to 0, to indicate that the line currently being processed is not a macro related line*/
 					current_line_macro_flag = 0;
 				}
 			}
 
-			/* check if the line is a macro definition line, if it is,
-			 * check if there are any text after the macro definition, if there is, print an error and continue to the next line*/
+			/* check if the line is a macro related line*/
 			if (current_line_macro_flag == 1) {
-				/*check if there is any text after the macro definition, if there is, print an error and continue to the next line*/
+				/* check if the line is a macro definition line, if it is,
+				 * check if there are any text after the macro definition, if there is, print an error and continue to the next line*/
 				workable_line = strtok(NULL, "\r\n");
 				if (workable_line != NULL && is_empty_line(workable_line) == 0) {
 					/*remove the '\n' or '\r' from the end of the line*/
@@ -218,26 +228,26 @@ void post_formating(error *error, char file_name[], macro **macros, int *number_
 												   -1, error);
 				}
 			}
-
+			
 		}
 
-		/*if there is no error*/
-		if (error->importance == NO_ERROR) {
+		/*if there is no error, and the current line is not a macro related line, add the line to the new file*/
+		if (error->importance == NO_ERROR && current_line_macro_flag == 0) {
 			/*if the macro_exist flag is on, add the line to the last macro memory*/
 			if (macro_exist == 1) {
-				(*macros)[(*number_of_macros) - 1].number_of_macro_lines++;
-				(*macros)[(*number_of_macros) - 1].lines = (line_text *) use_realloc(
-						(*macros)[(*number_of_macros) - 1].lines,
+				(*macros)[*number_of_macros - 1].number_of_macro_lines++;
+				(*macros)[*number_of_macros - 1].lines = (line_text *)use_realloc(
+						(*macros)[*number_of_macros - 1].lines,
 						(*macros)[*number_of_macros - 1].number_of_macro_lines * sizeof(line_text), error);
-				strcpy((*macros)[(*number_of_macros) - 1].lines[(*macros)[*number_of_macros - 1].number_of_macro_lines -
+				strcpy((*macros)[*number_of_macros - 1].lines[(*macros)[*number_of_macros - 1].number_of_macro_lines -
 																1].content, line);
 			}
-				/*else add the line to the new file*/
+			/*else add the line to the new file*/
 			else {
 				number_of_rows++;
-				
+
 				/*realloc more memory to the new file lines array to accommodate the new line*/
-				new_file = use_realloc(new_file, (number_of_rows) * sizeof(line_text), error);
+				new_file = use_realloc(new_file, number_of_rows * sizeof(line_text), error);
 				strcpy(new_file[number_of_rows - 1].content, line);
 			}
 		}
@@ -384,20 +394,20 @@ int is_line_macro(const char line[]) {
 }
 
 int is_macro_valid(char segment[], macro *macros, int amount_of_macros, char line[], int line_number, error *error) {
-	int i, found;
+	int found;
+	
 	/*check if the line exceeds the maximum symbol size, if it does, return -1*/
 	if (strlen(segment) > MAX_SYMBOL_SIZE) {
 		return -1;
 	}
 
-	for (i = 0; i < amount_of_macros; i++) {
-		found = search_macro_by_name(segment, macros + i, amount_of_macros - i);
-
-		if (found != -1) {
-			print_macro_already_exists(segment, line, line_number, error, macros[found].line_number + 1);
-		}
+	/* search for the current macro name in the list of macros,
+	 * if it is found, print the appropriate error message and return -2*/
+	if ((found = search_macro_by_name(segment, macros, amount_of_macros)) != -1) {
+		print_macro_already_exists(segment, line, line_number, error, macros[found].line_number + 1);
+		return -2;
 	}
-
+	
 	/*check if the line is a saved word, if it is, return the result of is_a_saved_word(line)*/
 	return is_a_saved_word(segment);
 }

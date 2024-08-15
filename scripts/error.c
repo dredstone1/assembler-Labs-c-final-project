@@ -68,6 +68,7 @@ void print_marker_and_caret(int start, int end, int pos1, int pos2, char line[])
 
 
 void print_system_error(char error_massage[], error *error, importance importance) {
+	/*if the error count is 0, print the file name and from the beginning of the line*/
 	start_printing_error_message_process(error, importance, error_massage);
 }
 

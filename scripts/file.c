@@ -50,14 +50,14 @@ void write_to_file_object(word_data *list1, word_data *list2, char fileName[], i
 
 	/*write the commands words to the file*/
 	for (current_word_line = 0; current_word_line < IC; current_word_line++) {
-		fprintf(file, "%0*d%*s%0*d\n", LENGTH_OF_WORD_ADDRESS_TO_BE_PRINTED, current_word_line + OS_SAVED_MEMORY_CELL,
+		fprintf(file, "%0*d%*s%0*d\n", LENGTH_OF_WORD_ADDRESS_TO_BE_PRINTED, current_word_line + OS_SAVED_MEMORY_CELLS,
 				SPACE_BETWEEN_WORD_ADDRESS_AND_CONTENT_TO_BE_PRINTED, "", LENGTH_OF_WORD_CONTENT_TO_BE_PRINTED,
 				int_to_octal(list1[current_word_line].word));
 	}
 	
 	/*write the data words to the file*/
 	for (current_word_line = 0; current_word_line < DC; current_word_line++) {
-		fprintf(file, "%0*d%*s%0*d", LENGTH_OF_WORD_ADDRESS_TO_BE_PRINTED, current_word_line + OS_SAVED_MEMORY_CELL + IC,
+		fprintf(file, "%0*d%*s%0*d", LENGTH_OF_WORD_ADDRESS_TO_BE_PRINTED, current_word_line + OS_SAVED_MEMORY_CELLS + IC,
 				SPACE_BETWEEN_WORD_ADDRESS_AND_CONTENT_TO_BE_PRINTED, "",
 				LENGTH_OF_WORD_CONTENT_TO_BE_PRINTED, int_to_octal(list2[current_word_line].word));
 		if (current_word_line + 1 < DC) {
@@ -166,7 +166,7 @@ void write_to_file_external(word_data *commands, int IC, char fileName[], int ex
 			}
 			
 			/*write the external symbol to the file*/
-			fprintf(file, "%-*s%*s%0*d", longest_symbol_name, commands[i].symbol, SPACE_BETWEEN_SYMBOL_NAME_AND_ADDRESS_TO_BE_PRINTED, "", LENGTH_OF_WORD_ADDRESS_OF_EXTERNAL_TO_BE_PRINTED, i + OS_SAVED_MEMORY_CELL);
+			fprintf(file, "%-*s%*s%0*d", longest_symbol_name, commands[i].symbol, SPACE_BETWEEN_SYMBOL_NAME_AND_ADDRESS_TO_BE_PRINTED, "", LENGTH_OF_WORD_ADDRESS_OF_EXTERNAL_TO_BE_PRINTED, i + OS_SAVED_MEMORY_CELLS);
 			
 			/*increment the amount of external symbols written*/
 			amount_of_extern++;

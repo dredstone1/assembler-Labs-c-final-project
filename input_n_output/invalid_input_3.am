@@ -27,6 +27,7 @@ MAIN: add    r3 ,   LIST
 
 string: sub r1, r4
 
+endmacr
 Test: sub r1, r4
 
 LIST: .data 6, -9

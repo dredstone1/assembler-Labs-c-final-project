@@ -27,7 +27,7 @@
  * when it finishes reading the file, it will close the file.
  * 
  * if there isn't any critical or cancellation error:
- * - it will add to every symbol address in the symbol table IC + OS_SAVED_MEMORY_CELL.
+ * - it will add to every symbol address in the symbol table IC + OS_SAVED_MEMORY_CELLS.
  * - it will call to the second pass function, to check if there are any symbols duplication or undefined symbols, and to set every symbol in the words list to the correct address.
  * 
  * if there wasn't any error/warning by now it will print the ".ob", ".ent" and ".ext" files.

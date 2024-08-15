@@ -156,14 +156,14 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 											   workable_line - start_workable_line + strlen(workable_line),
 											   workable_line - start_workable_line + MAX_SYMBOL_SIZE, -1, error);
 			}
-				/*if the symbol is empty, print error*/
+			/*if the symbol is empty, print error*/
 			else if (strlen(workable_line) == 0) {
 				print_general_error_no_quoting(MISSING_SYMBOL_MESSAGE, MISSING_SYMBOL_DESCRIPTION, line, line_number,
 											   workable_line - start_workable_line,
 											   workable_line - start_workable_line + 1,
 											   workable_line - start_workable_line, -1, error);
 			}
-				/*if the symbol is not valid, print error*/
+			/*if the symbol is not valid, print error*/
 			else {
 				print_general_error(INVALID_SYMBOL_NAME_MESSAGE, INVALID_SYMBOL_NAME_DESCRIPTION, line, line_number,
 									workable_line - start_workable_line,
@@ -238,7 +238,7 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 				continue;
 			}
 		}
-			/*if the first non-symbol word in the line is not a directive, handle the command, if there is an error, continue to the next line*/
+		/*if the first non-symbol word in the line is not a directive, handle the command, if there is an error, continue to the next line*/
 		else if (handle_commend_type_line(line, &workable_line, start_workable_line, symbol, symbol_defined, &IC,
 										  &label_amount, line_number, &command_words, error, &symbol_table, &command) == 0) {
 			continue;
@@ -251,7 +251,10 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 										   workable_line - start_workable_line + strlen(workable_line), -1, -1, error);
 		}
 
-		if (error->importance != CRITICAL && error->importance != CANCELLATION && IC + DC > MAXIMUM_NUMBER_OF_TOTAL_WORDS - OS_SAVED_MEMORY_CELL) {
+		/*if there is no critical or cancellation error, check if the memory is overflowed,
+		 * overflowed memory is when the IC + DC is bigger than the maximum number of total words - OS_SAVED_MEMORY_CELl.
+		 * if the memory is overflowed, print an error message. */
+		if (error->importance != CRITICAL && error->importance != CANCELLATION && IC + DC > MAXIMUM_NUMBER_OF_TOTAL_WORDS - OS_SAVED_MEMORY_CELLS) {
 			print_system_error(MEMORY_OVERFLOW_MESSAGE, error, WARNING);
 		}
 	}
@@ -259,9 +262,9 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 	/*close the file*/
 	fclose(file);
 	
-	/*if there is no critical error, add to every symbol address with the data flag on, IC + OS_SAVED_MEMORY_CELL, and continue to the second pass*/
+	/*if there is no critical error, add to every symbol address with the data flag on, IC + OS_SAVED_MEMORY_CELLS, and continue to the second pass*/
 	if (error->importance != CRITICAL && error->importance != CANCELLATION) {
-		update_table_by(symbol_table, IC + OS_SAVED_MEMORY_CELL, label_amount, 1);
+		update_table_by(symbol_table, IC + OS_SAVED_MEMORY_CELLS, label_amount, 1);
 		second_pass(command_words, entries, symbol_table, error, IC, label_amount, entry_amount, extern_amount);
 	}
 
@@ -428,9 +431,9 @@ int handle_directive_type_line(char *line, char **workable_line, char *start_wor
 int handle_commend_type_line(char *line, char **workable_line, char *start_workable_line, char *symbol,
 							 int symbol_defined, int *IC, int *label_amount, int line_number, word_data **command_words,
 							 error *error, symbol_address **symbol_table, command_data *command) {
-	/*if the symbol is defined, add the symbol to the symbol table with the IC + OS_SAVED_MEMORY_CELL value, and increment the IC, if there is an error, return 0*/
+	/*if the symbol is defined, add the symbol to the symbol table with the IC + OS_SAVED_MEMORY_CELLS value, and increment the IC, if there is an error, return 0*/
 	if (symbol_defined == 1 &&
-		add_symbol(symbol_table, label_amount, *IC + OS_SAVED_MEMORY_CELL, line_number, symbol, 0, error, 0) == 0) {
+		add_symbol(symbol_table, label_amount, *IC + OS_SAVED_MEMORY_CELLS, line_number, symbol, 0, error, 0) == 0) {
 		return 0;
 	}
 

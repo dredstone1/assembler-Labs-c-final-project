@@ -11,7 +11,7 @@
 #define TAB_LENGTH 4
 
 /* define the saved memory for the os */
-#define OS_SAVED_MEMORY_CELL 100
+#define OS_SAVED_MEMORY_CELLS 100
 
 /* define the amount of registers */
 #define LAST_REGISTER_COUNT 7
