@@ -80,7 +80,7 @@ int handle_commend_type_line(char *line, char **workable_line, char *start_worka
 
 
 void first_pass(char *file_name, error *error, macro *macros, int number_of_macros) {
-	int IC = 0, DC = 0, label_amount = 0, extern_amount = 0, entry_amount = 0, found_macro, symbol_defined, line_number = 0;
+	int IC = 0, DC = 0, label_amount = 0, extern_amount = 0, entry_amount = 0, found_macro, symbol_defined, line_number = 0, overflowed_memory = 0;
 
 	/*declaration of machine code image*/
 	word_data *command_words = NULL, *data_words = NULL;
@@ -251,11 +251,12 @@ void first_pass(char *file_name, error *error, macro *macros, int number_of_macr
 										   workable_line - start_workable_line + strlen(workable_line), -1, -1, error);
 		}
 
-		/*if there is no critical or cancellation error, check if the memory is overflowed,
+		/* if the memory is yet to be defined as overflowed, check if the memory is overflowed.
 		 * overflowed memory is when the IC + DC is bigger than the maximum number of total words - OS_SAVED_MEMORY_CELl.
-		 * if the memory is overflowed, print an error message. */
-		if (error->importance != CRITICAL && error->importance != CANCELLATION && IC + DC > MAXIMUM_NUMBER_OF_TOTAL_WORDS - OS_SAVED_MEMORY_CELLS) {
+		 * if the memory is overflowed, print an error message and set the overflowed_memory flag to 1.*/
+		if (overflowed_memory == 0 && IC + DC > MAXIMUM_NUMBER_OF_TOTAL_WORDS - OS_SAVED_MEMORY_CELLS) {
 			print_system_error(MEMORY_OVERFLOW_MESSAGE, error, WARNING);
+			overflowed_memory = 1;
 		}
 	}
 

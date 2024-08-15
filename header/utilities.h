@@ -164,7 +164,7 @@ int get_line_from_file(char line[], int line_number, char file_name[], error *er
 /**
  * @brief Advances the file pointer to a specified line number.
  *
- * This function reads lines from the file until the specified line number is reached, or the end of the file is encountered.
+ * This function reads lines from the file until the specified line number is reached.
  * It updates the current line number accordingly. If the last character of the line is a newline
  * or carriage return, it is removed.
  *

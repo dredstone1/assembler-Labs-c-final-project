@@ -204,12 +204,12 @@ int get_line_from_file(char line[], int line_number, char file_name[], error *er
 
 
 void go_to_next_line(FILE *file, char line[], int line_number, int *current_line_number) {
-	/* read the file line by line until the desired line is reached or the end of the file is reached */
-	while (fgets(line, MAX_LINE_LENGTH, file) != NULL && *current_line_number < line_number) {
-		/* increment the current line number */
-		(*current_line_number)++;
+	/* read the file line by line until the desired line is reached */
+	for (; *current_line_number < line_number; (*current_line_number)++) {
+		fgets(line, MAX_LINE_LENGTH, file);
 	}
 	
+	/* remove the newline or carriage from the end of the line, if it exists */
 	remove_end_of_line(line);
 }
 
