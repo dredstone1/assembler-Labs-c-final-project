@@ -22,7 +22,6 @@ int run_assembler(char **files_paths, int number_of_files);
  * 
  * @param argc The number of command line arguments.
  * @param argv An array of strings containing the command line arguments.
- * 
  * @return 0 if the program executes successfully, 1 if CRITICAL errors occurred.
  */
 int main(int argc, char **argv) {
