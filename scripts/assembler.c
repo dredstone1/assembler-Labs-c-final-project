@@ -1,69 +1,90 @@
 #include "../header/post_formating.h"
 #include "../header/first_pass.h"
 #include <stdlib.h>
-#include <stdio.h>
 
-void create_files(word_list_block *file_code_block, symbol_table *table, char file_name[], error_array *error);
 
+/**
+ * @brief Runs the assembler on the given files.
+ * 
+ * This function runs the assembler on the given files. It initializes the error struct and the macros array.
+ * It then iterates over the files, calling the post_formating function, the first_pass function, and then
+ * freeing the macros array and the file name.
+ * 
+ * @param files_paths An array of strings containing the paths to the files to be assembled.
+ * @param number_of_files The number of files to be assembled.
+ */
+
+/**
+ * @brief Runs the assembler on a set of input files.
+ *
+ * This function iterates through the provided file paths, performs pre-processing, 
+ * executes the first pass of the assembler, and handles memory cleanup.
+ * It also manages error handling and program termination, if necessary.
+ * based on the severity of encountered errors.
+ *
+ * @param files_paths An array of strings representing the paths to the input files.
+ * @param number_of_files The number of files to process.
+ */
 void run_assembler(char **files_paths, int number_of_files);
 
-int main(int argc, char **argv){
+
 /*
-    clock_t tic, toc;
-	tic = clock();
-*/
-    
-    run_assembler(argv, argc);
-    
-    printf(BLACK_COLOR);
-/*
-    toc = clock();
-*/
-/*
-    printf("time: %f seconds", (double)(toc - tic) / CLOCKS_PER_SEC);
-*/
-	getchar();
-    return 0;
+ * Main function that handles the assembler execution.
+ * 
+ * @param argc The number of command line arguments.
+ * @param argv An array of strings containing the command line arguments.
+ * 
+ * @return 0 if the program executes successfully, otherwise an error code.
+ */
+int main(int argc, char **argv) {
+	/*start the assembler loop*/
+	run_assembler(argv, argc);
+	return 0;
 }
 
-void run_assembler(char **files_paths, int number_of_files){
-	file file;
-	error_array error;
-	int i, error_count = 0;
-	word_list_block *file_code_block;
-	symbol_table table;
-	
+void run_assembler(char **files_paths, int number_of_files) {
+	error error;
+	int i, number_of_macros;
+	char *file_name = NULL;
+	macro *macros = NULL;
 
+	/* Iterate through each file path provided */
 	for (i = 1; i < number_of_files; ++i) {
-		initialize_error(&error);
+		/* Initialize error structure for the current file */
 		error.importance = NO_ERROR;
-		initialize_new_file_name(&file, &error, files_paths[i]);
-		read_file(&file, &error);
-		if (error.importance == NO_ERROR) {
-			post_formating(&file, &error);
-			file_code_block = create_new_word_list_block(&error);
-			initialize_symbol_table(&table);
-			first_pass(&file, &table, file_code_block, &error);
+		error.error_single_file_count = 0;
+		number_of_macros = 0;
+		macros = NULL;
 
-			add_symbols_to_code_block(file_code_block, &table, &error);
-			create_files(file_code_block, &table, file.filename, &error);
-
-			free_word_list_block(file_code_block);
-
-			free_file_lines(&file);
+		/* Prepare the file name for processing */
+		if (initialize_new_file_name(&file_name, &error, files_paths[i]) == 0){
+			return;
 		}
-		handel_error(error, file.filename);
-		error_count += error.size-1;
-		free(error.errors);
-	}
-	printf(BLACK_COLOR);
-	printf("total errors: %d\n", error_count);
-}
+		/*create the file name with the correct ending*/
+		set_ending_to_file_name(file_name, SOURCE_FILE_ENDING);
+		error.file_name = file_name;
 
-void create_files(word_list_block *file_code_block, symbol_table *table, char file_name[], error_array *error){
-	if (error->size > 1)
-		return;
-	write_to_file_object(file_code_block, file_name);
-	write_to_file_entry(table, file_name);
-	write_to_file_external(file_code_block, file_name, table);
+
+		/* Perform pre-processing and macro expansion */
+		post_formating(&error, file_name, &macros, &number_of_macros);
+
+		/* If no ERROR occurred during pre-processing, execute the first pass */
+		if (error.importance == NO_ERROR) {
+			first_pass(file_name, &error, macros, number_of_macros);
+		}
+
+		/* Free allocated memory for macros and file name, if necessary */
+		handle_free(macros);
+		handle_free(file_name);
+
+		/* Print a separator line after processing each file, if any errors occurred */
+		if (error.error_single_file_count > 0) {
+			print_separator(1);
+		}
+		
+		/* if the error importance is critical, return */
+		if (error.importance == CRITICAL){
+			return;
+		}
+	}
 }

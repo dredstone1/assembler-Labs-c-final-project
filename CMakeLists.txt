@@ -5,24 +5,24 @@ set(CMAKE_C_STANDARD 11)
 
 add_executable(mmn14
         scripts/post_formating.c
-        header/post_formating.h
         scripts/file.c
-        header/file.h
         scripts/error.c
-        header/error.h
-        scripts/macro.c
-        header/macro.h
-        scripts/line_node.c
-        header/line_node.h
         scripts/symbol_table.c
-        header/symbol_table.h
         scripts/assembler.c
-        scripts/words_block.c
-        header/words_block.h
+        scripts/word_conversion.c
         scripts/line_data.c
-        header/line_data.h
         scripts/first_pass.c
-        header/first_pass.h
         scripts/utilities.c
+        scripts/second_pass.c
+        header/post_formating.h
+        header/file.h
+        header/error.h
+        header/symbol_table.h
+        header/word_conversion.h
+        header/line_data.h
+        header/first_pass.h
         header/utilities.h
+        header/second_pass.h
+        header/consts.h
+        scripts/consts.c
 )
