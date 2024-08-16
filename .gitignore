@@ -52,5 +52,3 @@ Mkfile.old
 CMakeLists.txt
 dkms.conf
 /cmake-build-debug/
-valgrind-out.txt
-exomple
