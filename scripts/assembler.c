@@ -2,18 +2,6 @@
 #include "../header/first_pass.h"
 #include <stdlib.h>
 
-
-/**
- * @brief Runs the assembler on the given files.
- * 
- * This function runs the assembler on the given files. It initializes the error struct and the macros array.
- * It then iterates over the files, calling the post_formating function, the first_pass function, and then
- * freeing the macros array and the file name.
- * 
- * @param files_paths An array of strings containing the paths to the files to be assembled.
- * @param number_of_files The number of files to be assembled.
- */
-
 /**
  * @brief Runs the assembler on a set of input files.
  *
@@ -24,25 +12,26 @@
  *
  * @param files_paths An array of strings representing the paths to the input files.
  * @param number_of_files The number of files to process.
+ * @return 0 if the program executes successfully, 1 if CRITICAL errors occurred.
  */
-void run_assembler(char **files_paths, int number_of_files);
+int run_assembler(char **files_paths, int number_of_files);
 
 
-/*
+/**
  * Main function that handles the assembler execution.
  * 
  * @param argc The number of command line arguments.
  * @param argv An array of strings containing the command line arguments.
  * 
- * @return 0 if the program executes successfully, otherwise an error code.
+ * @return 0 if the program executes successfully, 1 if CRITICAL errors occurred.
  */
 int main(int argc, char **argv) {
-	/*start the assembler loop*/
-	run_assembler(argv, argc);
-	return 0;
+	/*start the assembler loop
+	 * and return the result*/
+	return run_assembler(argv, argc);
 }
 
-void run_assembler(char **files_paths, int number_of_files) {
+int run_assembler(char **files_paths, int number_of_files) {
 	error error;
 	int i, number_of_macros;
 	char *file_name = NULL;
@@ -58,7 +47,7 @@ void run_assembler(char **files_paths, int number_of_files) {
 
 		/* Prepare the file name for processing */
 		if (initialize_new_file_name(&file_name, &error, files_paths[i]) == 0){
-			return;
+			return 1;
 		}
 		/*create the file name with the correct ending*/
 		set_ending_to_file_name(file_name, SOURCE_FILE_ENDING);
@@ -84,7 +73,9 @@ void run_assembler(char **files_paths, int number_of_files) {
 		
 		/* if the error importance is critical, return */
 		if (error.importance == CRITICAL){
-			return;
+			return 1;
 		}
 	}
+	
+	return error.importance == CRITICAL;
 }

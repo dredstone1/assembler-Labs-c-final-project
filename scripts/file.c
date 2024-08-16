@@ -98,9 +98,6 @@ void write_to_file_entry(symbol_address *entries, int entry_amount, symbol_addre
 		if (search_symbol_by_name(entries[current_entry].symbol_name, labels, label_amount) != -1) {
 			max_symbol_name_length = max(strlen(entries[current_entry].symbol_name), max_symbol_name_length);
 		}
-/*		if (search_symbol_by_name(entries[current_entry].symbol_name, labels, label_amount) != -1 && strlen(entries[current_entry].symbol_name) > max_symbol_name_length) {
-			max_symbol_name_length = strlen(entries[current_entry].symbol_name);
-		}*/
 	}
 	
 	/*write the entries to the file*/
