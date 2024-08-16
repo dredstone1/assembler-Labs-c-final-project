@@ -127,8 +127,7 @@ int read_data(char **workable_line, char *line, directive_data *directive, error
  * @param line_number The line number of the current line being processed.
  * @return 1 if the symbol is successfully read and processed, 0 otherwise.
  */
-int
-read_extern_or_entry_symbol(char **workable_line, char *line, directive_data *directive, error *error, int line_number,
+int read_extern_or_entry_symbol(char **workable_line, char *line, directive_data *directive, error *error, int line_number,
 							char *start_workable_line);
 
 
